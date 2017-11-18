@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package phase1;
+
 
 import java.util.ArrayList;
 
@@ -16,6 +16,7 @@ public class Hero extends Warrior{
     private int resurrectionTime;
     private int powerLevel;
     private int experienceLevel;
+    private int money;
     private int[] numOfKilledByWeapon=new int [4];
     private int[] numOfKilledBySoldier=new int [4];
     private int[] numOfKilledByHero=new int [4];
@@ -27,6 +28,9 @@ public class Hero extends Warrior{
     public void addNumOfKilledByHero(String type){}
     public void addNumOfKilledBySoldier(String type){}
     public void addNumOfKilledByWeopen(String type){}
+    public void setMoney(int a){money=a;}
+    public void setMoney(String a){money=Integer.parseInt(a.trim());}
+    public int getMoney(){return money;}
     //public void addNumOfKilledByHero(int a){numOfKilledByHero=numOfKilledByHero+a;}
     //public void addNumOfKilledBySoldier(int a){numOfKilledBySoldier=numOfKilledBySoldier+a;}
     //public void addNumOfKilledByWeapon(int a){numOfKilledByWeapon=numOfKilledByWeapon+a;}
@@ -39,10 +43,7 @@ public class Hero extends Warrior{
     public int calculateResurrectionTime(){
         return 0;}
     public boolean applyWeapon(Alien[] alien){return true;};
-    public boolean isDead(){
-        if(getEnergy()>0)
-            return false;
-        return true;}
+
     public void soldierDied(Soldier dead){}
     public boolean gotShot(Alien a){return true;}
     public void addMoney(int a){setMoney(getMoney()+a);}
@@ -50,11 +51,12 @@ public class Hero extends Warrior{
         int b=Integer.parseInt(a.trim());
         setMoney(getMoney()+b);}
     public void move(){}
-    public void gotByWorm(int x,int y){setX(x);setY(y);moveSoldiers();}
+    //public void gotByWorm(int x,int y){setX(x);setY(y);moveSoldiers();}
     public void moveSoldiers(){
         for (int i=0;i<3;i++){
             soldiers[i].move();}
     }
+
     public Weapon buyWeapon(String nameOfWeapon){
         if (this.getMoney()<Weapon.getInitialPrice(nameOfWeapon))
             return null;
@@ -62,17 +64,19 @@ public class Hero extends Warrior{
         /// buy the new weapon!
     return null;
     }
+
+
     public boolean upgradeWeapon(Weapon toUpgrade){return false;}
-    Hero(double x,double y){
-        setXY(x,y);
+
+    Hero (Dimension dimension){
+        setDimension(dimension);
         setMoney(1000);
+
         for (int i;i<3;i++){
-            soldiers[i]=new Soldier(this,x,y);
+            soldiers[i]=new Soldier(this,dimension);
                 }
-    
-    
-    
     }
+    public boolean died(){}
     @Override
     public String toString(){return null;}
 }

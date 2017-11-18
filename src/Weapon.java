@@ -13,7 +13,7 @@ public class Weapon {
     
     private String name;
     private int type;
-    private double x,y;
+    //private double x,y;
     private int powerOfBullet;
     private int powerOfBulletAir;
     private int speedOfBullet;
@@ -23,17 +23,17 @@ public class Weapon {
     private int level;
     private boolean onAirOnly;
     private int speedReduction;
-    
+    private Dimension dimension;
+
+    public Dimension getDimension() {
+        return dimension;
+    }
+    public void setDimension(Dimension dimension) {
+        this.dimension = dimension;
+    }
+
     public void setMyHero(Hero hero){myHero=hero;}
     public Hero getMyHero(){return myHero;}
-    public void setX(int a){x=a;}
-    public void setY(int a){y=a;}
-    public void setXY(int a,int b){x=a;y=b;}
-    public void setX(String a){x=Integer.parseInt(a.trim());}
-    public void setY(String a){y=Integer.parseInt(a.trim());}
-    public void setXY(String a,String b){x=Integer.parseInt(a.trim());y=Integer.parseInt(b.trim());}    
-    public double getX(){return x;}
-    public double getY(){return y;}
     public void setName(String a){name = a.trim();}
     public String getName(){return name;}
     public void setRadious(double a){radious=a;}
@@ -54,8 +54,7 @@ public class Weapon {
     public void setPrice(String a){price=Integer.parseInt(a.trim());}
     public void setOnAirOnly(){onAirOnly=true;}
     public boolean getOnAirOnly(){return onAirOnly;}
-    public double distance(int X,int Y){
-        return Math.sqrt(Math.pow((X-x),2) +Math.pow((Y-y),2));} 
+
     public int getLevel(){return level;}
     public void setLevel(int a){level=a;}
     public boolean upgrade(int money){
@@ -139,8 +138,8 @@ public class Weapon {
     
     
     }
-    Weapon(int X,int Y,String type_,Hero mine){
-        setXY(X,Y);
+    Weapon(Dimension dimension,String type_,Hero mine){
+        setDimension(dimension);
         setType(type_);
         setName(type_);
         setMyHero(mine);

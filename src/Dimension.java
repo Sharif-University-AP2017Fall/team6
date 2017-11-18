@@ -15,6 +15,10 @@ public class Dimension {
         return y;
     }
 
+    public double distance(int X,int Y){
+        return Math.sqrt((double)Math.pow((X-getX()),2) + (double)Math.pow((Y-getY()),2));
+    }
+
     @Override
     public boolean equals(Object obj) {
         Dimension otherDimension = ((Dimension) obj);

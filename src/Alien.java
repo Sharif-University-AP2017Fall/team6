@@ -5,6 +5,16 @@ public class Alien implements Moveable{
     private int shootingSpeed;
     private int strength;
     private boolean canFly;
+    private Dimension dimension;
+
+
+    public Dimension getDimension() {
+        return dimension;
+    }
+    public void setDimension(Dimension dimension) {
+        this.dimension = dimension;
+    }
+
 
     public Alien(String name) {
         this.name = name;
