@@ -1,4 +1,4 @@
-public class Alien {
+public class Alien implements Moveable{
     private String name;
     private int energy;
     private int speed;
@@ -55,6 +55,8 @@ public class Alien {
 
     public void fire(Warrior warrior){}
 
+    public void reduceEnergy(int amount){}
+
     public String getName() {
         return name;
     }
@@ -77,5 +79,10 @@ public class Alien {
 
     public boolean isCanFly() {
         return canFly;
+    }
+
+    @Override
+    public void move() {
+
     }
 }

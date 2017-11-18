@@ -7,13 +7,19 @@ public class GameMap {
     private List<Route> routes = new ArrayList<>(); //each map has at least two routes
     private List<Dimension> intersections = new ArrayList<>(); //the routes
     private Map<Dimension, Weapon> specifiedLocations;
+    private List<Wormhole> wormholes = new ArrayList<>();
 
-    public GameMap(List<Route> routes, List<Dimension> intersections, ArrayList<Dimension> dimensions) {
+    public GameMap(List<Route> routes, List<Dimension> intersections, ArrayList<Dimension> dimensions, ArrayList<Wormhole> wormholes) {
         this.routes = routes;
         this.intersections = intersections;
+        this.wormholes = wormholes;
         for (int i = 0; i < dimensions.size(); i++){
             specifiedLocations.put(dimensions.get(i), null);
         }
+    }
+
+    public GameMap(){
+
     }
 
     public List<Route> getRoutes() {
@@ -23,6 +29,8 @@ public class GameMap {
     public List<Dimension> getIntersections() {
         return intersections;
     }
+
+    public Alien makeAlien(){}
 }
 class Route{
     private Line[] lines = new Line[5]; //each route consists of 5 lines

@@ -27,4 +27,6 @@ public class Wormhole {
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
+
+    public void transferMoveable(Moveable moveable){}
 }
