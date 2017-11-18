@@ -18,7 +18,7 @@ public class Soldier extends Warrior {
     public void incresePowerOfBullet(int a){}
     public boolean applyWeapon(Alien[] alien){return true;};
     public boolean resurrection(){return true;}
-    //public boolean gotShot(Alien a){return true;}
+    
     public void increaseRadious(int payment){
             while(payment>9){
             setRadious(getRadious()*1.1);
@@ -42,8 +42,9 @@ public class Soldier extends Warrior {
         setDimension(dimension);
 
     }
-
-    public boolean died(){}
+    
+    public boolean gotShot(Alien a){return false;}
+    public boolean died(){return false;}
     @Override
     public String toString(){return null;}
 }

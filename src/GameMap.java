@@ -30,7 +30,7 @@ public class GameMap {
         return intersections;
     }
 
-    public Alien makeAlien(){}
+    public Alien makeAlien(){return null;}
 }
 class Route{
     private Line[] lines = new Line[5]; //each route consists of 5 lines
@@ -61,6 +61,6 @@ class Line{
         this.endPoint = endPoint;
     }
 
-    public boolean moveAlien(Alien alien){} //if the alien's dimension proceeds the endPoint return false; which means move to next line
+    public boolean moveAlien(Alien alien){return false;} //if the alien's dimension proceeds the endPoint return false; which means move to next line
 
 }

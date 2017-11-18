@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package phase1;
+
 
 /**
  *
@@ -37,7 +37,6 @@ public class Weapon {
     public void setName(String a){name = a.trim();}
     public String getName(){return name;}
     public void setRadious(double a){radious=a;}
-    //public void setRadious(){radious=0.5;}
     public void setRadious(String a){radious=Double.parseDouble(a.trim());}
     public double getRadious(){return radious;}
     public void setPowerOfBullet(int a){powerOfBullet=a;}
@@ -67,8 +66,8 @@ public class Weapon {
         return false;
         }
     public void upgradePower(){
-        setpowerOfBulletAir((int)(getpowerOfBulletAir()*1.1));
-        setpowerOfBullet((int)(getpowerOfBullet()*1.1));
+        setPowerOfBulletAir((int)(getPowerOfBulletAir()*1.1));
+        setPowerOfBullet((int)(getPowerOfBullet()*1.1));
     }
     public void upgradeRadious(){
         setRadious(getRadious()*1.1);
@@ -162,7 +161,6 @@ public class Weapon {
         }
 
     }
-    
     public boolean applyWeapon(Alien[] alien){return false;}
     @Override
     public String toString(){return null;}

@@ -54,7 +54,7 @@ public abstract class Warrior {
 
 
     public void setGameMap(GameMap a){gameMap=a;}
-    public Map getGameMap(){return gameMap;}
+    public GameMap getGameMap(){return gameMap;}
 
     
     public abstract boolean applyWeapon(Alien[] alien);
