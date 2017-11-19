@@ -1,3 +1,6 @@
+
+import java.util.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -57,7 +60,7 @@ public abstract class Warrior implements Movable {
     public GameMap getGameMap(){return gameMap;}
 
     
-    public abstract boolean applyWeapon(Alien[] alien);
+    public abstract boolean applyWeapon(List<Alien> alien);
     public abstract boolean died();
     public abstract boolean gotShot(Alien a);
     @Override

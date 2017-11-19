@@ -5,6 +5,7 @@
  */
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
  *
@@ -86,16 +87,50 @@ public class Hero extends Warrior {
     
     
     
-    @Override
-    public void move(){
-        moveSoldiers();
+//    @Override
+//    public void move(char a){
+//        int X,Y;
+//        Y=this.getDimension().getY();
+//        X=this.getDimension().getX();
+//        if (a=='w' | a=='W'){
+//            Y=Y-1;}
+//        else if (a=='d' | a=='D'){
+//            X=X+1;}
+//        else if (a=='s' | a=='S'){
+//            Y=Y+1;}
+//        else if (a=='a' | a=='A'){
+//            X=X-1;}
+//            
+//        moveSoldiers(a);   
+//        this.getGameMap().moveHero(new Dimension(Y,X));    
+//        
+//    }
+//    
+//    public void moveSoldiers(char a){
+//        for (int i=0;i<3;i++){
+//            soldiers[i].move(a);}
+//    }
+    
+    public boolean applyWeapon(List<Alien> alien){
+        int n=alien.size();
+        int numBullet=0;
+        for (int i=0;i<n;i++){
+            if (this.getDimension().distance(alien.get(i).getDimension())<this.getRadius())
+                {
+                   alien.get(i).gotShot(this); 
+                   numBullet++;
+                   if(numBullet>getSpeedOfBullet())
+                       break;
+                }
+        
+        }
+        
+        return true;
     }
-    public void moveSoldiers(){
-        for (int i=0;i<3;i++){
-            soldiers[i].move();}
-    }
+    
+    
+    
     public void soldierDied(Soldier dead){}
-    public boolean applyWeapon(Alien[] alien){return true;}
 }
 
 

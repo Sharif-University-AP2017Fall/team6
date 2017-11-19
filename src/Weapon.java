@@ -287,7 +287,7 @@ public abstract class Weapon implements Mappable{
         
         }
         return null;}
-    public abstract boolean applyWeapon(Alien[] alien);
+    public abstract boolean applyWeapon(List<Alien> alien);
     
  
 }

@@ -66,7 +66,10 @@ public class Alien implements Movable{
     public void fire(Warrior warrior){}
 
     public void reduceEnergy(int amount){}
-
+    
+    public boolean gotShot(Warrior a){return false;}
+    public boolean gotShot(Weapon a){return false;}
+    
     public String getName() {
         return name;
     }
@@ -95,4 +98,6 @@ public class Alien implements Movable{
     public void move() {
 
     }
+
+    
 }

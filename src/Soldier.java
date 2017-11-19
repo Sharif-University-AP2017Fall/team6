@@ -1,3 +1,6 @@
+
+import java.util.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -46,7 +49,22 @@ public class Soldier extends Warrior {
         getMyHero().soldierDied(this);
         return false;
     }
-     
+    public boolean applyWeapon(List<Alien> alien){
+                int n=alien.size();
+        int numBullet=0;
+        for (int i=0;i<n;i++){
+            if (this.getDimension().distance(alien.get(i).getDimension())<this.getRadius())
+                {
+                   alien.get(i).gotShot(this); 
+                   numBullet++;
+                   if(numBullet>getSpeedOfBullet())
+                       break;
+                }
+        
+        }
+        
+        return true;
+    } 
     
     
     public void incresePowerOfBullet(int a){}
@@ -54,5 +72,7 @@ public class Soldier extends Warrior {
 
     @Override
     public void move(){}
-    public boolean applyWeapon(Alien[] alien){return true;}
+    
+
+    
 }

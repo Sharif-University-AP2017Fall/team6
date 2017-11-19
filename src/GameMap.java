@@ -84,6 +84,8 @@ public class GameMap {
     public int chooseRandomRoute(){
         return (int) (Math.random() * routes.size());
     }
+    
+    public void moveHero(Dimension a){}
     /***** GETTERS *******/
 
     public List<Route> getRoutes() {
@@ -112,7 +114,7 @@ public class GameMap {
 
     public Hero getHero() {
         return hero;
-    }
+    }   
 }
 
 class Route{
