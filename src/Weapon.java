@@ -1,3 +1,6 @@
+
+import java.util.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,7 +12,7 @@
  *
  * @author Tara
  */
-public class Weapon {
+public abstract class Weapon {
     
     private String name;
     private int type;
@@ -23,7 +26,13 @@ public class Weapon {
     private boolean onAirOnly;
     private int speedReduction;
     private Dimension dimension;
-
+    private  int InitialPrice;
+    private  int InitialPowerOfBullet;
+    private  int InitialPowerOfBulletAir;
+    private  int InitialSpeedOfBullet;
+    private  int InitialSpeedReduction;
+    private  double InitialRadius;
+    
     public Dimension getDimension() {
         return dimension;
     }
@@ -63,25 +72,31 @@ public class Weapon {
             return true;}
         return false;
         }
-    public void upgradePower(){
+    private void upgradePower(){
         setPowerOfBulletAir((int)(getPowerOfBulletAir()*1.1));
         setPowerOfBullet((int)(getPowerOfBullet()*1.1));
     }
-    public void upgradeRadious(){
+    private void upgradeRadious(){
         setRadius(getRadius()*1.1);
     }
     public void setSpeedReduction(int a){speedReduction=a;}
     public void setSpeedReduction(String a){speedReduction=Integer.parseInt(a.trim());}
     public int getSpeedReduction(){return speedReduction;}
     public int getType(){return type;}
-    public void setType(int a){type=a;}
-    public void setType(String a){
-        setPrice(Weapon.getInitialPrice(a));
-        setSpeedOfBullet(Weapon.getInitialSpeedOfBullet(a));
-        setPowerOfBullet(Weapon.getInitialPowerOfBullet(a));
-        setPowerOfBulletAir(Weapon.getInitialPowerOfBulletAir(a));
-        setSpeedReduction(Weapon.getInitialSpeedReduction(a));
-        setRadius(Weapon.getInitialRadius(a));
+    private void setType(int a){type=a;}
+    private void setType(String a){
+        InitialPrice=Weapon.getInitialPrice(a);
+        setPrice(InitialPrice);
+        InitialSpeedOfBullet=getInitialSpeedOfBullet(a);
+        setSpeedOfBullet(InitialSpeedOfBullet);
+        InitialPowerOfBullet=getInitialPowerOfBullet(a);
+        setPowerOfBullet(InitialPowerOfBullet);
+        InitialPowerOfBulletAir=getInitialPowerOfBulletAir(a);
+        setPowerOfBulletAir(InitialPowerOfBulletAir);
+        InitialSpeedReduction=getInitialSpeedReduction(a);
+        setSpeedReduction(InitialSpeedReduction);
+        InitialRadius=getInitialRadius(a);
+        setRadius(InitialRadius);
         switch (a){           
             case "Machine Gun":               
                 setType(0); 
@@ -106,14 +121,33 @@ public class Weapon {
         }
 
     }
+    
     Weapon(Dimension dimension,String type_,Hero mine){
         setDimension(dimension);
         setType(type_);
         setName(type_);
         setMyHero(mine);
     }
-    
-
+    public static Weapon WeaponFactory(Dimension dimension,String type_,Hero mine){
+         switch (type_){           
+            case "Machine Gun":               
+                return  new WeaponNearest(dimension,type_, mine); 
+                
+            case "Rocket":                
+                return  new WeaponAll(dimension,type_, mine); 
+            case "Laser":               
+                return  new WeaponNearest(dimension,type_, mine); 
+            case "Antiaircraft":              
+                return  new WeaponNearest(dimension,type_, mine); 
+            case "Freezer":
+                return  new WeaponAll(dimension,type_, mine); 
+            default:
+                System.out.println(type_+ "not Found");
+                break;
+        
+    }      
+    return null;
+    } 
     public static int getInitialPrice(String a){
     switch (a){
             case "Machine Gun":
@@ -132,7 +166,7 @@ public class Weapon {
         }
 
     }
-    public static int getInitialSpeedOfBullet(String a){
+    public  int getInitialSpeedOfBullet(String a){
     switch (a){
             case "Machine Gun":
                 return 10;
@@ -150,7 +184,7 @@ public class Weapon {
         }
 
     }
-    public static int getInitialPowerOfBullet(String a){
+    public  int getInitialPowerOfBullet(String a){
     switch (a){
             case "Machine Gun":
                 return 10;
@@ -168,7 +202,7 @@ public class Weapon {
         }
 
     }
-    public static int getInitialPowerOfBulletAir(String a){
+    public  int getInitialPowerOfBulletAir(String a){
     switch (a){
             case "Machine Gun":
                 return 5;
@@ -186,7 +220,7 @@ public class Weapon {
         }
 
     }   
-    public static int getInitialSpeedReduction(String a){
+    public  int getInitialSpeedReduction(String a){
     switch (a){
             case "Machine Gun":
                 return 0;
@@ -204,7 +238,7 @@ public class Weapon {
         }
 
     } 
-    public static double getInitialRadius(String a){
+    public  double getInitialRadius(String a){
     switch (a){
             case "Machine Gun":
                 return 1;
@@ -222,16 +256,35 @@ public class Weapon {
         }
 
     }  
-    
-    
-    
-    public static Weapon search(Weapon weapon,String nameSearch){return null;}
-    public boolean applyWeapon(Alien[] alien){return false;}
     @Override
-    public String toString(){return null;}
-
-
-
+    public String toString(){
+        
+        String str="name: "+getName()+" place: "+" not defined in toString yet"+ " level: "+getLevel();
+        
+        return str;}
+    public static Weapon search(List<Weapon> weapon,String nameSearch){
+        int n=weapon.size();
+        Weapon searching;
+        for (int i=0;i<n;i++){
+            searching=weapon.get(i);
+            if (searching!=null && searching.getName().equalsIgnoreCase(nameSearch))
+                {return searching;}
+        
+        }
+        return null;}
     
     
+    
+    
+    public static Weapon search(List<Weapon> weapon,int x,int y){
+        int n=weapon.size();
+        Weapon searching;
+        for (int i=0;i<n;i++){
+
+        
+        }
+        return null;}
+    public abstract boolean applyWeapon(Alien[] alien);
+    
+ 
 }

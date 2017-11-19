@@ -14,11 +14,6 @@ public class Soldier extends Warrior {
     
     public void setMyHero(Hero hero){myHero=hero;}
     public Hero getMyHero(){return myHero;}
-
-    public void incresePowerOfBullet(int a){}
-    public boolean applyWeapon(Alien[] alien){return true;};
-    public boolean resurrection(){return true;}
-    
     public void increaseRadious(int payment){
             while(payment>9){
             setRadious(getRadius()*1.1);
@@ -35,18 +30,29 @@ public class Soldier extends Warrior {
     public void resetRadious(){
             setRadius();
     }
-    
-
     Soldier(Hero a,Dimension dimension){
         setMyHero(a);
         setDimension(dimension);
 
     }
-    
-    public boolean gotShot(Alien a){return false;}
-    public boolean died(){return false;}
+    public boolean gotShot(Alien a){
+        setEnergy(getEnergy()-a.getStrength());
+        if(isDead())
+            died();
+        return true;}   
     @Override
-    public String toString(){return null;}
+    public String toString(){return "Soldier: \n \t Radius: "+ getRadius()+" Power: "+getPowerOfBullet();}
+    public boolean died(){
+        getMyHero().soldierDied(this);
+        return false;
+    }
+     
+    
+    
+    public void incresePowerOfBullet(int a){}
+    public boolean resurrection(){return true;}
+
     @Override
     public void move(){}
+    public boolean applyWeapon(Alien[] alien){return true;}
 }
