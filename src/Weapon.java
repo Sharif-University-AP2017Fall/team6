@@ -68,7 +68,7 @@ public class Weapon {
         setPowerOfBullet((int)(getPowerOfBullet()*1.1));
     }
     public void upgradeRadious(){
-        setRadious(getRadious()*1.1);
+        setRadius(getRadius()*1.1);
     }
     public void setSpeedReduction(int a){speedReduction=a;}
     public void setSpeedReduction(String a){speedReduction=Integer.parseInt(a.trim());}
@@ -217,7 +217,7 @@ public class Weapon {
             case "Freezer":
                 return 1;
             default:
-                System.out.println(a+ " not found in -getInitialSpeedReduction- ");
+                System.out.println(a+ " not found in -getInitialRadius- ");
                 return -1;
         }
 
