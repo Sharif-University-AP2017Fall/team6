@@ -21,7 +21,7 @@ public class Soldier extends Warrior {
     
     public void increaseRadious(int payment){
             while(payment>9){
-            setRadious(getRadious()*1.1);
+            setRadious(getRadius()*1.1);
             payment=payment-10;
             }            
     }
@@ -33,9 +33,9 @@ public class Soldier extends Warrior {
         increaseRadious(b);
     }
     public void resetRadious(){
-            setRadious();
+            setRadius();
     }
-    public void move(){}
+    
 
     Soldier(Hero a,Dimension dimension){
         setMyHero(a);
@@ -47,4 +47,6 @@ public class Soldier extends Warrior {
     public boolean died(){return false;}
     @Override
     public String toString(){return null;}
+    @Override
+    public void move(){}
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *
  * @author Tara
  */
-public class Hero extends Warrior{
+public class Hero extends Warrior {
     private Soldier[] soldiers=new Soldier[3]; // remember to initialize!
     private int resurrectionTime;
     private int powerLevel;
@@ -39,7 +39,7 @@ public class Hero extends Warrior{
     public void addMoney(String a){
         int b=Integer.parseInt(a.trim());
         setMoney(getMoney()+b);}
-    public void move(){}
+
     public void moveSoldiers(){
         for (int i=0;i<3;i++){
             soldiers[i].move();}
@@ -67,6 +67,8 @@ public class Hero extends Warrior{
     public boolean died(){return false;}
     @Override
     public String toString(){return null;}
+    @Override
+    public void move(){}
 }
 
 

@@ -9,9 +9,9 @@
  *
  * @author Tara
  */
-public abstract class Warrior {
+public abstract class Warrior implements Moveable {
     private String name;
-    private double radious;
+    private double radius;
     private int powerOfBullet;
     private int speedOfBullet;
     private int energy;
@@ -28,10 +28,10 @@ public abstract class Warrior {
 
     public void setName(String a){name = a.trim();}
     public String getName(){return name;}
-    public void setRadious(double a){radious=a;}
-    public void setRadious(){radious=0.5;}
-    public void setRadious(String a){radious=Double.parseDouble(a.trim());}
-    public double getRadious(){return radious;}
+    public void setRadious(double a){radius=a;}
+    public void setRadius(){radius=0.5;}
+    public void setRadius(String a){radius=Double.parseDouble(a.trim());}
+    public double getRadius(){return radius;}
     public void setPowerOfBullet(int a){powerOfBullet=a;}
     public void setPowerOfBullet(String a){powerOfBullet=Integer.parseInt(a.trim());}
     public int getPowerOfBullet(){return powerOfBullet;}
@@ -60,5 +60,6 @@ public abstract class Warrior {
     public abstract boolean applyWeapon(Alien[] alien);
     public abstract boolean died();
     public abstract boolean gotShot(Alien a);
-    public abstract void move();
+    @Override
+    public  void move(){}
 }
