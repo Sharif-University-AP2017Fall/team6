@@ -1,4 +1,4 @@
-public class Alien implements Moveable{
+public class Alien implements Movable{
     private String name;
     private int energy;
     private int speed;

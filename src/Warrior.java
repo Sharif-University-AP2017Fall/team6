@@ -9,7 +9,7 @@
  *
  * @author Tara
  */
-public abstract class Warrior implements Moveable {
+public abstract class Warrior implements Movable {
     private String name;
     private double radius;
     private int powerOfBullet;

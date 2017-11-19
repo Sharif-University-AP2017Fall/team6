@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon {
+public abstract class Weapon implements Mappable{
     
     private String name;
     private int type;
@@ -36,9 +36,12 @@ public abstract class Weapon {
     public Dimension getDimension() {
         return dimension;
     }
+
+    @Override
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
+
     public void setMyHero(Hero hero){myHero=hero;}
     public Hero getMyHero(){return myHero;}
     public void setName(String a){name = a.trim();}
