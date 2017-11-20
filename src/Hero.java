@@ -131,6 +131,18 @@ public class Hero extends Warrior {
     
     
     public void soldierDied(Soldier dead){}
+
+    @Override
+    public void move(Dimension changeDimension) {
+        Dimension newDim = new Dimension(getDimension().getX() + changeDimension.getX(),
+                getDimension().getY() + changeDimension.getY());
+        setDimension(newDim);
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] != null){
+                soldiers[i].move(changeDimension);
+            }
+        }
+    }
 }
 
 

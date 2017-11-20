@@ -71,8 +71,9 @@ public class Soldier extends Warrior {
     public boolean resurrection(){return true;}
 
     @Override
-    public void move(){}
-    
-
-    
+    public void move(Dimension changeDimension) {
+        Dimension newDimension = new Dimension(getDimension().getX() + changeDimension.getX(),
+                getDimension().getY() + changeDimension.getY());
+        setDimension(newDimension);
+    }
 }

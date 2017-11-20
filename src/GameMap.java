@@ -33,7 +33,7 @@ public class GameMap {
     }
 
     public void generateAliens(){
-        if ((int)(Math.random() * 3) == 0){ //generate alien with probability 1/3
+        if ((int)(Math.random() * 3) == 0){ //generate alien with probability 1/3 for now. when adding clock, this will change
             Route whichRoute = routes.get(chooseRandomRoute());
             int whichAlien = (int)(Math.random() * 4);
             switch (whichAlien){
@@ -145,10 +145,12 @@ class Route{
             for (int j = 0; j < aliensToMove.size(); j++){
                 Alien currentAlienToMove = aliensToMove.get(j);
                 Dimension dimensionToMove = lines[i].moveAlienOnLine(currentAlienToMove);
-                if (dimensionToMove == null){ //has reached the end of current line
-                    lines[i + 1].addAlienToLine(currentAlienToMove);
+                if (dimensionToMove == null){ //has reached the end of current line and the start of next line
+                    currentAlienToMove.setDimension(lines[i + 1].getStartPoint());
+                    alienMap.get(lines[i + 1]).add(currentAlienToMove);
                 }else{
                     if (intersections.contains(dimensionToMove)){
+                        currentAlienToMove.move(dimensionToMove);
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }
@@ -161,7 +163,7 @@ class Route{
     /**** when we generate an alien in the GameMap class, we randomly select a route to add it to. afterwards,
      * we pass that alien to this function of the chosen route. ****/
     public void addAlienToRoute(Alien alien, int lineNumber){
-        lines[lineNumber].addAlienToLine(alien);
+        alienMap.get(lines[lineNumber]).add(alien);
     }
 
     public int whichLine(Dimension dimension){
@@ -180,7 +182,7 @@ class Line{
     private Dimension startPoint;
     private Dimension endPoint;
 
-    private int unit; //we change the x of each movable by this amount, we will finalize this.
+    public static int UNIT; //we change the x of each movable by this amount, we will finalize this.
 
     public Line(int slope, int intercept, Dimension startPoint, Dimension endPoint) {
         this.slope = slope;
@@ -193,18 +195,14 @@ class Line{
         int currentX = alien.getDimension().getX();
         int currentY = alien.getDimension().getY();
 
-        int newX = currentX + unit;
+        int newX = currentX + UNIT;
         int newY = slope * newX + intercept;
 
-        if (newX <= endPoint.getX()){
-            alien.setDimension(new Dimension(newX, newY));
-            return alien.getDimension();
+        if (newX < endPoint.getX()){
+            //alien.setDimension(new Dimension(newX, newY));
+            return new Dimension(newX, newY);
         }
         return null;
-    }
-
-    public void addAlienToLine(Alien alien){
-        alien.setDimension(startPoint);
     }
 
     public boolean isOnLine(Dimension dimension){
@@ -217,6 +215,10 @@ class Line{
             }
         }
         return false;
+    }
+
+    public Dimension getStartPoint() {
+        return startPoint;
     }
 }
 

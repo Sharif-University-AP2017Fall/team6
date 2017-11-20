@@ -1,4 +1,5 @@
 public class Alien implements Movable{
+
     private String name;
     private int energy;
     private int speed;
@@ -95,8 +96,8 @@ public class Alien implements Movable{
     }
 
     @Override
-    public void move() {
-
+    public void move(Dimension dimension) {
+        setDimension(dimension);
     }
 
     
