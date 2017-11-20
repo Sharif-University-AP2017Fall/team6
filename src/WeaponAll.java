@@ -13,26 +13,20 @@ import java.util.List;
  */
 public class WeaponAll extends Weapon {
 
-    public WeaponAll(Dimension dimension, String type_, Hero mine) {
-        super(dimension, type_, mine);
+    public WeaponAll(Dimension dimension, String type) {
+        super(dimension, type);
     }
     @Override
     public  boolean applyWeapon(List<Alien> alien){
-        int n=alien.size();
-        int numBullet=0;
-        for (int i=0;i<n;i++){
-            if (this.getDimension().distance(alien.get(i).getDimension())<this.getRadius())
-                {
-                   alien.get(i).gotShot(this); 
-                   numBullet++;
-                   if(numBullet>getSpeedOfBullet())
-                       break;
-                }
-        
+        int n = alien.size();
+        int numBullet = 0;
+        for (int i = 0; i < n; i++){
+            alien.get(i).gotShot(this);
+            numBullet++;
+            if (numBullet > getSpeedOfBullet()){
+                break;
+            }
         }
-
-        return true;}
-
-
-    
+        return true;
+    }
 }

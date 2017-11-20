@@ -1,31 +1,42 @@
 public class Dimension {
-    private int x;
-    private int y;
-    
-    public Dimension(int x, int y) {
-        this.x = x;
-        this.y = y;
+    private double X;
+    private double Y;
+
+
+    public Dimension(double x, double y) {
+        X = x;
+        Y = y;
     }
 
-    public int getX() {
-        return x;
+    public double getX() {
+        return X;
     }
 
-    public int getY() {
-        return y;
+    public void setX(int x) {
+        X = x;
     }
 
-    public double distance(int X,int Y){
-        return Math.sqrt((double)Math.pow((X-getX()),2) + (double)Math.pow((Y-getY()),2));
+    public double getY() {
+        return Y;
     }
-    public double distance(Dimension a){
-        int X=a.getX();
-        int Y=a.getY();
-        return Math.sqrt((double)Math.pow((X-getX()),2) + (double)Math.pow((Y-getY()),2));
+
+    public void setY(int y) {
+        Y = y;
     }
+
+    public double distanceFrom(Dimension dimension){
+        return Math.sqrt((dimension.getX() - this.X) * (dimension.getX() - this.X) +
+                (dimension.getY() - this.Y) * (dimension.getY() - this.Y));
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.X + ", " + this.Y + ")";
+    }
+
     @Override
     public boolean equals(Object obj) {
         Dimension otherDimension = ((Dimension) obj);
-        return otherDimension.getY() == y && otherDimension.getX() == x;
+        return otherDimension.getY() == this.Y && otherDimension.getX() == this.X;
     }
 }

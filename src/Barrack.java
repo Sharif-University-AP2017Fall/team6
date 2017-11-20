@@ -3,7 +3,7 @@ public class Barrack implements Mappable {
     private Dimension dimension;
 
     @Override
-    public void setDimension(Dimension dimension) {
+    public void mapTo(Dimension dimension) {
         this.dimension = dimension;
     }
 

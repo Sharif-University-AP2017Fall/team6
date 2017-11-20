@@ -13,26 +13,26 @@ import java.util.List;
  */
 public class WeaponNearest extends Weapon {
 
-    public WeaponNearest(Dimension dimension, String type_, Hero mine) {
-        super(dimension, type_, mine);
+    public WeaponNearest(Dimension dimension, String type) {
+        super(dimension, type);
     }
     @Override
     public  boolean applyWeapon(List<Alien> alien){
-        Alien min=alien.get(0);
-        double dist=this.getDimension().distance(min.getDimension());
-        int n=alien.size();
-        int numBullet=0;
-        for (int i=1;i<n;i++){
-            if (dist>this.getDimension().distance(alien.get(i).getDimension()))
-                min=alien.get(i);
+        Alien min = alien.get(0);
+        double dist = this.getDimension().distanceFrom(min.getDimension());
+        int n = alien.size();
+        int numBullet = 0;
+        for (int i = 1;i<n;i++){
+            if (dist > this.getDimension().distanceFrom(alien.get(i).getDimension()))
+                min = alien.get(i);
         }
         
-        while(numBullet<this.getSpeedOfBullet()){
+        while(numBullet < this.getSpeedOfBullet()){
                    min.gotShot(this); 
                    numBullet++;
-                   if(numBullet>getSpeedOfBullet())
+                   if(numBullet > getSpeedOfBullet())
                        break;
         }
-
-        return true;}
+        return true;
+    }
 }

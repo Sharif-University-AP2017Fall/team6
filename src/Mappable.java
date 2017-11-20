@@ -1,3 +1,3 @@
 public interface Mappable {
-    public void setDimension(Dimension dimension);
+    void mapTo(Dimension dimension);
 }

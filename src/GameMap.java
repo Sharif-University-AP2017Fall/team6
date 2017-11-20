@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 public class GameMap {
-    public static int XBOUND;
-    public static int YBOUND; //we have to initialize both of these right here
+    public static double XBOUND;
+    public static double YBOUND; //we have to initialize both of these right here
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> Wormholes = new ArrayList<>();
@@ -86,6 +86,20 @@ public class GameMap {
     }
     
     public void moveHero(Dimension a){}
+
+    public void shootAliensByWeapons(){
+        for (Dimension dimension : specifiedLocations.keySet()){
+            Mappable m = specifiedLocations.get(dimension);
+            if (m instanceof Weapon){
+                Weapon weapon = ((Weapon) m);
+                List<Alien> aliensToShoot = new ArrayList<>();
+                for (int i = 0; i < routes.size(); i++){
+                    aliensToShoot = routes.get(i).withinRadiusOfWeapon(weapon);
+                    weapon.applyWeapon(aliensToShoot);
+                }
+            }
+        }
+    }
     /***** GETTERS *******/
 
     public List<Route> getRoutes() {
@@ -174,42 +188,70 @@ class Route{
         }
         return -1;
     }
+
+    public List<Alien> withinRadiusOfWeapon(Weapon weapon){
+        List<Integer> linesWithinRadius = new ArrayList<>();
+        List<Alien> aliensToShoot = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            Dimension nearestPoint = lines[i].getNearestPoint(weapon.getDimension());
+            if (weapon.isWithinRadius(nearestPoint)){
+                linesWithinRadius.add(i);
+            }
+        }
+
+        for (Integer withinRadius : linesWithinRadius) {
+            List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
+            for (int i = 0; i < aliensToCheck.size(); i++){
+                Alien currentAlienToCheck = aliensToCheck.get(i);
+                if (weapon.isWithinRadius(currentAlienToCheck)){
+                    aliensToShoot.add(currentAlienToCheck);
+                }
+            }
+        }
+        return aliensToShoot;
+    }
 }
 
 class Line{
-    private int slope;
-    private int intercept;
+    private double slope;
+    private double intercept;
     private Dimension startPoint;
     private Dimension endPoint;
 
-    public static int UNIT; //we change the x of each movable by this amount, we will finalize this.
+    public static double UNIT; //we change the x of each movable by this amount, we will finalize this.
 
-    public Line(int slope, int intercept, Dimension startPoint, Dimension endPoint) {
+    public Line(double slope, double intercept, Dimension startPoint, Dimension endPoint) {
         this.slope = slope;
         this.intercept = intercept;
         this.startPoint = startPoint;
         this.endPoint = endPoint;
     }
 
-    public Dimension moveAlienOnLine(Alien alien){
-        int currentX = alien.getDimension().getX();
-        int currentY = alien.getDimension().getY();
+    public Line(double slope, double intercept) {
+        this.slope = slope;
+        this.intercept = intercept;
+    }
 
-        int newX = currentX + UNIT;
-        int newY = slope * newX + intercept;
+    public Dimension moveAlienOnLine(Alien alien){
+        double currentX = alien.getDimension().getX();
+        double currentY = alien.getDimension().getY();
+
+        double newX = currentX + UNIT;
+        double newY = slope * newX + intercept;
 
         if (newX < endPoint.getX()){
-            //alien.setDimension(new Dimension(newX, newY));
             return new Dimension(newX, newY);
         }
         return null;
     }
 
-    public boolean isOnLine(Dimension dimension){
-        int xToCheck = dimension.getX();
-        int yToCheck = dimension.getY();
+    /*** mathematical line calculations ****/
 
-        if (xToCheck >= startPoint.getX() && xToCheck < endPoint.getX()){
+    public boolean isOnLine(Dimension dimension){
+        double xToCheck = dimension.getX();
+        double yToCheck = dimension.getY();
+
+        if (xToCheck >= startPoint.getX() && xToCheck <= endPoint.getX()){
             if (xToCheck * slope + intercept == yToCheck){
                 return true;
             }
@@ -217,8 +259,41 @@ class Line{
         return false;
     }
 
+    public Line getPerpendicularToLine(Dimension point){
+        double slope = (double)-1 / this.slope;
+        double intercept = (double)point.getX() * -1 * slope + (double)point.getY();
+        return new Line(slope, intercept);
+    }
+
+    public Dimension getIntersectionWithLine(Line line){
+        double x = (this.intercept - line.getIntercept()) / (line.getSlope() - this.slope);
+        double y = x * slope + intercept;
+        return new Dimension(x, y);
+    }
+
+    public Dimension getNearestPoint(Dimension dimension){
+        Line perpendicularToThis = this.getPerpendicularToLine(dimension);
+        Dimension intersection = this.getIntersectionWithLine(perpendicularToThis);
+        if (this.isOnLine(intersection)){
+            return intersection;
+        }else if (dimension.distanceFrom(startPoint) < dimension.distanceFrom(endPoint)){
+            return startPoint;
+        }
+        return endPoint;
+    }
+
+    /**** GETTER AND SETTER ****/
+
     public Dimension getStartPoint() {
         return startPoint;
+    }
+
+    public double getSlope() {
+        return slope;
+    }
+
+    public double getIntercept() {
+        return intercept;
     }
 }
 
