@@ -10,6 +10,7 @@ public class GameMap {
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> Wormholes = new ArrayList<>();
     private Map<Dimension, Mappable> specifiedLocations = new HashMap<>();
+    private Map<Integer, Dimension> numberOfLocation = new HashMap<>();
 
     private Dimension flag;
     private Alien[] reachedFlag = new Alien[5];
@@ -30,6 +31,62 @@ public class GameMap {
     public GameMap(Hero hero) {
         this.hero = hero;
         //code for initializing the routes and the line equations.
+    }
+
+    public void putWeaponInPlace(String weaponName, int whichPlace){
+        int i = 0;
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            i++;
+            if (i == whichPlace){
+                if (specifiedLocations.get(dimension) == null){
+                    Weapon bought = this.hero.buyWeapon(weaponName, dimension);
+                    if (bought != null){
+                        specifiedLocations.put(dimension, bought);
+                    }else{
+                        System.out.println("not enough money.");
+                    }
+                }else{
+                    System.out.println("there is already a weapon in this location.");
+                }
+                break;
+            }
+        }
+    }
+
+    public void upgradeWeaponInPlace(String weaponName, int whichPlace){
+        int i = 0;
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            i++;
+            if (i == whichPlace){
+                if (specifiedLocations.get(dimension) != null){
+                    Weapon toUpgrade = ((Weapon) specifiedLocations.get(dimension));
+                    if (toUpgrade.getName().equalsIgnoreCase(weaponName)){
+                        if (!hero.upgradeWeapon(toUpgrade)) {
+                            System.out.println("not enough money");
+                        }else{
+                            System.out.println("upgraded successfully");
+                        }
+                    }else{
+                        System.out.println("incorrect name.");
+                    }
+                }else{
+                    System.out.println("there is no weapon in this place.");
+                }
+            }
+        }
+    }
+
+    public void showReachedFlag(){
+        int num = 0;
+        ArrayList<String> names = new ArrayList<>();
+        for (Alien alien : reachedFlag) {
+            if (alien != null){
+                num++;
+                names.add(alien.getName());
+            }
+        }
+        System.out.println(num + " aliens have reached flag.");
+        names.forEach(System.out::println);
     }
 
     public void generateAliens(){
@@ -92,29 +149,68 @@ public class GameMap {
             Mappable m = specifiedLocations.get(dimension);
             if (m instanceof Weapon){
                 Weapon weapon = ((Weapon) m);
-                List<Alien> aliensToShoot;
+                List<Alien> aliensToShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++){
-                    aliensToShoot = routes.get(i).aliensWithinRadius(weapon);
-                    weapon.shoot(aliensToShoot);
+                    aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
+                List<Alien> deadAliens = weapon.shoot(aliensToShoot);
+                updateAchivements(deadAliens, "weapon");
+                for (int i = 0; i < routes.size(); i++)
+                    this.removeAliensFromRoute(routes.get(i), deadAliens);
             }
         }
     }
 
     public void shootAliensByHeroAndSoldiers(){
-        List<Alien> aliensToShoot;
+        List<Alien> deadAliens = new ArrayList<>();
+
+        List<Alien> aliensToShootByHero = new ArrayList<>();
         for (int i = 0; i < routes.size(); i++){
-            aliensToShoot = routes.get(i).aliensWithinRadius(this.hero);
-            hero.shoot(aliensToShoot);
-            Soldier soldiers[] = this.hero.getSoldiers();
-            for (int j = 0; j < 3; j++){
-                if (soldiers[j] != null){
-                    aliensToShoot = routes.get(i).aliensWithinRadius(soldiers[j]);
-                    soldiers[j].shoot(aliensToShoot);
+            aliensToShootByHero.addAll(routes.get(i).aliensWithinRadius(this.hero));
+        }
+        deadAliens.addAll(this.hero.shoot(aliensToShootByHero));
+        updateAchivements(deadAliens, "hero");
+
+        Soldier soldiers[] = this.hero.getSoldiers();
+        for (int j = 0; j < 3; j++){
+            if (soldiers[j] != null){
+                List<Alien> aliensToShootBySoldier = new ArrayList<>();
+                for (int i = 0; i < routes.size(); i++){
+                    aliensToShootBySoldier.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
                 }
+                deadAliens.addAll(soldiers[j].shoot(aliensToShootBySoldier));
+            }
+        }
+
+        this.hero.addMoney(deadAliens.size() * 10);
+
+        for (int i = 0; i < routes.size(); i++){
+            this.removeAliensFromRoute(routes.get(i), deadAliens);
+        }
+    }
+
+    public void removeAliensFromRoute(Route route, List<Alien> deadAliens){
+        for (int j = 0; j < deadAliens.size(); j++){
+            Alien alienToRemove = deadAliens.get(j);
+            int lineNumber = route.whichLine(alienToRemove.getDimension());
+            route.removeAlienFromLine(alienToRemove, lineNumber);
+        }
+    }
+
+    public void updateAchivements(List<Alien> deadAliens, String killedBy){
+        Achivement achivement = hero.getAchivement();
+        if (killedBy.equalsIgnoreCase("hero")){
+            for (int i = 0; i < deadAliens.size(); i++){
+                achivement.killedHero(deadAliens.get(i));
+            }
+        }else if (killedBy.equalsIgnoreCase("weapon")){
+            for (int i = 0; i < deadAliens.size(); i++){
+                achivement.killedWeapon(deadAliens.get(i));
             }
         }
     }
+
+
     /***** GETTERS *******/
 
     public List<Route> getRoutes() {
@@ -143,7 +239,30 @@ public class GameMap {
 
     public Hero getHero() {
         return hero;
-    }   
+    }
+
+    public List<Weapon> getWeapons(){
+        List<Weapon> weapons = new ArrayList<>();
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                weapons.add((Weapon) specifiedLocations.get(dimension));
+            }
+        }
+        return weapons;
+    }
+
+    public List<Weapon> getWeapons(String type){
+        List<Weapon> weapons = new ArrayList<>();
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                Weapon weapon = ((Weapon) specifiedLocations.get(dimension));
+                if (weapon.getName().equalsIgnoreCase(type)){
+                    weapons.add(weapon);
+                }
+            }
+        }
+        return weapons;
+    }
 }
 
 class Route{
@@ -193,6 +312,12 @@ class Route{
      * we pass that alien to this function of the chosen route. ****/
     public void addAlienToRoute(Alien alien, int lineNumber){
         alienMap.get(lines[lineNumber]).add(alien);
+    }
+
+    public void removeAlienFromLine(Alien alien, int lineNumber){
+        if (lineNumber >= 0){
+            alienMap.get(lines[lineNumber]).remove(alien);
+        }
     }
 
     public int whichLine(Dimension dimension){

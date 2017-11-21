@@ -22,6 +22,8 @@ public abstract class Warrior implements Movable, Shootable {
     private int speedOfBullet;
     private int energy;
 
+    private int numKilled;
+
     public String getName() {
         return name;
     }
@@ -44,6 +46,10 @@ public abstract class Warrior implements Movable, Shootable {
 
     public int getEnergy() {
         return energy;
+    }
+
+    public int getNumKilled() {
+        return numKilled;
     }
 
     public void setRadius(double radius) {
@@ -71,7 +77,7 @@ public abstract class Warrior implements Movable, Shootable {
     }
 
     public void reduceEnergy(int a){
-        energy=energy-a;
+        energy = energy-a;
         if (isDead())
             died();
     }
@@ -97,6 +103,7 @@ public abstract class Warrior implements Movable, Shootable {
             if (min.isDead()){
                 List<Alien> deadAlien = new ArrayList<>();
                 deadAlien.add(min);
+                numKilled++;
                 return deadAlien;
             }
         }

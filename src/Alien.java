@@ -6,9 +6,9 @@ public class Alien implements Movable{
     private int initialSpeed;
     private int shootingSpeed;
     private int strength;
+    private int type;
     private boolean canFly;
     private Dimension dimension;
-
 
     public Dimension getDimension() {
         return dimension;
@@ -16,7 +16,6 @@ public class Alien implements Movable{
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
-
 
     public Alien(String name) {
         this.name = name;
@@ -27,6 +26,7 @@ public class Alien implements Movable{
                 this.initialSpeed = 8;
                 this.shootingSpeed = 5;
                 this.strength = 7;
+                this.type = 0;
                 this.canFly = false;
                 break;
             case "Algwasonion":
@@ -35,6 +35,7 @@ public class Alien implements Movable{
                 this.initialSpeed = 4;
                 this.shootingSpeed = 10;
                 this.strength = 25;
+                this.type = 1;
                 this.canFly = false;
                 break;
             case "Activionion":
@@ -43,6 +44,7 @@ public class Alien implements Movable{
                 this.initialSpeed = 2;
                 this.shootingSpeed = 2;
                 this.strength = 40;
+                this.type = 2;
                 this.canFly = false;
                 break;
             case "Aironion":
@@ -51,18 +53,10 @@ public class Alien implements Movable{
                 this.initialSpeed = 5;
                 this.shootingSpeed = 5;
                 this.strength = 20;
+                this.type = 3;
                 this.canFly = true;
                 break;
         }
-    }
-
-    public Alien(String name, int energy, int initialSpeed, int shootingSpeed, int strength, boolean canFly) { //custom constructor?!
-        this.name = name;
-        this.energy = energy;
-        this.speed = initialSpeed;
-        this.shootingSpeed = shootingSpeed;
-        this.strength = strength;
-        this.canFly = canFly;
     }
 
     public void reduceSpeed(double reductionPercentage){
@@ -115,8 +109,17 @@ public class Alien implements Movable{
         return canFly;
     }
 
+    public int getType() {
+        return type;
+    }
+
     @Override
     public void move(Dimension dimension) {
         setDimension(dimension);
+    }
+
+    @Override
+    public String toString() {
+        return  "name: " + name + "\tplace: " + dimension + "\tenergy left: " + energy;
     }
 }

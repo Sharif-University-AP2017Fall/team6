@@ -20,6 +20,7 @@ public class Hero extends Warrior {
     private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
 
     Hero (Dimension dimension){
+        achivement = new Achivement();
         setDimension(dimension);
         setMoney(1000);
 
@@ -53,7 +54,15 @@ public class Hero extends Warrior {
     }
 
     public void addMoney(int amount){
-        this.money += money;
+        this.money += amount;
+    }
+
+    public Achivement getAchivement() {
+        return achivement;
+    }
+
+    public void reduceMoney(int amount){
+        this.money -= amount;
     }
 
     public void addPowerLevel(){powerLevel++;}
@@ -67,6 +76,7 @@ public class Hero extends Warrior {
             addPowerLevel();}
     }
     public void addExperienceLevel(int a){experienceLevel=a+experienceLevel;}
+
     public int calculateResurrectionTime(){
         double a1 = getExperienceLevel();
         double a2 = getPowerLevel();
@@ -81,25 +91,34 @@ public class Hero extends Warrior {
             died();
         return true;
     }
-    public Weapon buyWeapon(String nameOfWeapon,Dimension dimension){
-        if (this.getMoney()<Weapon.getInitialPrice(nameOfWeapon))
-            {Weapon bought=Weapon.WeaponFactory(dimension,nameOfWeapon);
+
+    public Weapon buyWeapon(String nameOfWeapon, Dimension dimension){
+        if (this.getMoney() < Weapon.getInitialPrice(nameOfWeapon)){
+            Weapon bought = Weapon.WeaponFactory(dimension,nameOfWeapon);
             if (bought!=null)
-                setMoney(getMoney()-bought.getPrice());
+                reduceMoney(bought.getPrice());
             return bought;}   
         return null;
     }
+
     public boolean died(){
        // System.out.println("GAME OVER");
         System.out.println(toString());
        // System.exit(0);
         return false;
     }
-    /*public boolean upgradeWeapon(Weapon toUpgrade){
-            boolean condit = toUpgrade.upgrade();
-            return condit;  
-       }*/
-    @Override
+    public boolean upgradeWeapon(Weapon toUpgrade){
+        return toUpgrade.upgrade(this);
+    }
+
+    public void showStatus(){
+        System.out.println("place: " + super.getDimension() +
+                "\tenergy left: " + super.getEnergy() +
+                "\tnumber of aliens killed: " + achivement.getNumOfKilledByHero() +
+                "\n");
+    }
+
+   /* @Override
     public String toString(){
         String str="";
         str=str+" Power level: "+getPowerLevel()+"\n Experience Level: "+ (getPowerLevel()*50+getExperienceLevel())
@@ -107,6 +126,25 @@ public class Hero extends Warrior {
             
         
         return null;
+    }
+*/
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        string.append("Hero " +
+                "\tname: " + super.getName() +
+                "\tplace: " + super.getDimension() +
+                "\tenergy left: " + super.getEnergy() +
+                "\n");
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] != null){
+                string.append("Soldier #" + (i + 1) + soldiers[i].toString());
+            }else {
+                string.append("Soldier #" + (i + 1) + " is dead. Rest In Peace.\n");
+            }
+        }
+        return string.toString();
     }
 
     /**** Hero changes its dimension and his alive soldiers also change dimensions. ****/
@@ -137,7 +175,7 @@ class Achivement {
     public Achivement() {
         achieved.put("Great Hunter",false);
         achieved.put("Good Gene",false);
-        achieved.put("Greek Godess",false);
+        achieved.put("Greek Goddess",false);
         achieved.put("Eagle Eye",false);
         achieved.put("Restless Shooter",false);
         achieved.put("Brave Warrior",false);
@@ -200,7 +238,7 @@ class Achivement {
             case "Activionion":
                 numOfKilledByHero[2]++; 
                 if(numOfKilledByHero[2] > 4)
-                    achieved.replace("Greek Godess", true);
+                    achieved.replace("Greek Goddess", true);
                 if(numOfKilledByHero[2] > 9)
                     achieved.replace("Eagle Eye", true);
                 break;
@@ -208,6 +246,14 @@ class Achivement {
                 numOfKilledByHero[3]++;
                 break;
         }
+    }
+
+    public int getNumOfKilledByHero(){
+        int num = 0;
+        for (int i = 0; i < numOfKilledByHero.length; i++){
+            num += numOfKilledByHero[i];
+        }
+        return num;
     }
     public String toString(){
         StringBuilder str = new StringBuilder();

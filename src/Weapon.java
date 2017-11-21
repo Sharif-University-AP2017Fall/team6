@@ -39,6 +39,49 @@ public abstract class Weapon implements Mappable, Shootable{
         setName(type);
     }
 
+    private void setType(String a){
+        setLevel(1);
+
+        initialPrice = Weapon.getInitialPrice(a);
+        setPrice(initialPrice);
+        initialSpeedOfBullet = getInitialSpeedOfBullet(a);
+        setSpeedOfBullet(initialSpeedOfBullet);
+        initialPowerOfBullet = getInitialPowerOfBullet(a);
+        setPowerOfBullet(initialPowerOfBullet);
+        initialPowerOfBulletAir = getInitialPowerOfBulletAir(a);
+        setPowerOfBulletAir(initialPowerOfBulletAir);
+        initialSpeedReduction = getInitialSpeedReduction(a);
+        setSpeedReduction(initialSpeedReduction);
+        initialRadius = getInitialRadius(a);
+        setRadius(initialRadius);
+
+        switch (a){
+            case "Machine Gun":
+                setType(0);
+                setOnAirOnly(false);
+                break;
+            case "Rocket":
+                setType(1);
+                setOnAirOnly(false);
+                break;
+            case "Laser":
+                setType(2);
+                setOnAirOnly(false);
+                break;
+            case "Antiaircraft":
+                setType(3);
+                setOnAirOnly(true);
+                break;
+            case "Freezer":
+                setType(4);
+                setOnAirOnly(false);
+                break;
+            default:
+                System.out.println(a + "not Found");
+                break;
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -95,32 +138,34 @@ public abstract class Weapon implements Mappable, Shootable{
         this.powerOfBullet = powerOfBullet;
     }
 
-    public int getPowerOfBulletAir() {
-        return powerOfBulletAir;
-    }
-
     public int getType() {
         return type;
-    }
-
-    public int getSpeedReduction() {
-        return speedReduction;
     }
 
     public void setType(int type) {
         this.type = type;
     }
 
+    public int getSpeedReduction() {
+        return speedReduction;
+    }
+
     public void setSpeedReduction(int speedReduction) {
         this.speedReduction = speedReduction;
     }
+
+    public int getPowerOfBulletAir() {
+        return powerOfBulletAir;
+    }
+
     public void setPowerOfBulletAir(int powerOfBulletAir) {
         this.powerOfBulletAir = powerOfBulletAir;
     }
+
     public boolean upgrade(Hero hero){
-        if ((hero.getMoney() > (int)(getPrice() * 1.2)) && level<3){
-            setPrice((int)(getPrice() * 1.2));
-            hero.addMoney(-1 * getPrice());
+        if ((double)hero.getMoney() > (this.price * 1.2) && level < 3){
+            setPrice((int)(this.price * 1.2));
+            hero.reduceMoney(this.price);
             level++;
             upgradePower();
             upgradeRadious();
@@ -136,6 +181,12 @@ public abstract class Weapon implements Mappable, Shootable{
 
     private void upgradeRadious(){
         setRadius(this.radius * 1.1);
+    }
+
+    public void showStatus(){
+        System.out.println("place: " + dimension +
+                "\tlevel: " + level +
+                "\n");
     }
 
     @Override
@@ -156,43 +207,28 @@ public abstract class Weapon implements Mappable, Shootable{
         this.dimension = dimension;
     }
 
-    private void setType(String a){
-        initialPrice = Weapon.getInitialPrice(a);
-        setPrice(initialPrice);
-        initialSpeedOfBullet = getInitialSpeedOfBullet(a);
-        setSpeedOfBullet(initialSpeedOfBullet);
-        initialPowerOfBullet = getInitialPowerOfBullet(a);
-        setPowerOfBullet(initialPowerOfBullet);
-        initialPowerOfBulletAir = getInitialPowerOfBulletAir(a);
-        setPowerOfBulletAir(initialPowerOfBulletAir);
-        initialSpeedReduction = getInitialSpeedReduction(a);
-        setSpeedReduction(initialSpeedReduction);
-        initialRadius = getInitialRadius(a);
-        setRadius(initialRadius);
-        switch (a){
-            case "Machine Gun":
-                setType(0);
-                break;
-            case "Rocket":
-                setType(1);
-                break;
-            case "Laser":
-                setType(2);
-                break;
-            case "Antiaircraft":
-                setOnAirOnly(true);
-                setType(3);
-                break;
-            case "Freezer":
-                setType(4);
-                break;
-
-            default:
-                System.out.println(a + "not Found");
-                break;
+    public static Weapon search(List<Weapon> weapon,String nameSearch){
+        int n = weapon.size();
+        Weapon searching;
+        for (int i = 0; i < n; i++){
+            searching = weapon.get(i);
+            if (searching != null && searching.getName().equalsIgnoreCase(nameSearch)){
+                return searching;
+            }
         }
-
+        return null;
     }
+
+    public static Weapon search(List<Weapon> weapon,int x,int y){
+        int n=weapon.size();
+        Weapon searching;
+        for (int i=0;i<n;i++){
+
+
+        }
+        return null;
+    }
+
     public static Weapon WeaponFactory(Dimension dimension,String type){
          switch (type){
             case "Machine Gun":               
@@ -208,9 +244,10 @@ public abstract class Weapon implements Mappable, Shootable{
             default:
                 System.out.println(type + "not Found");
                 break;
-    }      
+         }
     return null;
-    } 
+    }
+
     public static int getInitialPrice(String a){
     switch (a){
             case "Machine Gun":
@@ -227,7 +264,6 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialPrice- ");
                 return -1;
         }
-
     }
     public  int getInitialSpeedOfBullet(String a){
     switch (a){
@@ -245,7 +281,6 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialSpeedOfBullet- ");
                 return -1;
         }
-
     }
     public  int getInitialPowerOfBullet(String a){
     switch (a){
@@ -263,7 +298,6 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialSpeedOfBullet- ");
                 return -1;
         }
-
     }
     public  int getInitialPowerOfBulletAir(String a){
     switch (a){
@@ -281,8 +315,8 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialSpeedOfBulletAir- ");
                 return -1;
         }
+    }
 
-    }   
     public  int getInitialSpeedReduction(String a){
     switch (a){
             case "Machine Gun":
@@ -299,8 +333,8 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialSpeedReduction- ");
                 return -1;
         }
+    }
 
-    } 
     public  double getInitialRadius(String a){
     switch (a){
             case "Machine Gun":
@@ -317,35 +351,10 @@ public abstract class Weapon implements Mappable, Shootable{
                 System.out.println(a+ " not found in -getInitialRadius- ");
                 return -1;
         }
-
     }
 
     @Override
     public String toString(){
-        String str= "name: " + this.name + " place: " + " not defined in toString yet" + " level: " + this.level;
-        
-        return str;
-    }
-
-    public static Weapon search(List<Weapon> weapon,String nameSearch){
-        int n = weapon.size();
-        Weapon searching;
-        for (int i = 0; i < n; i++){
-            searching = weapon.get(i);
-            if (searching != null && searching.getName().equalsIgnoreCase(nameSearch)){
-                return searching;
-            }
-        }
-        return null;
-    }
-    
-    public static Weapon search(List<Weapon> weapon,int x,int y){
-        int n=weapon.size();
-        Weapon searching;
-        for (int i=0;i<n;i++){
-
-        
-        }
-        return null;
+        return "name: " + this.name + " place: " + dimension + " level: " + this.level;
     }
 }

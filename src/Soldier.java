@@ -38,8 +38,22 @@ public class Soldier extends Warrior {
         if(isDead())
             died();
         return true;}   
+    /*@Override
+    public String toString(){return "Soldier: \n \t Radius: "+ getRadius()+" Power: "+getPowerOfBullet();}*/
+
+    public void showStatus(){
+        System.out.println("place: " + super.getDimension() +
+                "\tenergy left: " + super.getEnergy() +
+                "\n");
+    }
+
     @Override
-    public String toString(){return "Soldier: \n \t Radius: "+ getRadius()+" Power: "+getPowerOfBullet();}
+    public String toString() {
+        return "\tname: " + super.getName() +
+                "\nplace: " + super.getDimension() +
+                "\tenergy left : " + super.getEnergy() +
+                "\n";
+    }
 
     public boolean applyWeapon(List<Alien> alien){
         int n=alien.size();
@@ -52,9 +66,7 @@ public class Soldier extends Warrior {
                    if(numBullet>getSpeedOfBullet())
                        break;
                 }
-        
         }
-        
         return true;
     }
 
