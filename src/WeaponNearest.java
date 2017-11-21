@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -17,22 +18,34 @@ public class WeaponNearest extends Weapon {
         super(dimension, type);
     }
     @Override
-    public  boolean applyWeapon(List<Alien> alien){
-        Alien min = alien.get(0);
-        double dist = this.getDimension().distanceFrom(min.getDimension());
-        int n = alien.size();
-        int numBullet = 0;
-        for (int i = 1;i<n;i++){
-            if (dist > this.getDimension().distanceFrom(alien.get(i).getDimension()))
-                min = alien.get(i);
+    public List<Alien> shoot(List<Alien> aliens){
+        Alien min = aliens.get(0);
+        double dist = this.getShootingPoint().distanceFrom(min.getDimension());
+        int n = aliens.size();
+        for (int i = 1; i < n; i++){
+            if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())){
+                if (dist > this.getShootingPoint().distanceFrom(aliens.get(i).getDimension())){
+                    min = aliens.get(i);
+                }
+            }
         }
-        
-        while(numBullet < this.getSpeedOfBullet()){
-                   min.gotShot(this); 
-                   numBullet++;
-                   if(numBullet > getSpeedOfBullet())
-                       break;
+        if (min != null){
+            if (!this.isOnAirOnly() || (this.isOnAirOnly() && min.isCanFly())){
+                for (int numBullet = 0; numBullet < getSpeedOfBullet(); numBullet++){
+                    min.reduceSpeed(this.getSpeedReduction() / 100);
+                    if (min.isCanFly()){
+                        min.reduceEnergy(this.getPowerOfBulletAir());
+                    }else{
+                        min.reduceEnergy(this.getPowerOfBullet());
+                    }
+                    if (min.isDead()){
+                        List<Alien> deadAlien = new ArrayList<>();
+                        deadAlien.add(min);
+                        return deadAlien;
+                    }
+                }
+            }
         }
-        return true;
+        return null;
     }
 }

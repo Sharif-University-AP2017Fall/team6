@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -12,57 +13,103 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Warrior implements Movable {
+public abstract class Warrior implements Movable, Shootable {
     private String name;
     private double radius;
+    private Dimension dimension;
+
     private int powerOfBullet;
     private int speedOfBullet;
     private int energy;
-    private GameMap gameMap;
-    private Dimension dimension;
 
+    public String getName() {
+        return name;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
 
     public Dimension getDimension() {
         return dimension;
     }
+
+    public int getPowerOfBullet() {
+        return powerOfBullet;
+    }
+
+    public int getSpeedOfBullet() {
+        return speedOfBullet;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
-    public void setName(String a){name = a.trim();}
-    public String getName(){return name;}
-    public void setRadious(double a){radius=a;}
-    public void setRadius(){radius=0.5;}
-    public void setRadius(String a){radius=Double.parseDouble(a.trim());}
-    public double getRadius(){return radius;}
-    public void setPowerOfBullet(int a){powerOfBullet=a;}
-    public void setPowerOfBullet(String a){powerOfBullet=Integer.parseInt(a.trim());}
-    public int getPowerOfBullet(){return powerOfBullet;}
-    public void setSpeedOfBullet(int a){speedOfBullet=a;}
-    public void setSpeedOfBullet(String a){speedOfBullet=Integer.parseInt(a.trim());}
-    public int getSpeedOfBullet(){return speedOfBullet;} 
-    public void setEnergy(int a){energy=a;}
-    public void setEnergy(String a){energy=Integer.parseInt(a.trim());}
-    public int getEnergy(){return energy;}
-    public boolean isDead(){
-        if ( 0<getEnergy())
-            return false;
-        return true;}
+    public void setPowerOfBullet(int powerOfBullet) {
+        this.powerOfBullet = powerOfBullet;
+    }
+
+    public void setSpeedOfBullet(int speedOfBullet) {
+        this.speedOfBullet = speedOfBullet;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
+
+    public boolean isDead() {
+        return energy < 0;
+    }
+
     public void reduceEnergy(int a){
         energy=energy-a;
         if (isDead())
             died();
-
     }
 
-
-    public void setGameMap(GameMap a){gameMap=a;}
-    public GameMap getGameMap(){return gameMap;}
-
-    
-    public abstract boolean applyWeapon(List<Alien> alien);
     public abstract boolean died();
     public abstract boolean gotShot(Alien a);
+
     @Override
-    public  void move(){}
+    public abstract void move(Dimension dimension);
+
+    @Override
+    public List<Alien> shoot(List<Alien> aliens) {
+        Alien min = aliens.get(0);
+        double dist = this.getShootingPoint().distanceFrom(min.getDimension());
+        int n = aliens.size();
+        for (int i = 1;i<n;i++){
+            if (dist > this.getShootingPoint().distanceFrom(aliens.get(i).getDimension()))
+                min = aliens.get(i);
+        }
+        for (int numBullet = 0; numBullet < getSpeedOfBullet(); numBullet++){
+            min.stop();
+            min.reduceEnergy(this.powerOfBullet);
+            if (min.isDead()){
+                List<Alien> deadAlien = new ArrayList<>();
+                deadAlien.add(min);
+                return deadAlien;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isWithinRadius(Dimension dimension) {
+        return this.dimension.distanceFrom(dimension) <= this.radius;
+    }
+
+    @Override
+    public Dimension getShootingPoint() {
+        return this.dimension;
+    }
 }

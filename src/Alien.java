@@ -3,6 +3,7 @@ public class Alien implements Movable{
     private String name;
     private int energy;
     private int speed;
+    private int initialSpeed;
     private int shootingSpeed;
     private int strength;
     private boolean canFly;
@@ -23,6 +24,7 @@ public class Alien implements Movable{
             case "Albertonion":
                 this.energy = 250;
                 this.speed = 8;
+                this.initialSpeed = 8;
                 this.shootingSpeed = 5;
                 this.strength = 7;
                 this.canFly = false;
@@ -30,6 +32,7 @@ public class Alien implements Movable{
             case "Algwasonion":
                 this.energy = 150;
                 this.speed = 4;
+                this.initialSpeed = 4;
                 this.shootingSpeed = 10;
                 this.strength = 25;
                 this.canFly = false;
@@ -37,6 +40,7 @@ public class Alien implements Movable{
             case "Activionion":
                 this.energy = 400;
                 this.speed = 2;
+                this.initialSpeed = 2;
                 this.shootingSpeed = 2;
                 this.strength = 40;
                 this.canFly = false;
@@ -44,6 +48,7 @@ public class Alien implements Movable{
             case "Aironion":
                 this.energy = 200;
                 this.speed = 5;
+                this.initialSpeed = 5;
                 this.shootingSpeed = 5;
                 this.strength = 20;
                 this.canFly = true;
@@ -60,13 +65,28 @@ public class Alien implements Movable{
         this.canFly = canFly;
     }
 
+    public void reduceSpeed(double reductionPercentage){
+        int reduceAmount = (int) (this.speed * reductionPercentage);
+        this.speed -= reduceAmount;
+    }
+
+    public void stop(){
+        this.speed = 0;
+    }
+
+    public void backToNormalSpeed(){
+        this.speed = this.initialSpeed;
+    }
+
+    public void reduceEnergy(int amount){
+        this.energy -= amount;
+    }
+
     public boolean isDead(){
         return energy <= 0;
     }
 
     public void fire(Warrior warrior){}
-
-    public void reduceEnergy(int amount){}
     
     public boolean gotShot(Warrior a){return false;}
     public boolean gotShot(Weapon a){return false;}
@@ -99,6 +119,4 @@ public class Alien implements Movable{
     public void move(Dimension dimension) {
         setDimension(dimension);
     }
-
-    
 }

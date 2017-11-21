@@ -11,14 +11,14 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon implements Mappable{
-    
+public abstract class Weapon implements Mappable, Shootable{
+
     private String name;
+    private Dimension dimension;
     private int type; //not sure if this is necessary
     private int price;
     private int level;
     private boolean onAirOnly;
-    private Dimension dimension;
 
     private double radius; //شعاع اثر
     private int speedOfBullet; //آهنگ شلیک
@@ -32,14 +32,11 @@ public abstract class Weapon implements Mappable{
     private int initialSpeedOfBullet;
     private int initialSpeedReduction;
     private double initialRadius;
-    
-    @Override
-    public void mapTo(Dimension dimension) {
-        this.dimension = dimension;
-    }
 
-    public Dimension getDimension() {
-        return dimension;
+    Weapon(Dimension dimension,String type){
+        mapTo(dimension);
+        setType(type);
+        setName(type);
     }
 
     public String getName() {
@@ -117,7 +114,6 @@ public abstract class Weapon implements Mappable{
     public void setSpeedReduction(int speedReduction) {
         this.speedReduction = speedReduction;
     }
-
     public void setPowerOfBulletAir(int powerOfBulletAir) {
         this.powerOfBulletAir = powerOfBulletAir;
     }
@@ -132,6 +128,7 @@ public abstract class Weapon implements Mappable{
         }
         return false;
     }
+
     private void upgradePower(){
         setPowerOfBulletAir((int)(this.powerOfBulletAir * 1.1));
         setPowerOfBullet((int)(this.powerOfBullet * 1.1));
@@ -141,12 +138,22 @@ public abstract class Weapon implements Mappable{
         setRadius(this.radius * 1.1);
     }
 
+    @Override
     public boolean isWithinRadius(Dimension dimension){
         return this.dimension.distanceFrom(dimension) <= this.radius;
     }
 
-    public boolean isWithinRadius(Alien alien){
-        return isWithinRadius(alien.getDimension());
+    @Override
+    public abstract List<Alien> shoot(List<Alien> aliens);
+
+    @Override
+    public Dimension getShootingPoint() {
+        return this.dimension;
+    }
+
+    @Override
+    public void mapTo(Dimension dimension) {
+        this.dimension = dimension;
     }
 
     private void setType(String a){
@@ -162,41 +169,34 @@ public abstract class Weapon implements Mappable{
         setSpeedReduction(initialSpeedReduction);
         initialRadius = getInitialRadius(a);
         setRadius(initialRadius);
-        switch (a){           
-            case "Machine Gun":               
-                setType(0); 
-                break; 
-            case "Rocket":                
+        switch (a){
+            case "Machine Gun":
+                setType(0);
+                break;
+            case "Rocket":
                 setType(1);
                 break;
-            case "Laser":               
+            case "Laser":
                 setType(2);
                 break;
-            case "Antiaircraft":              
+            case "Antiaircraft":
                 setOnAirOnly(true);
                 setType(3);
                 break;
             case "Freezer":
                 setType(4);
                 break;
-               
+
             default:
                 System.out.println(a + "not Found");
                 break;
         }
 
     }
-    
-    Weapon(Dimension dimension,String type){
-        mapTo(dimension);
-        setType(type);
-        setName(type);
-    }
     public static Weapon WeaponFactory(Dimension dimension,String type){
          switch (type){
             case "Machine Gun":               
                 return  new WeaponNearest(dimension,type);
-                
             case "Rocket":                
                 return  new WeaponAll(dimension,type);
             case "Laser":               
@@ -208,7 +208,6 @@ public abstract class Weapon implements Mappable{
             default:
                 System.out.println(type + "not Found");
                 break;
-        
     }      
     return null;
     } 
@@ -319,23 +318,23 @@ public abstract class Weapon implements Mappable{
                 return -1;
         }
 
-    }  
+    }
+
     @Override
     public String toString(){
-        
         String str= "name: " + this.name + " place: " + " not defined in toString yet" + " level: " + this.level;
         
         return str;
     }
+
     public static Weapon search(List<Weapon> weapon,String nameSearch){
-        int n=weapon.size();
+        int n = weapon.size();
         Weapon searching;
-        for (int i=0;i<n;i++){
-            searching=weapon.get(i);
-            if (searching!=null && searching.getName().equalsIgnoreCase(nameSearch)){
+        for (int i = 0; i < n; i++){
+            searching = weapon.get(i);
+            if (searching != null && searching.getName().equalsIgnoreCase(nameSearch)){
                 return searching;
             }
-        
         }
         return null;
     }
@@ -349,7 +348,4 @@ public abstract class Weapon implements Mappable{
         }
         return null;
     }
-    public abstract boolean applyWeapon(List<Alien> alien);
-    
- 
 }

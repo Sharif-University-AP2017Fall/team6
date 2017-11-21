@@ -29,6 +29,11 @@ public class Dimension {
                 (dimension.getY() - this.Y) * (dimension.getY() - this.Y));
     }
 
+    public boolean isWithinBounds(){
+        return X >= 0 && X <= GameMap.XBOUND
+                && Y >= 0 && Y <= GameMap.YBOUND;
+    }
+
     @Override
     public String toString() {
         return "(" + this.X + ", " + this.Y + ")";

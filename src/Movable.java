@@ -1,4 +1,4 @@
 public interface Movable {
-    public void move(Dimension dimension);
+    void move(Dimension dimension);
      //public void move(char a);
 }

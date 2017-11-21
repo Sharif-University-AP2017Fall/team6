@@ -92,10 +92,25 @@ public class GameMap {
             Mappable m = specifiedLocations.get(dimension);
             if (m instanceof Weapon){
                 Weapon weapon = ((Weapon) m);
-                List<Alien> aliensToShoot = new ArrayList<>();
+                List<Alien> aliensToShoot;
                 for (int i = 0; i < routes.size(); i++){
-                    aliensToShoot = routes.get(i).withinRadiusOfWeapon(weapon);
-                    weapon.applyWeapon(aliensToShoot);
+                    aliensToShoot = routes.get(i).aliensWithinRadius(weapon);
+                    weapon.shoot(aliensToShoot);
+                }
+            }
+        }
+    }
+
+    public void shootAliensByHeroAndSoldiers(){
+        List<Alien> aliensToShoot;
+        for (int i = 0; i < routes.size(); i++){
+            aliensToShoot = routes.get(i).aliensWithinRadius(this.hero);
+            hero.shoot(aliensToShoot);
+            Soldier soldiers[] = this.hero.getSoldiers();
+            for (int j = 0; j < 3; j++){
+                if (soldiers[j] != null){
+                    aliensToShoot = routes.get(i).aliensWithinRadius(soldiers[j]);
+                    soldiers[j].shoot(aliensToShoot);
                 }
             }
         }
@@ -189,12 +204,12 @@ class Route{
         return -1;
     }
 
-    public List<Alien> withinRadiusOfWeapon(Weapon weapon){
+    public List<Alien> aliensWithinRadius(Shootable shootable){
         List<Integer> linesWithinRadius = new ArrayList<>();
         List<Alien> aliensToShoot = new ArrayList<>();
         for (int i = 0; i < 5; i++){
-            Dimension nearestPoint = lines[i].getNearestPoint(weapon.getDimension());
-            if (weapon.isWithinRadius(nearestPoint)){
+            Dimension nearestPoint = lines[i].getNearestPoint(shootable.getShootingPoint());
+            if (shootable.isWithinRadius(nearestPoint)){
                 linesWithinRadius.add(i);
             }
         }
@@ -203,7 +218,7 @@ class Route{
             List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
             for (int i = 0; i < aliensToCheck.size(); i++){
                 Alien currentAlienToCheck = aliensToCheck.get(i);
-                if (weapon.isWithinRadius(currentAlienToCheck)){
+                if (shootable.isWithinRadius(currentAlienToCheck.getDimension())){
                     aliensToShoot.add(currentAlienToCheck);
                 }
             }
@@ -236,7 +251,7 @@ class Line{
         double currentX = alien.getDimension().getX();
         double currentY = alien.getDimension().getY();
 
-        double newX = currentX + UNIT;
+        double newX = currentX + UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
 
         if (newX < endPoint.getX()){

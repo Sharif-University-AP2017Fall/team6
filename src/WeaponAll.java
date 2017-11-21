@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -17,16 +18,30 @@ public class WeaponAll extends Weapon {
         super(dimension, type);
     }
     @Override
-    public  boolean applyWeapon(List<Alien> alien){
-        int n = alien.size();
+    public List<Alien> shoot(List<Alien> aliens){
+        int alienNum = aliens.size();
         int numBullet = 0;
-        for (int i = 0; i < n; i++){
-            alien.get(i).gotShot(this);
-            numBullet++;
+        List<Alien> deadAliens = new ArrayList<>();
+        for (int i = 0; i < alienNum; i++){
+            Alien alienToShoot = aliens.get(i);
+            if (!alienToShoot.isDead()){
+                if (!this.isOnAirOnly() || (this.isOnAirOnly() && alienToShoot.isCanFly())){
+                    alienToShoot.reduceSpeed(this.getSpeedReduction() / 100);
+                    if (alienToShoot.isCanFly()){
+                        alienToShoot.reduceEnergy(this.getPowerOfBulletAir());
+                    }else{
+                        alienToShoot.reduceEnergy(this.getPowerOfBullet());
+                    }
+                    if (alienToShoot.isDead()){
+                        deadAliens.add(alienToShoot);
+                    }
+                    numBullet++;
+                }
+            }
             if (numBullet > getSpeedOfBullet()){
                 break;
             }
         }
-        return true;
+        return deadAliens;
     }
 }
