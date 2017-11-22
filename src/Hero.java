@@ -104,6 +104,7 @@ public class Hero extends Warrior {
         resurrectionTime = (int) b;
         return resurrectionTime;
     }
+
     public boolean gotShot(Alien a){
         setEnergy(getEnergy() - a.getStrength());
         if(isDead())
@@ -120,14 +121,34 @@ public class Hero extends Warrior {
         return null;
     }
 
+    public boolean upgradeWeapon(Weapon toUpgrade){
+        return toUpgrade.upgrade(this);
+    }
+
+    public boolean upgradeSoldiers(){
+        int numAlive = 0;
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] != null){
+                numAlive++;
+            }
+        }
+        if (this.getMoney() >= numAlive * 10){
+            this.reduceMoney(numAlive * 10);
+            for (int i = 0; i < 3; i++){
+                if (soldiers[i] != null){
+                    soldiers[i].increaseRadious();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public boolean died(){
        // System.out.println("GAME OVER");
         System.out.println(toString());
        // System.exit(0);
         return false;
-    }
-    public boolean upgradeWeapon(Weapon toUpgrade){
-        return toUpgrade.upgrade(this);
     }
 
     public void showStatus(){

@@ -11,22 +11,15 @@
  * @author Tara
  */
 public class Soldier extends Warrior {
-    public void increaseRadious(int payment){
-        while(payment>9){
-            setRadius(getRadius() * 1.1);
-            payment=payment-10;
-        }
+
+    public void increaseRadious(){
+        setRadius(getRadius() * 1.1);
     }
-    public void addMoney(int a){
-        increaseRadious(a);
-    }
-    public void addMoney(String a){
-        int b=Integer.parseInt(a.trim());
-        increaseRadious(b);
-    }
+
     public void resetRadious(){
             setRadius(0.5);
     }
+
     Soldier(Hero a,Dimension dimension){
         setDimension(dimension);
 
