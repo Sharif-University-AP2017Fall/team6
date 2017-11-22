@@ -169,6 +169,10 @@ public class GameMap {
                     aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
+                if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
+                    reduceAllWeaponsPrice();
+                }
+                this.hero.addMoney(deadAliens.size() * 10);
                 updateAchivements(deadAliens, "weapon");
                 for (int i = 0; i < routes.size(); i++)
                     this.removeAliensFromRoute(routes.get(i), deadAliens);
@@ -177,15 +181,21 @@ public class GameMap {
     }
 
     public void shootAliensByHeroAndSoldiers(){
-        List<Alien> deadAliens = new ArrayList<>();
+        List<Alien> killedByHero = new ArrayList<>();
 
         List<Alien> aliensToShootByHero = new ArrayList<>();
         for (int i = 0; i < routes.size(); i++){
             aliensToShootByHero.addAll(routes.get(i).aliensWithinRadius(this.hero));
         }
-        deadAliens.addAll(this.hero.shoot(aliensToShootByHero));
-        updateAchivements(deadAliens, "hero");
 
+        killedByHero.addAll(this.hero.shoot(aliensToShootByHero));
+        if (this.hero.addExperienceLevel(killedByHero.size() * 15)) {
+            reduceAllWeaponsPrice();
+        }
+        this.hero.addMoney(killedByHero.size() * 10);
+        updateAchivements(killedByHero, "hero");
+
+        List<Alien> killedBySoldiers = new ArrayList<>();
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++){
             if (soldiers[j] != null){
@@ -193,14 +203,27 @@ public class GameMap {
                 for (int i = 0; i < routes.size(); i++){
                     aliensToShootBySoldier.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
                 }
-                deadAliens.addAll(soldiers[j].shoot(aliensToShootBySoldier));
+                killedBySoldiers.addAll(soldiers[j].shoot(aliensToShootBySoldier));
             }
         }
-
-        this.hero.addMoney(deadAliens.size() * 10);
+        this.hero.addMoney(killedBySoldiers.size() * 10);
+        if (this.hero.addExperienceLevel(killedBySoldiers.size() * 5)) {
+            reduceAllWeaponsPrice();
+        }
 
         for (int i = 0; i < routes.size(); i++){
-            this.removeAliensFromRoute(routes.get(i), deadAliens);
+            this.removeAliensFromRoute(routes.get(i), killedByHero);
+            this.removeAliensFromRoute(routes.get(i), killedBySoldiers);
+        }
+    }
+
+    public void reduceAllWeaponsPrice(){
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            Mappable m = specifiedLocations.get(dimension);
+            if (m instanceof Weapon){
+                Weapon weapon = ((Weapon) m);
+                weapon.reducePrice(0.9);
+            }
         }
     }
 

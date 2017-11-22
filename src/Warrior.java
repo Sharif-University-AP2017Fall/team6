@@ -82,6 +82,14 @@ public abstract class Warrior implements Movable, Shootable {
             died();
     }
 
+    public void increaseBulletPower(){
+        this.powerOfBullet = (int)(this.powerOfBullet * 1.1);
+    }
+
+    public void increaseBulletSpeed(){
+        this.speedOfBullet = (int)(this.speedOfBullet * 1.1);
+    }
+
     public abstract boolean died();
     public abstract boolean gotShot(Alien a);
 

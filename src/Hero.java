@@ -65,17 +65,36 @@ public class Hero extends Warrior {
         this.money -= amount;
     }
 
-    public void addPowerLevel(){powerLevel++;}
+    public boolean addPowerLevel(){
+        if (powerLevel < 3){
+            powerLevel++;
+            this.increaseBulletPower();
+            this.increaseBulletSpeed();
+            for (int i = 0; i < 3; i++){
+                if (soldiers[i] != null){
+                    soldiers[i].increaseBulletPower();
+                    soldiers[i].increaseBulletSpeed();
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     public Soldier[] getSoldiers() {
         return soldiers;
     }
-    public void calculatePowerLevel(){
-        while (getExperienceLevel()>49)
-            {addExperienceLevel(-50);
-            addPowerLevel();}
+
+    public boolean addExperienceLevel(int amount){
+        experienceLevel += amount;
+        if (experienceLevel >= 50){
+            if (addPowerLevel()) {
+                setExperienceLevel(0);
+                return true;
+            }
+        }
+        return false;
     }
-    public void addExperienceLevel(int a){experienceLevel=a+experienceLevel;}
 
     public int calculateResurrectionTime(){
         double a1 = getExperienceLevel();

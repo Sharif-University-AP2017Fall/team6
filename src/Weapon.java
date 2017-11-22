@@ -98,6 +98,10 @@ public abstract class Weapon implements Mappable, Shootable{
         this.price = price;
     }
 
+    public void reducePrice(double percentage){
+        setPrice((int) (this.price * percentage));
+    }
+
     public int getLevel() {
         return level;
     }
