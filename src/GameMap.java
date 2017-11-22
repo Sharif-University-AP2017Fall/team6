@@ -122,6 +122,7 @@ public class GameMap {
     }
 
     public void moveAliens(){
+
         for (int i = 0; i < routes.size(); i++){
             List<Alien> reachedIntersectionOrFlag = routes.get(i).moveAliensOnRoute();
             for (int j = 0; i < reachedIntersectionOrFlag.size(); i++){
@@ -134,6 +135,25 @@ public class GameMap {
                 int whichLine = whichRoute.whichLine(alien.getDimension());
                 whichRoute.addAlienToRoute(alien, whichLine);
             }
+        }
+    }
+
+    public void backToNormalSpeed(){
+        List<Alien> allAliens = new ArrayList<>();
+        List<Alien> reducedSpeed = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            allAliens.addAll(routes.get(i).getAliens());
+            for (Dimension dimension : specifiedLocations.keySet()) {
+                Mappable m = specifiedLocations.get(dimension);
+                if (m instanceof Weapon){
+                    Weapon weapon = ((Weapon) m);
+                    reducedSpeed.addAll(routes.get(i).aliensWithinRadius(weapon));
+                }
+            }
+        }
+        allAliens.removeAll(reducedSpeed);
+        for (int i = 0; i < allAliens.size(); i++){
+            allAliens.get(i).backToNormalSpeed();
         }
     }
 
@@ -169,6 +189,7 @@ public class GameMap {
                     aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
+                aliensToShoot.removeAll(deadAliens);
                 if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
                     reduceAllWeaponsPrice();
                 }
@@ -178,6 +199,7 @@ public class GameMap {
                     this.removeAliensFromRoute(routes.get(i), deadAliens);
             }
         }
+        backToNormalSpeed();
     }
 
     public void shootAliensByHeroAndSoldiers(){
@@ -376,7 +398,6 @@ class Route{
                 linesWithinRadius.add(i);
             }
         }
-
         for (Integer withinRadius : linesWithinRadius) {
             List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
             for (int i = 0; i < aliensToCheck.size(); i++){
@@ -387,6 +408,14 @@ class Route{
             }
         }
         return aliensToShoot;
+    }
+
+    public List<Alien> getAliens(){
+        List<Alien> aliens = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            aliens.addAll(alienMap.get(lines[i]));
+        }
+        return aliens;
     }
 }
 
