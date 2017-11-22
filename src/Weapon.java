@@ -33,10 +33,14 @@ public abstract class Weapon implements Mappable, Shootable{
     private int initialSpeedReduction;
     private double initialRadius;
 
+    public static int NUM_USED_TESLA = 0;
+    public static int SECONDS_LEFT_TO_USE_TESLA = 10;
+    public static boolean TESLA_IN_USE = false;
+
     Weapon(Dimension dimension,String type){
         mapTo(dimension);
-        setType(type);
         setName(type);
+        setType(type);
     }
 
     private void setType(String a){
@@ -76,6 +80,9 @@ public abstract class Weapon implements Mappable, Shootable{
                 setType(4);
                 setOnAirOnly(false);
                 break;
+            case "Tesla":
+                setType(5);
+                setOnAirOnly(false);
             default:
                 System.out.println(a + "not Found");
                 break;
@@ -245,6 +252,10 @@ public abstract class Weapon implements Mappable, Shootable{
                 return  new WeaponNearest(dimension,type);
             case "Freezer":
                 return  new WeaponAll(dimension,type);
+             case "Tesla":
+                 NUM_USED_TESLA++;
+                 TESLA_IN_USE = true;
+                 return new WeaponAll(dimension, type);
             default:
                 System.out.println(type + "not Found");
                 break;
@@ -351,6 +362,8 @@ public abstract class Weapon implements Mappable, Shootable{
                 return 1.5;
             case "Freezer":
                 return 1;
+        case "Tesla":
+                return 2;
             default:
                 System.out.println(a+ " not found in -getInitialRadius- ");
                 return -1;

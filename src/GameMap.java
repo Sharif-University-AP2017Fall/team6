@@ -17,7 +17,7 @@ public class GameMap {
     private List<Alien> activeAliens = new ArrayList<>(); //not sure if this is necessary
     private Hero hero;
 
-    public GameMap(List<Route> routes,
+    /*public GameMap(List<Route> routes,
                    List<Wormhole> Wormholes,
                    Map<Dimension, Mappable> specifiedLocations,
                    Dimension flag) {
@@ -25,7 +25,7 @@ public class GameMap {
         this.wormholes = Wormholes;
         this.specifiedLocations = specifiedLocations;
         this.flag = flag;
-    }
+    }*/
 
     public GameMap(Hero hero) {
         this.hero = hero;
@@ -75,19 +75,6 @@ public class GameMap {
         }
     }
 
-    public void showReachedFlag(){
-        int num = 0;
-        ArrayList<String> names = new ArrayList<>();
-        for (Alien alien : reachedFlag) {
-            if (alien != null){
-                num++;
-                names.add(alien.getName());
-            }
-        }
-        System.out.println(num + " aliens have reached flag.");
-        names.forEach(System.out::println);
-    }
-
     public void generateAliens(){
         if ((int)(Math.random() * 3) == 0){ //generate alien with probability 1/3 for now. when adding clock, this will change
             Route whichRoute = routes.get(chooseRandomRoute());
@@ -109,6 +96,23 @@ public class GameMap {
         }
     }
 
+    public int chooseRandomRoute(){
+        return (int) (Math.random() * routes.size());
+    }
+
+    public void showReachedFlag(){
+        int num = 0;
+        ArrayList<String> names = new ArrayList<>();
+        for (Alien alien : reachedFlag) {
+            if (alien != null){
+                num++;
+                names.add(alien.getName());
+            }
+        }
+        System.out.println(num + " aliens have reached flag.");
+        names.forEach(System.out::println);
+    }
+
     public void reachFlag(Alien alien){
         for (int i = 0; i < 5; i++){
             if (reachedFlag[i] == null){
@@ -122,7 +126,6 @@ public class GameMap {
     }
 
     public void moveAliens(){
-
         for (int i = 0; i < routes.size(); i++){
             List<Alien> reachedIntersectionOrFlag = routes.get(i).moveAliensOnRoute();
             for (int j = 0; i < reachedIntersectionOrFlag.size(); i++){
@@ -136,6 +139,7 @@ public class GameMap {
                 whichRoute.addAlienToRoute(alien, whichLine);
             }
         }
+        backToNormalSpeed();
     }
 
     public void backToNormalSpeed(){
@@ -157,10 +161,6 @@ public class GameMap {
         }
     }
 
-    public int chooseRandomRoute(){
-        return (int) (Math.random() * routes.size());
-    }
-    
     public void moveHero(Dimension change){
         this.hero.move(change);
         Dimension newDim = hero.getDimension();
@@ -177,6 +177,45 @@ public class GameMap {
                     out.getDimension().getY() - in.getDimension().getY());
             this.hero.move(newChange);
         }
+    }
+
+    public void useTesla(Dimension dimension){
+        if (Weapon.NUM_USED_TESLA < 2){
+            if (!Weapon.TESLA_IN_USE){
+                Weapon tesla = Weapon.WeaponFactory(dimension, "Tesla");
+                List<Alien> aliensToKill = new ArrayList<>();
+                for (int i = 0; i < routes.size(); i++){
+                    aliensToKill.addAll(routes.get(i).aliensWithinRadius(tesla));
+                }
+                if (this.hero.addExperienceLevel(aliensToKill.size() * 5)){
+                    reduceAllWeaponsPrice();
+                }
+                this.hero.addMoney(aliensToKill.size() * 10);
+                updateAchivements(aliensToKill, "weapon");
+                for (int i = 0; i < routes.size(); i++){
+                    this.removeAliensFromRoute(routes.get(i), aliensToKill);
+                }
+            }else{
+                System.out.println("You must wait " + Weapon.SECONDS_LEFT_TO_USE_TESLA + " more seconds.");
+            }
+        }else{
+            System.out.println("Can not use Tesla anymore.");
+        }
+
+    }
+
+    public void updateTeslaStatus(){
+        if (Weapon.TESLA_IN_USE){
+            Weapon.SECONDS_LEFT_TO_USE_TESLA--;
+            if (Weapon.SECONDS_LEFT_TO_USE_TESLA == 0){
+                Weapon.TESLA_IN_USE = false;
+            }
+        }
+    }
+
+    public void shootAliens(){
+        shootAliensByHeroAndSoldiers();
+        shootAliensByWeapons();
     }
 
     public void shootAliensByWeapons(){
@@ -199,7 +238,7 @@ public class GameMap {
                     this.removeAliensFromRoute(routes.get(i), deadAliens);
             }
         }
-        backToNormalSpeed();
+        //backToNormalSpeed();
     }
 
     public void shootAliensByHeroAndSoldiers(){
@@ -239,6 +278,14 @@ public class GameMap {
         }
     }
 
+    public void removeAliensFromRoute(Route route, List<Alien> deadAliens){
+        for (int j = 0; j < deadAliens.size(); j++){
+            Alien alienToRemove = deadAliens.get(j);
+            int lineNumber = route.whichLine(alienToRemove.getDimension());
+            route.removeAlienFromLine(alienToRemove, lineNumber);
+        }
+    }
+
     public void reduceAllWeaponsPrice(){
         for (Dimension dimension : specifiedLocations.keySet()) {
             Mappable m = specifiedLocations.get(dimension);
@@ -246,14 +293,6 @@ public class GameMap {
                 Weapon weapon = ((Weapon) m);
                 weapon.reducePrice(0.9);
             }
-        }
-    }
-
-    public void removeAliensFromRoute(Route route, List<Alien> deadAliens){
-        for (int j = 0; j < deadAliens.size(); j++){
-            Alien alienToRemove = deadAliens.get(j);
-            int lineNumber = route.whichLine(alienToRemove.getDimension());
-            route.removeAlienFromLine(alienToRemove, lineNumber);
         }
     }
 
