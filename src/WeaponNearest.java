@@ -19,30 +19,37 @@ public class WeaponNearest extends Weapon {
     }
     @Override
     public List<Alien> shoot(List<Alien> aliens){
-        Alien min = aliens.get(0);
-        double dist = this.getShootingPoint().distanceFrom(min.getDimension());
-        int n = aliens.size();
-        for (int i = 1; i < n; i++){
-            if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())){
-                if (dist > this.getShootingPoint().distanceFrom(aliens.get(i).getDimension())){
-                    min = aliens.get(i);
+        List<Alien> canShoot = new ArrayList<>();
+        if (this.isOnAirOnly()){
+            for (int i = 0; i < aliens.size(); i++){
+                if (aliens.get(i).isCanFly()){
+                    canShoot.add(aliens.get(i));
                 }
             }
+        }else{
+            canShoot.addAll(aliens);
         }
-        if (min != null){
-            if (!this.isOnAirOnly() || (this.isOnAirOnly() && min.isCanFly())){
-                for (int numBullet = 0; numBullet < getSpeedOfBullet(); numBullet++){
-                    min.reduceSpeed(this.getSpeedReduction() / 100);
-                    if (min.isCanFly()){
-                        min.reduceEnergy(this.getPowerOfBulletAir());
-                    }else{
-                        min.reduceEnergy(this.getPowerOfBullet());
-                    }
-                    if (min.isDead()){
-                        List<Alien> deadAlien = new ArrayList<>();
-                        deadAlien.add(min);
-                        return deadAlien;
-                    }
+        if (!canShoot.isEmpty()){
+            Alien min = canShoot.get(0);
+            Dimension shootingPoint = this.getShootingPoint();
+            double distance = shootingPoint.distanceFrom(min.getDimension());
+            for (int i = 1; i < canShoot.size(); i++){
+                if (distance > shootingPoint.distanceFrom(canShoot.get(i).getDimension())){
+                    min = canShoot.get(i);
+                }
+            }
+            int maxBullet = this.getSpeedOfBullet();
+            for (int numBullet = 0; numBullet < maxBullet; numBullet++){
+                min.reduceSpeed(this.getSpeedReduction() / 100);
+                if (min.isCanFly()){
+                    min.reduceSpeed(this.getPowerOfBulletAir());
+                }else{
+                    min.reduceSpeed(this.getPowerOfBullet());
+                }
+                if (min.isDead()){
+                    List<Alien> deadAlien = new ArrayList<>();
+                    deadAlien.add(min);
+                    return deadAlien;
                 }
             }
         }

@@ -8,9 +8,8 @@ public class GameMap {
     public static double YBOUND; //we have to initialize both of these right here
 
     private List<Route> routes = new ArrayList<>();
-    private List<Wormhole> Wormholes = new ArrayList<>();
+    private List<Wormhole> wormholes = new ArrayList<>();
     private Map<Dimension, Mappable> specifiedLocations = new HashMap<>();
-    private Map<Integer, Dimension> numberOfLocation = new HashMap<>();
 
     private Dimension flag;
     private Alien[] reachedFlag = new Alien[5];
@@ -23,7 +22,7 @@ public class GameMap {
                    Map<Dimension, Mappable> specifiedLocations,
                    Dimension flag) {
         this.routes = routes;
-        this.Wormholes = Wormholes;
+        this.wormholes = Wormholes;
         this.specifiedLocations = specifiedLocations;
         this.flag = flag;
     }
@@ -142,7 +141,23 @@ public class GameMap {
         return (int) (Math.random() * routes.size());
     }
     
-    public void moveHero(Dimension a){}
+    public void moveHero(Dimension change){
+        this.hero.move(change);
+        Dimension newDim = hero.getDimension();
+        Wormhole in = null;
+        for (int i = 0; i < this.wormholes.size(); i++){
+            if (wormholes.get(i).getDimension().equals(newDim)){
+                in = wormholes.get(i);
+                break;
+            }
+        }
+        if (in != null){
+            Wormhole out = wormholes.get(in.getLeadsTo());
+            Dimension newChange = new Dimension(out.getDimension().getX() - in.getDimension().getX(),
+                    out.getDimension().getY() - in.getDimension().getY());
+            this.hero.move(newChange);
+        }
+    }
 
     public void shootAliensByWeapons(){
         for (Dimension dimension : specifiedLocations.keySet()){
@@ -218,7 +233,7 @@ public class GameMap {
     }
 
     public List<Wormhole> getWormholes() {
-        return Wormholes;
+        return wormholes;
     }
 
     public Map<Dimension, Mappable> getSpecifiedLocations() {

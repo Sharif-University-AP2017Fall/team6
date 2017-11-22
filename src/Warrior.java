@@ -90,21 +90,32 @@ public abstract class Warrior implements Movable, Shootable {
 
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
-        Alien min = aliens.get(0);
-        double dist = this.getShootingPoint().distanceFrom(min.getDimension());
-        int n = aliens.size();
-        for (int i = 1;i<n;i++){
-            if (dist > this.getShootingPoint().distanceFrom(aliens.get(i).getDimension()))
-                min = aliens.get(i);
+        List<Alien> canShoot = new ArrayList<>();
+        for (int i = 0; i < aliens.size(); i++){
+            if (!aliens.get(i).isCanFly()){
+                canShoot.add(aliens.get(i));
+            }
         }
-        for (int numBullet = 0; numBullet < getSpeedOfBullet(); numBullet++){
-            min.stop();
-            min.reduceEnergy(this.powerOfBullet);
-            if (min.isDead()){
-                List<Alien> deadAlien = new ArrayList<>();
-                deadAlien.add(min);
-                numKilled++;
-                return deadAlien;
+        if (!canShoot.isEmpty()){
+            Alien min = canShoot.get(0);
+            Dimension shootingPoint = this.getShootingPoint();
+            double distance = shootingPoint.distanceFrom(min.getDimension());
+            int n = canShoot.size();
+            for (int i = 0; i < n; i++){
+                if (distance > shootingPoint.distanceFrom(canShoot.get(i).getDimension())){
+                    min = canShoot.get(i);
+                }
+            }
+            int maxBullet = this.getSpeedOfBullet();
+            for (int numBullet = 0; numBullet < maxBullet; numBullet++){
+                min.stop();
+                min.reduceEnergy(this.powerOfBullet);
+                if (min.isDead()){
+                    List<Alien> deadAlien = new ArrayList<>();
+                    deadAlien.add(min);
+                    numKilled++;
+                    return deadAlien;
+                }
             }
         }
         return null;
