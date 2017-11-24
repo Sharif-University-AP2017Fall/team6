@@ -19,7 +19,39 @@ public class GameMap {
     private int secondsLeftToResurrectHero = 0;
 
     public GameMap(Hero hero) {
+        flag = new Dimension(800, 300);
         this.hero = hero;
+
+        Line lines[] = new Line[5];
+        ArrayList<Dimension> breakPoints = new ArrayList<>();
+        ArrayList<Dimension> intersections = new ArrayList<>();
+        intersections.add(new Dimension(450, 300));
+        intersections.add(flag);
+
+        breakPoints.add(new Dimension(0, 0));
+        breakPoints.add(new Dimension(150, 150));
+        breakPoints.add(new Dimension(300, 150));
+        breakPoints.add(new Dimension(450, 300));
+        breakPoints.add(new Dimension(600, 150));
+        lines[0] = new Line(1.0, 0.0, breakPoints.get(0), breakPoints.get(1));
+        lines[1] = new Line(0.0, 150.0, breakPoints.get(1), breakPoints.get(2));
+        lines[2] = new Line(1.0, -150.0, breakPoints.get(2), breakPoints.get(3));
+        lines[3] = new Line(-1.0, 750, breakPoints.get(3), breakPoints.get(4));
+        lines[4] = new Line(0.75, -300, breakPoints.get(4), flag);
+        routes.add(new Route(lines, intersections));
+
+        breakPoints.set(0, new Dimension(0, 600));
+        breakPoints.set(1, new Dimension(150, 450));
+        breakPoints.set(2, new Dimension(300, 450));
+        breakPoints.set(3, new Dimension(450, 300));
+        breakPoints.set(4, new Dimension(600, 450));
+        lines[0] = new Line(-1.0, 600, breakPoints.get(0), breakPoints.get(1));
+        lines[1] = new Line(0, 450, breakPoints.get(1), breakPoints.get(2));
+        lines[2] = new Line(-1.0, 750, breakPoints.get(2), breakPoints.get(3));
+        lines[3] = new Line(1.0, 150, breakPoints.get(3), breakPoints.get(4));
+        lines[4] = new Line(-0.75, 900, breakPoints.get(4), flag);
+        routes.add(new Route(lines, intersections));
+
         //code for initializing the routes and the line equations. and specified locations
     }
 
@@ -118,20 +150,25 @@ public class GameMap {
     }
 
     public void generateAliens(){
-        if ((int)(Math.random() * 3) == 0){ //generate alien with probability 1/3 for now. when adding clock, this will change
-            Route whichRoute = routes.get(chooseRandomRoute());
+        if ((int)(Math.random() * 1) == 0){ //generate alien with probability 1/10 for now. when adding clock, this will change
+            int routeNumber = chooseRandomRoute();
+            Route whichRoute = routes.get(routeNumber);
             int whichAlien = (int)(Math.random() * 4);
             switch (whichAlien){
                 case 0:
+                    System.out.println("Adding Albertonion to route " + routeNumber);
                     whichRoute.addAlienToRoute(new Alien("Albertonion"), 0);
                     break;
                 case 1:
+                    System.out.println("Adding Algwasonion to route " + routeNumber);
                     whichRoute.addAlienToRoute(new Alien("Algwasonion"), 0);
                     break;
                 case 2:
+                    System.out.println("Adding Activinion to route " + routeNumber);
                     whichRoute.addAlienToRoute(new Alien("Activionion"), 0);
                     break;
                 case 3:
+                    System.out.println("Adding Aironion to route " + routeNumber);
                     whichRoute.addAlienToRoute(new Alien("Aironion"), 0);
                     break;
             }
@@ -155,33 +192,50 @@ public class GameMap {
         names.forEach(System.out::println);
     }
 
-    public void reachFlag(Alien alien){
+    public boolean reachFlag(Alien alien){
+        System.out.println(alien.getName() + " reached flag.");
         for (int i = 0; i < 5; i++){
             if (reachedFlag[i] == null){
                 reachedFlag[i] = alien;
                 if (i == 4){
                     System.out.println("Game Over");
+                    return true;
                 }
                 break;
             }
         }
+        return false;
     }
 
-    public void moveAliens(){
+    public boolean gameStatus(){
+        int numReached = 0;
+        for (int i = 0; i < 5; i++){
+            if (reachedFlag[i] != null){
+                numReached++;
+            }
+        }
+        return numReached >= 5;
+    }
+
+    public boolean moveAliens(){
         for (int i = 0; i < routes.size(); i++){
             List<Alien> reachedIntersectionOrFlag = routes.get(i).moveAliensOnRoute();
-            for (int j = 0; i < reachedIntersectionOrFlag.size(); i++){
+            for (int j = 0; j < reachedIntersectionOrFlag.size(); j++){
                 Alien alien = reachedIntersectionOrFlag.get(j);
                 if (alien.getDimension().equals(flag)){
-                    reachFlag(alien);
-                    return;
+                    if (reachFlag(alien)) {
+                        return true;
+                    }
                 }
-                Route whichRoute = routes.get(chooseRandomRoute());
+                int randomNumber = chooseRandomRoute();
+                System.out.println(alien.getName() + " was relocated to route number " + randomNumber);
+                Route whichRoute = routes.get(randomNumber);
                 int whichLine = whichRoute.whichLine(alien.getDimension());
                 whichRoute.addAlienToRoute(alien, whichLine);
             }
         }
-        backToNormalSpeed();
+        //backToNormalSpeed();
+        return false;
     }
 
     public void backToNormalSpeed(){
@@ -434,34 +488,40 @@ class Route{
     Map<Line, ArrayList<Alien>> alienMap = new HashMap<>();
 
     /**** custom constructor *****/
-    public Route(Line[] lines) {
-        this.lines = lines;
+    public Route(Line[] lines, List<Dimension> intersections) {
+        for (int i = 0; i < 5; i++){
+            this.lines[i] = lines[i];
+        }
         for (int i = 0; i < lines.length; i++){
             alienMap.put(lines[i], new ArrayList<>());
         }
-    }
-
-    public Route(){
-        // line equations
-        // intersection dimension
-        for (int i = 0; i < lines.length; i++){
-            alienMap.put(lines[i], new ArrayList<>());
-        }
+        this.intersections.addAll(intersections);
     }
 
     public List<Alien> moveAliensOnRoute(){
         List<Alien> reachedIntersection = new ArrayList<>();
-        for (int i = 0; i < 5; i++){
+        for (int i = 4; i >= 0; i--){
             List<Alien> aliensToMove = alienMap.get(lines[i]);
             for (int j = 0; j < aliensToMove.size(); j++){
                 Alien currentAlienToMove = aliensToMove.get(j);
                 Dimension dimensionToMove = lines[i].moveAlienOnLine(currentAlienToMove);
                 if (dimensionToMove == null){ //has reached the end of current line and the start of next line
-                    currentAlienToMove.setDimension(lines[i + 1].getStartPoint());
-                    alienMap.get(lines[i + 1]).add(currentAlienToMove);
-                }else{
+                    System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
+                    dimensionToMove = lines[i].getEndPoint();
+                    currentAlienToMove.move(dimensionToMove);
+
+                    alienMap.get(lines[i]).remove(currentAlienToMove);
+
                     if (intersections.contains(dimensionToMove)){
-                        currentAlienToMove.move(dimensionToMove);
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection 1");
+                        reachedIntersection.add(currentAlienToMove);
+                    }else{
+                        alienMap.get(lines[i + 1]).add(currentAlienToMove);
+                    }
+                }else{
+                    currentAlienToMove.move(dimensionToMove);
+                    if (intersections.contains(dimensionToMove)){
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection 2");
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }
@@ -471,9 +531,8 @@ class Route{
         return reachedIntersection;
     }
 
-    /**** when we generate an alien in the GameMap class, we randomly select a route to add it to. afterwards,
-     * we pass that alien to this function of the chosen route. ****/
     public void addAlienToRoute(Alien alien, int lineNumber){
+        alien.move(lines[lineNumber].getStartPoint());
         alienMap.get(lines[lineNumber]).add(alien);
     }
 
@@ -484,12 +543,13 @@ class Route{
     }
 
     public int whichLine(Dimension dimension){
+        int which = -1;
         for (int i = 0; i < 5; i++){
             if (lines[i].isOnLine(dimension)){
-                return i;
+                which = i;
             }
         }
-        return -1;
+        return which;
     }
 
     public List<Alien> aliensWithinRadius(Shooter shooter){
@@ -528,7 +588,7 @@ class Line{
     private Dimension startPoint;
     private Dimension endPoint;
 
-    public static double UNIT; //we change the x of each movable by this amount, we will finalize this.
+    public static double UNIT = 10; //we change the x of each movable by this amount, we will finalize this.
 
     public Line(double slope, double intercept, Dimension startPoint, Dimension endPoint) {
         this.slope = slope;
@@ -544,7 +604,6 @@ class Line{
 
     public Dimension moveAlienOnLine(Alien alien){
         double currentX = alien.getDimension().getX();
-        double currentY = alien.getDimension().getY();
 
         double newX = currentX + UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
@@ -596,6 +655,10 @@ class Line{
 
     public Dimension getStartPoint() {
         return startPoint;
+    }
+
+    public Dimension getEndPoint() {
+        return endPoint;
     }
 
     public double getSlope() {

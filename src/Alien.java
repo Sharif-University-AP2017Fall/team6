@@ -115,6 +115,7 @@ public class Alien implements Movable, Comparable{
 
     @Override
     public void move(Dimension dimension) {
+        System.out.println(name + " moved to dimension " + dimension);
         setDimension(dimension);
     }
 

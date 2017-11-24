@@ -8,37 +8,10 @@ public class AlienCreeps {
         AlienCreeps game = new AlienCreeps();
         game.launch();
     }
-    public void launch(){
-        //code to start came and put weapons in predefined locations.
-        while (true){
-            /*actionsList();
-            int input = Integer.parseInt(scanner.nextLine());
-            switch (input){
-                case 0:
-                    actionsList();
-                    break;
-                case 1:
-                    gameMap.showRemainingAliens();
-                    System.out.println(hero);
-                    gameMap.showWeapons();
-                    gameMap.showReachedFlag();
-                    break;
-                case 2:
-                    System.out.println("Choose a weapon:");
-                    System.out.println();
-                    Weapon.showWeaponList();
-                    String weaponName = scanner.nextLine();
-                    System.out.println("Choose a location number:");
-                    gameMap.showAvailableLocations();
-                    int locationNumber = Integer.parseInt(scanner.nextLine());
-                    gameMap.putWeaponInPlace(weaponName, locationNumber);
-                    break;
-                case 3:
-                    //code
-                    break;
-                case 4:
 
-            }*/
+    public void launch(){
+        //code to start game and put weapons in predefined locations.
+        while (true){
             String input = scanner.nextLine();
             String info[] = input.split(" ");
             if (input.matches("put [\\w]* in place [\\d]*")){
@@ -81,20 +54,5 @@ public class AlienCreeps {
                 System.out.println("invalid command");
             }
         }
-    }
-
-    public void actionsList(){
-        System.out.println("0 - show actions list\n" +
-                "1 - show details\n" +
-                "2 - put (weapon name) in place (location number()\n" +
-                "3 - upgrade (weapon name) in place (location number)\n" +
-                "4 - move hero for (x, y)\n" +
-                "5 - tesla in (x, y)\n" +
-                "6 - hero status\n" +
-                "7 - knights status\n" +
-                "8 - weapons status\n" +
-                "9 - status (weapon name) status\n" +
-                "10 - show achievements\n" +
-                "11 - go ahead");
     }
 }
