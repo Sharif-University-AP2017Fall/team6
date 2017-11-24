@@ -1,4 +1,4 @@
-public class Alien implements Movable{
+public class Alien implements Movable, Comparable{
 
     private String name;
     private int energy;
@@ -132,5 +132,11 @@ public class Alien implements Movable{
             }
         }
         return false;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Alien otherAlien = ((Alien) o);
+        return this.name.compareTo(otherAlien.getName());
     }
 }

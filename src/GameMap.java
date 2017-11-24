@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameMap {
     public static double XBOUND;
@@ -21,19 +18,60 @@ public class GameMap {
     private boolean heroIsDead = false;
     private int secondsLeftToResurrectHero = 0;
 
-    /*public GameMap(List<Route> routes,
-                   List<Wormhole> Wormholes,
-                   Map<Dimension, Mappable> specifiedLocations,
-                   Dimension flag) {
-        this.routes = routes;
-        this.wormholes = Wormholes;
-        this.specifiedLocations = specifiedLocations;
-        this.flag = flag;
-    }*/
-
     public GameMap(Hero hero) {
         this.hero = hero;
-        //code for initializing the routes and the line equations.
+        //code for initializing the routes and the line equations. and specified locations
+    }
+
+    public void nextSecond(){
+        updateTeslaStatus();
+        barrack.proceed();
+        for (int i = 0; i < 3; i++){
+            if (hero.getSoldiers()[i] == null){
+                hero.getSoldiers()[i] = barrack.getSoldier();
+            }
+        }
+        if (heroIsDead){
+            secondsLeftToResurrectHero--;
+        }
+        generateAliens();
+        moveAliens();
+        shootAliensByWeapons();
+        shootAliensByHeroAndSoldiers();
+    }
+
+    public void showRemainingAliens(){
+        ArrayList<Alien> remainingAliens = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            remainingAliens.addAll(routes.get(i).getAliens());
+        }
+        Collections.sort(remainingAliens);
+        remainingAliens.forEach(System.out::println);
+    }
+
+    public void showWeapons(){
+        ArrayList<Weapon> weapons = new ArrayList<>();
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                weapons.add(((Weapon) specifiedLocations.get(dimension)));
+            }
+        }
+        Collections.sort(weapons);
+        weapons.forEach(System.out::println);
+    }
+
+    public void showWeapons(String name){
+        ArrayList<Weapon> weapons = new ArrayList<>();
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                Weapon weapon = (Weapon) specifiedLocations.get(dimension);
+                if (weapon.getName().equalsIgnoreCase(name)){
+                    weapons.add(((Weapon) specifiedLocations.get(dimension)));
+                }
+            }
+        }
+        Collections.sort(weapons);
+        weapons.forEach(System.out::println);
     }
 
     public void putWeaponInPlace(String weaponName, int whichPlace){
@@ -311,14 +349,14 @@ public class GameMap {
     }
 
     public void updateAchivements(List<Alien> deadAliens, String killedBy){
-        Achivement achivement = hero.getAchivement();
+        Achievement achievement = hero.getAchievement();
         if (killedBy.equalsIgnoreCase("hero")){
             for (int i = 0; i < deadAliens.size(); i++){
-                achivement.killedHero(deadAliens.get(i));
+                achievement.killedHero(deadAliens.get(i));
             }
         }else if (killedBy.equalsIgnoreCase("weapon")){
             for (int i = 0; i < deadAliens.size(); i++){
-                achivement.killedWeapon(deadAliens.get(i));
+                achievement.killedWeapon(deadAliens.get(i));
             }
         }
     }
@@ -375,6 +413,18 @@ public class GameMap {
             }
         }
         return weapons;
+    }
+
+    public void showAvailableLocations(){
+        int number = 1;
+        System.out.println("Available locations are: ");
+        System.out.println("-------------------------");
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) == null){
+                System.out.println(number + " - " + dimension);
+            }
+            number++;
+        }
     }
 }
 

@@ -15,11 +15,11 @@ public class Hero extends Warrior {
     private int powerLevel;
     private int experienceLevel;
     private int money;
-    private Achivement achivement;
+    private Achievement achievement;
     //private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
 
     Hero (Dimension dimension){
-        achivement = new Achivement();
+        achievement = new Achievement();
         setDimension(dimension);
         setMoney(1000);
 
@@ -61,8 +61,8 @@ public class Hero extends Warrior {
         this.money += amount;
     }
 
-    public Achivement getAchivement() {
-        return achivement;
+    public Achievement getAchievement() {
+        return achievement;
     }
 
     public void reduceMoney(int amount){
@@ -145,20 +145,19 @@ public class Hero extends Warrior {
     public void showStatus(){
         System.out.println("place: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy() +
-                "\tnumber of aliens killed: " + achivement.getNumOfKilledByHero() +
+                "\tnumber of aliens killed: " + achievement.getNumOfKilledByHero() +
                 "\n");
     }
 
-   /* @Override
-    public String toString(){
-        String str="";
-        str=str+" Power level: "+getPowerLevel()+"\n Experience Level: "+ (getPowerLevel()*50+getExperienceLevel())
-            + "\n Money: "+ getMoney() + "\n"+ achivement.toString();
-            
-        
-        return null;
+    public void showKnightStatus(){
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] != null){
+                soldiers[i].showStatus();
+            }else{
+                System.out.println("Soldier #" + (i + 1) + " is dead.");
+            }
+        }
     }
-*/
 
     @Override
     public String toString() {
@@ -171,8 +170,6 @@ public class Hero extends Warrior {
         for (int i = 0; i < 3; i++){
             if (soldiers[i] != null){
                 string.append("Soldier #" + (i + 1) + soldiers[i].toString());
-            }else {
-                string.append("Soldier #" + (i + 1) + " is dead. Rest In Peace.\n");
             }
         }
         return string.toString();
@@ -196,14 +193,14 @@ public class Hero extends Warrior {
 }
 
 
-class Achivement {
+class Achievement {
     private int numTypeAlien=4;
     private int[] numOfKilledByWeapon = new int [numTypeAlien];
     private int[] numOfKilledBySoldier = new int [numTypeAlien];
     private int[] numOfKilledByHero = new int [numTypeAlien];
     private Map<String,Boolean> achieved = new HashMap<>();
 
-    public Achivement() {
+    public Achievement() {
         achieved.put("Great Hunter",false);
         achieved.put("Good Gene",false);
         achieved.put("Greek Goddess",false);
@@ -227,7 +224,7 @@ class Achivement {
                     achieved.replace("Brave Warrior", true);
                 break;
             case "Activionion":
-                numOfKilledByWeapon[2]++; 
+                numOfKilledByWeapon[2]++;
                 if(numOfKilledByHero[2] > 9)
                     achieved.replace("Butcher", true);
                 break;
@@ -247,7 +244,7 @@ class Achivement {
                 numOfKilledBySoldier[1]++;
                 break;
             case "Activionion":
-                numOfKilledBySoldier[2]++; 
+                numOfKilledBySoldier[2]++;
                 break;
             case "Aironion":
                 numOfKilledBySoldier[3]++;
@@ -267,7 +264,7 @@ class Achivement {
                     achieved.replace("Good Gene", true);
                 break;
             case "Activionion":
-                numOfKilledByHero[2]++; 
+                numOfKilledByHero[2]++;
                 if(numOfKilledByHero[2] > 4)
                     achieved.replace("Greek Goddess", true);
                 if(numOfKilledByHero[2] > 9)

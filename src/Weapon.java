@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon implements Mappable, Shooter{
+public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     private String name;
     private Dimension dimension;
@@ -370,8 +370,23 @@ public abstract class Weapon implements Mappable, Shooter{
         }
     }
 
+    public static void showWeaponList(){
+        System.out.println("-------------------------");
+        System.out.println("Machine Gun\n" +
+                "Rocker\n" +
+                "Laser\n" +
+                "Antiaircraft\n" +
+                "Freezer\n");
+    }
+
     @Override
     public String toString(){
         return "name: " + this.name + " place: " + dimension + " level: " + this.level;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Weapon otherWeapon = ((Weapon) o);
+        return this.name.compareTo(otherWeapon.getName());
     }
 }
