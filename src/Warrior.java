@@ -13,13 +13,13 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Warrior implements Movable, Shootable {
+public abstract class Warrior implements Movable, Shooter {
     private String name;
     private double radius;
     private Dimension dimension;
 
     private int powerOfBullet;
-    private int speedOfBullet;
+    private int shootingSpeed;
     private int energy;
 
     private int numKilled;
@@ -40,8 +40,8 @@ public abstract class Warrior implements Movable, Shootable {
         return powerOfBullet;
     }
 
-    public int getSpeedOfBullet() {
-        return speedOfBullet;
+    public int getShootingSpeed() {
+        return shootingSpeed;
     }
 
     public int getEnergy() {
@@ -64,8 +64,8 @@ public abstract class Warrior implements Movable, Shootable {
         this.powerOfBullet = powerOfBullet;
     }
 
-    public void setSpeedOfBullet(int speedOfBullet) {
-        this.speedOfBullet = speedOfBullet;
+    public void setShootingSpeed(int shootingSpeed) {
+        this.shootingSpeed = shootingSpeed;
     }
 
     public void setEnergy(int energy) {
@@ -87,11 +87,10 @@ public abstract class Warrior implements Movable, Shootable {
     }
 
     public void increaseBulletSpeed(){
-        this.speedOfBullet = (int)(this.speedOfBullet * 1.1);
+        this.shootingSpeed = (int)(this.shootingSpeed * 1.1);
     }
 
     public abstract boolean died();
-    public abstract boolean gotShot(Alien a);
 
     @Override
     public abstract void move(Dimension dimension);
@@ -109,12 +108,12 @@ public abstract class Warrior implements Movable, Shootable {
             Dimension shootingPoint = this.getShootingPoint();
             double distance = shootingPoint.distanceFrom(min.getDimension());
             int n = canShoot.size();
-            for (int i = 0; i < n; i++){
+            for (int i = 1; i < n; i++){
                 if (distance > shootingPoint.distanceFrom(canShoot.get(i).getDimension())){
                     min = canShoot.get(i);
                 }
             }
-            int maxBullet = this.getSpeedOfBullet();
+            int maxBullet = this.getShootingSpeed();
             for (int numBullet = 0; numBullet < maxBullet; numBullet++){
                 min.stop();
                 min.reduceEnergy(this.powerOfBullet);
@@ -125,6 +124,7 @@ public abstract class Warrior implements Movable, Shootable {
                     return deadAlien;
                 }
             }
+            min.shoot(this);
         }
         return null;
     }

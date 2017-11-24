@@ -10,12 +10,16 @@ public class GameMap {
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
     private Map<Dimension, Mappable> specifiedLocations = new HashMap<>();
+    private Barrack barrack;
 
     private Dimension flag;
     private Alien[] reachedFlag = new Alien[5];
 
     private List<Alien> activeAliens = new ArrayList<>(); //not sure if this is necessary
     private Hero hero;
+
+    private boolean heroIsDead = false;
+    private int secondsLeftToResurrectHero = 0;
 
     /*public GameMap(List<Route> routes,
                    List<Wormhole> Wormholes,
@@ -243,20 +247,26 @@ public class GameMap {
 
     public void shootAliensByHeroAndSoldiers(){
         List<Alien> killedByHero = new ArrayList<>();
-
-        List<Alien> aliensToShootByHero = new ArrayList<>();
-        for (int i = 0; i < routes.size(); i++){
-            aliensToShootByHero.addAll(routes.get(i).aliensWithinRadius(this.hero));
-        }
-
-        killedByHero.addAll(this.hero.shoot(aliensToShootByHero));
-        if (this.hero.addExperienceLevel(killedByHero.size() * 15)) {
-            reduceAllWeaponsPrice();
-        }
-        this.hero.addMoney(killedByHero.size() * 10);
-        updateAchivements(killedByHero, "hero");
-
         List<Alien> killedBySoldiers = new ArrayList<>();
+
+        if (!this.hero.isDead()){
+            List<Alien> aliensToShootByHero = new ArrayList<>();
+            for (int i = 0; i < routes.size(); i++){
+                aliensToShootByHero.addAll(routes.get(i).aliensWithinRadius(this.hero));
+            }
+
+            killedByHero.addAll(this.hero.shoot(aliensToShootByHero));
+            if (this.hero.addExperienceLevel(killedByHero.size() * 15)) {
+                reduceAllWeaponsPrice();
+            }
+            this.hero.addMoney(killedByHero.size() * 10);
+            updateAchivements(killedByHero, "hero");
+            if (this.hero.isDead()){
+                this.heroIsDead = true;
+                this.secondsLeftToResurrectHero = this.hero.getResurrectionTime();
+            }
+        }
+
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++){
             if (soldiers[j] != null){
@@ -265,6 +275,10 @@ public class GameMap {
                     aliensToShootBySoldier.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
                 }
                 killedBySoldiers.addAll(soldiers[j].shoot(aliensToShootBySoldier));
+                if (soldiers[j].isDead()){
+                    soldiers[j] = null;
+                    barrack.requestSoldier(this.hero.getResurrectionTime());
+                }
             }
         }
         this.hero.addMoney(killedBySoldiers.size() * 10);
@@ -428,12 +442,12 @@ class Route{
         return -1;
     }
 
-    public List<Alien> aliensWithinRadius(Shootable shootable){
+    public List<Alien> aliensWithinRadius(Shooter shooter){
         List<Integer> linesWithinRadius = new ArrayList<>();
         List<Alien> aliensToShoot = new ArrayList<>();
         for (int i = 0; i < 5; i++){
-            Dimension nearestPoint = lines[i].getNearestPoint(shootable.getShootingPoint());
-            if (shootable.isWithinRadius(nearestPoint)){
+            Dimension nearestPoint = lines[i].getNearestPoint(shooter.getShootingPoint());
+            if (shooter.isWithinRadius(nearestPoint)){
                 linesWithinRadius.add(i);
             }
         }
@@ -441,7 +455,7 @@ class Route{
             List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
             for (int i = 0; i < aliensToCheck.size(); i++){
                 Alien currentAlienToCheck = aliensToCheck.get(i);
-                if (shootable.isWithinRadius(currentAlienToCheck.getDimension())){
+                if (shooter.isWithinRadius(currentAlienToCheck.getDimension())){
                     aliensToShoot.add(currentAlienToCheck);
                 }
             }

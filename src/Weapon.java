@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon implements Mappable, Shootable{
+public abstract class Weapon implements Mappable, Shooter{
 
     private String name;
     private Dimension dimension;

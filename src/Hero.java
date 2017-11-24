@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -17,7 +16,7 @@ public class Hero extends Warrior {
     private int experienceLevel;
     private int money;
     private Achivement achivement;
-    private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
+    //private ArrayList<Weapon> weapons = new ArrayList<Weapon>();
 
     Hero (Dimension dimension){
         achivement = new Achivement();
@@ -25,7 +24,7 @@ public class Hero extends Warrior {
         setMoney(1000);
 
         for (int i=0;i<3;i++){
-            soldiers[i]=new Soldier(this,dimension);
+            soldiers[i]=new Soldier(dimension);
         }
     }
 
@@ -43,6 +42,11 @@ public class Hero extends Warrior {
 
     public void setExperienceLevel(int experienceLevel) {
         this.experienceLevel = experienceLevel;
+    }
+
+    public int getResurrectionTime() {
+        this.calculateResurrectionTime();
+        return resurrectionTime;
     }
 
     public int getMoney() {
@@ -87,29 +91,16 @@ public class Hero extends Warrior {
 
     public boolean addExperienceLevel(int amount){
         experienceLevel += amount;
-        if (experienceLevel >= 50){
+        if (experienceLevel - powerLevel * 50 >= 50){
             if (addPowerLevel()) {
-                setExperienceLevel(0);
                 return true;
             }
         }
         return false;
     }
 
-    public int calculateResurrectionTime(){
-        double a1 = getExperienceLevel();
-        double a2 = getPowerLevel();
-        double b = 5 - (a1*+50*a2)*0.01-a2;
-        b = b * 0.99;
-        resurrectionTime = (int) b;
-        return resurrectionTime;
-    }
-
-    public boolean gotShot(Alien a){
-        setEnergy(getEnergy() - a.getStrength());
-        if(isDead())
-            died();
-        return true;
+    public void calculateResurrectionTime(){
+        this.resurrectionTime = (int)((5.0 - (((double)this.experienceLevel / 100) + (double)this.powerLevel)) * 0.99);
     }
 
     public Weapon buyWeapon(String nameOfWeapon, Dimension dimension){

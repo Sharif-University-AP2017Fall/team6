@@ -20,17 +20,13 @@ public class Soldier extends Warrior {
             setRadius(0.5);
     }
 
-    Soldier(Hero a,Dimension dimension){
+    Soldier(Dimension dimension){
         setDimension(dimension);
+    }
+
+    Soldier(){
 
     }
-    public boolean gotShot(Alien a){
-        setEnergy(getEnergy()-a.getStrength());
-        if(isDead())
-            died();
-        return true;}   
-    /*@Override
-    public String toString(){return "Soldier: \n \t Radius: "+ getRadius()+" Power: "+getPowerOfBullet();}*/
 
     public void showStatus(){
         System.out.println("place: " + super.getDimension() +

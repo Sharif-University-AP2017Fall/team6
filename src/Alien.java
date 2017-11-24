@@ -122,4 +122,15 @@ public class Alien implements Movable{
     public String toString() {
         return  "name: " + name + "\tplace: " + dimension + "\tenergy left: " + energy;
     }
+
+    public boolean shoot(Warrior warrior){
+        int maxBullet = shootingSpeed;
+        for (int i = 0; i < maxBullet; i++){
+            warrior.reduceEnergy(strength);
+            if (warrior.isDead()){
+                return true;
+            }
+        }
+        return false;
+    }
 }
