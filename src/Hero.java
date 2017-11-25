@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class Hero extends Warrior {
     private Soldier[] soldiers = new Soldier[3]; // remember to initialize!
+    private Dimension soldierDims[] = new Dimension[3];
     private int resurrectionTime;
     private int powerLevel;
     private int experienceLevel;
@@ -22,10 +23,13 @@ public class Hero extends Warrior {
         achievement = new Achievement();
         setDimension(dimension);
         setMoney(1000);
-
-        for (int i=0;i<3;i++){
-            soldiers[i]=new Soldier(dimension);
-        }
+        setEnergy(300);
+        soldierDims[0] = new Dimension(15, 0);
+        soldierDims[1] = new Dimension(-15, 0);
+        soldierDims[2] = new Dimension(0, -15);
+        soldiers[0] = new Soldier(soldierDims[0].add(dimension));
+        soldiers[1] = new Soldier(soldierDims[1].add(dimension));
+        soldiers[2] = new Soldier(soldierDims[2].add(dimension));
     }
 
     public int getPowerLevel() {
@@ -47,6 +51,10 @@ public class Hero extends Warrior {
     public int getResurrectionTime() {
         this.calculateResurrectionTime();
         return resurrectionTime;
+    }
+
+    public Dimension[] getSoldierDims() {
+        return soldierDims;
     }
 
     public int getMoney() {

@@ -1,5 +1,6 @@
 public class Alien implements Movable, Comparable{
-
+    private static int NUM = 0;
+    private static boolean START = false;
     private String name;
     private int energy;
     private int speed;
@@ -18,6 +19,8 @@ public class Alien implements Movable, Comparable{
     }
 
     public Alien(String name) {
+        NUM++;
+        START = true;
         this.name = name;
         switch (name){
             case "Albertonion":
@@ -111,6 +114,14 @@ public class Alien implements Movable, Comparable{
 
     public int getType() {
         return type;
+    }
+
+    public static int getNUM() {
+        return NUM;
+    }
+
+    public static boolean isSTART() {
+        return START;
     }
 
     @Override

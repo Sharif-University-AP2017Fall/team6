@@ -3,7 +3,7 @@ public class Barrack implements Mappable {
     private Dimension dimension;
     private boolean inUse;
     private int soldiersInDemand;
-    private int timeNeeded;
+    private int timeNeeded; //pay attention :))) vip :)) we know it, you don't. hahahhahaha :)))
     private int currentTime;
     private Soldier training;
 

@@ -131,7 +131,7 @@ public abstract class Warrior implements Movable, Shooter {
 
     @Override
     public boolean isWithinRadius(Dimension dimension) {
-        return this.dimension.distanceFrom(dimension) <= this.radius;
+        return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
     @Override

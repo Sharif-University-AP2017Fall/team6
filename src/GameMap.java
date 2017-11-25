@@ -1,8 +1,9 @@
 import java.util.*;
 
 public class GameMap {
-    public static double XBOUND;
-    public static double YBOUND; //we have to initialize both of these right here
+    public static double XBOUND = 800;
+    public static double YBOUND = 600; //we have to initialize both of these right here
+    public static int UNIT = 15;
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
@@ -52,24 +53,65 @@ public class GameMap {
         lines[4] = new Line(-0.75, 900, breakPoints.get(4), flag);
         routes.add(new Route(lines, intersections));
 
-        //code for initializing the routes and the line equations. and specified locations
+        specifiedLocations.put(new Dimension(240, 140), null);
+        specifiedLocations.put(new Dimension(70, 75), null);
+        specifiedLocations.put(new Dimension(380, 240), null);
+        specifiedLocations.put(new Dimension(450, 290), null);
+        specifiedLocations.put(new Dimension(450, 310), null);
+        specifiedLocations.put(new Dimension(440, 300), null);
+        specifiedLocations.put(new Dimension(460, 300), null);
+        specifiedLocations.put(new Dimension(210, 460), null);
+        specifiedLocations.put(new Dimension(520, 375), null);
+        specifiedLocations.put(new Dimension(600, 145), null);
+        specifiedLocations.put(new Dimension(710, 240), null);
+        //specifiedLocations.put(new Dimension())
+
+        List<Dimension> wormholeDims = Dimension.randomDimension(6);
+        wormholes.add(new Wormhole(1, wormholeDims.get(0)));
+        wormholes.add(new Wormhole(0, wormholeDims.get(1)));
+        wormholes.add(new Wormhole(3, wormholeDims.get(2)));
+        wormholes.add(new Wormhole(2, wormholeDims.get(3)));
+        wormholes.add(new Wormhole(5, wormholeDims.get(4)));
+        wormholes.add(new Wormhole(4, wormholeDims.get(5)));
+        //code for initializing specific locations.
     }
+
 
     public void nextSecond(){
         updateTeslaStatus();
-        barrack.proceed();
-        for (int i = 0; i < 3; i++){
-            if (hero.getSoldiers()[i] == null){
-                hero.getSoldiers()[i] = barrack.getSoldier();
+        if (this.heroIsDead){
+            this.secondsLeftToResurrectHero--;
+            if (this.secondsLeftToResurrectHero == 0){
+                this.heroIsDead = false;
+                this.hero.setEnergy(300);
             }
         }
-        if (heroIsDead){
-            secondsLeftToResurrectHero--;
+        barrack.proceed();
+        Soldier soldier = barrack.getSoldier();
+        if (soldier != null){
+            for (int i = 0; i < 3; i++){
+                if (hero.getSoldiers()[i] == null){
+                    Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
+                    soldier.setDimension(soldierDimension);
+                    hero.getSoldiers()[i] = soldier;
+                }
+            }
+        }
+        if ((int)(Math.random() * 10) == 1){
+            List<Dimension> wormholeDims = Dimension.randomDimension(6);
+            for (int i = 0; i < 6; i++){
+                wormholes.get(i).setDimension(wormholeDims.get(i));
+            }
         }
         generateAliens();
         moveAliens();
         shootAliensByWeapons();
         shootAliensByHeroAndSoldiers();
+        if (Alien.isSTART()){
+            if (Alien.getNUM() <= 0){
+                System.out.println("CONGRATULATIONS! YOU WON :D");
+            }
+        }
     }
 
     public void showRemainingAliens(){
@@ -79,31 +121,6 @@ public class GameMap {
         }
         Collections.sort(remainingAliens);
         remainingAliens.forEach(System.out::println);
-    }
-
-    public void showWeapons(){
-        ArrayList<Weapon> weapons = new ArrayList<>();
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            if (specifiedLocations.get(dimension) instanceof Weapon){
-                weapons.add(((Weapon) specifiedLocations.get(dimension)));
-            }
-        }
-        Collections.sort(weapons);
-        weapons.forEach(System.out::println);
-    }
-
-    public void showWeapons(String name){
-        ArrayList<Weapon> weapons = new ArrayList<>();
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            if (specifiedLocations.get(dimension) instanceof Weapon){
-                Weapon weapon = (Weapon) specifiedLocations.get(dimension);
-                if (weapon.getName().equalsIgnoreCase(name)){
-                    weapons.add(((Weapon) specifiedLocations.get(dimension)));
-                }
-            }
-        }
-        Collections.sort(weapons);
-        weapons.forEach(System.out::println);
     }
 
     public void putWeaponInPlace(String weaponName, int whichPlace){
@@ -150,7 +167,7 @@ public class GameMap {
     }
 
     public void generateAliens(){
-        if ((int)(Math.random() * 1) == 0){ //generate alien with probability 1/10 for now. when adding clock, this will change
+        if ((int)(Math.random() * 4) == 0){
             int routeNumber = chooseRandomRoute();
             Route whichRoute = routes.get(routeNumber);
             int whichAlien = (int)(Math.random() * 4);
@@ -257,21 +274,24 @@ public class GameMap {
         }
     }
 
-    public void moveHero(Dimension change){
-        this.hero.move(change);
-        Dimension newDim = hero.getDimension();
-        Wormhole in = null;
-        for (int i = 0; i < this.wormholes.size(); i++){
-            if (wormholes.get(i).getDimension().equals(newDim)){
-                in = wormholes.get(i);
-                break;
+    public void moveHero(Dimension change){ /*** add bounds for hero. ***/
+        if (this.heroIsDead){
+            System.out.println("Hero is dead :( Can't move hero.");
+        }else{
+            this.hero.move(change);
+            Dimension newDim = hero.getDimension();
+            for (int i = 0; i < this.wormholes.size(); i++){
+                if (wormholes.get(i).isWithinRadius(newDim)){
+                    Wormhole in = wormholes.get(i);
+                    Wormhole out = wormholes.get(in.getLeadsTo());
+                    Dimension newChange = new Dimension(out.getDimension().getX() - in.getDimension().getX(),
+                            out.getDimension().getY() - in.getDimension().getY());
+                    System.out.println("hero went into wormhole " + (i + 1) + " and came out from wormhole " + (in.getLeadsTo() + 1));
+                    System.out.println("she says hi :)");
+                    this.hero.move(newChange);
+                    break;
+                }
             }
-        }
-        if (in != null){
-            Wormhole out = wormholes.get(in.getLeadsTo());
-            Dimension newChange = new Dimension(out.getDimension().getX() - in.getDimension().getX(),
-                    out.getDimension().getY() - in.getDimension().getY());
-            this.hero.move(newChange);
         }
     }
 
@@ -453,6 +473,7 @@ public class GameMap {
                 weapons.add((Weapon) specifiedLocations.get(dimension));
             }
         }
+        Collections.sort(weapons);
         return weapons;
     }
 
@@ -466,6 +487,7 @@ public class GameMap {
                 }
             }
         }
+        Collections.sort(weapons);
         return weapons;
     }
 
@@ -588,8 +610,6 @@ class Line{
     private Dimension startPoint;
     private Dimension endPoint;
 
-    public static double UNIT = 10; //we change the x of each movable by this amount, we will finalize this.
-
     public Line(double slope, double intercept, Dimension startPoint, Dimension endPoint) {
         this.slope = slope;
         this.intercept = intercept;
@@ -605,7 +625,7 @@ class Line{
     public Dimension moveAlienOnLine(Alien alien){
         double currentX = alien.getDimension().getX();
 
-        double newX = currentX + UNIT * alien.getSpeed();
+        double newX = currentX + GameMap.UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
 
         if (newX < endPoint.getX()){
@@ -651,8 +671,6 @@ class Line{
         return endPoint;
     }
 
-    /**** GETTER AND SETTER ****/
-
     public Dimension getStartPoint() {
         return startPoint;
     }
@@ -673,14 +691,24 @@ class Line{
 class Wormhole {
     private int leadsTo; //this equals the index of the Wormhole it points to.
     private Dimension dimension;
+    private double radius;
 
     public Wormhole(int leadsTo, Dimension dimension) {
         this.leadsTo = leadsTo;
+        this.dimension = dimension;
+        radius = 1;
+    }
+
+    public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
     public int getLeadsTo() {
         return leadsTo;
+    }
+
+    public boolean isWithinRadius(Dimension otherDim){
+        return otherDim.distanceFrom(dimension) <= radius;
     }
 
     public Dimension getDimension() {

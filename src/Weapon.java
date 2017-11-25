@@ -202,7 +202,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
-        return this.dimension.distanceFrom(dimension) <= this.radius;
+        return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
     @Override

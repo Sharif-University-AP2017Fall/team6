@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Dimension {
     private double X;
     private double Y;
@@ -32,6 +35,20 @@ public class Dimension {
     public boolean isWithinBounds(){
         return X >= 0 && X <= GameMap.XBOUND
                 && Y >= 0 && Y <= GameMap.YBOUND;
+    }
+
+    public Dimension add(Dimension otherDimension){
+        return new Dimension(otherDimension.getX() + X, otherDimension.getY() + Y);
+    }
+
+    public static List<Dimension> randomDimension(int num){
+        List<Dimension> ds = new ArrayList<>();
+        for (int i = 0; i < num; i++){
+            double x = ((Math.random() * (GameMap.XBOUND - 20)) + 10);
+            double y = ((Math.random() * (GameMap.YBOUND - 20)) + 10);
+            ds.add(new Dimension(x, y));
+        }
+        return ds;
     }
 
     @Override

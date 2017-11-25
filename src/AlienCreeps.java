@@ -25,7 +25,7 @@ public class AlienCreeps {
             }else if (input.matches("show details")){
                 gameMap.showRemainingAliens();
                 System.out.println(hero);
-                gameMap.showWeapons();
+                gameMap.getWeapons().forEach(System.out::println);
                 gameMap.showReachedFlag();
             }else if (input.matches("move hero for \\([\\d]*,[\\s]*[\\d]*\\)")){
                 String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
@@ -43,9 +43,9 @@ public class AlienCreeps {
                 //if game map has barrack:
                 hero.showKnightStatus();
             }else if(input.matches("weapons status")){
-                gameMap.showWeapons();
+                gameMap.getWeapons().forEach(System.out::println);
             }else if(input.matches("status [\\w]* weapon")){
-                gameMap.showWeapons(info[2]);
+                gameMap.getWeapons(info[2]).forEach(System.out::println);
             }else if(input.matches("show achievements")){
                 System.out.println(hero.getAchievement());
             }else if(input.matches("go ahead")){
