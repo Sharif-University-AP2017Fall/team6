@@ -321,6 +321,7 @@ public class GameMap {
     }
 
     public void moveHero(Dimension change){ /*** add bounds for hero. ***/
+        //System.out.println(" before"+ hero);
         if (this.heroIsDead){
             System.out.println("Hero is dead :( Can't move hero.");
         }else{
@@ -339,6 +340,8 @@ public class GameMap {
                 }
             }
         }
+        //System.out.println(" after "+ hero);
+        
     }
 
     public void useTesla(Dimension dimension){

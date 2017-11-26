@@ -7,7 +7,7 @@ public class AlienCreeps {
     public static void main(String[] args) {
         AlienCreeps game = new AlienCreeps();
         game.initialize();
-        game.test();
+        game.launch();
        // game.launch();
     }
 
@@ -54,9 +54,13 @@ public class AlienCreeps {
                 String weaponName = info[1];
                 int locationNum = Integer.parseInt(info[4]);
                 gameMap.putWeaponInPlace(weaponName, locationNum);
-            }else if(input.matches("upgrade [\\w]* in place [\\d]*")){
+            }else if(input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]*")){
                 String weaponName = info[1];
-                int locationNum = Integer.parseInt(info[4]);
+                int locationNum;
+                if (!info[2].equals("in"))
+                    {weaponName+=" "+info[2];
+                    locationNum = Integer.parseInt(info[5]);}
+                else{locationNum = Integer.parseInt(info[4]); }
                 gameMap.upgradeWeaponInPlace(weaponName, locationNum);
             }else if (input.matches("show details")){
                 gameMap.showRemainingAliens();
