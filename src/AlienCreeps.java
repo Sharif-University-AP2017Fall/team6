@@ -12,13 +12,13 @@ public class AlienCreeps {
     }
 
     public void test(){
-        gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
-        for (int i = 0; i < 5; i++){
+        //gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
+        for (int i = 0; i < 50; i++){
             System.out.println("second " + (i + 1));
             System.out.println("**********");
-            //gameMap.generateAliens();
+            gameMap.generateAliens();
             gameMap.moveAliens();
-            gameMap.what();
+            gameMap.shootAliensByWeapons();
         }
     }
     public void initialize(){

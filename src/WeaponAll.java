@@ -23,6 +23,7 @@ public class WeaponAll extends Weapon {
         int numBullet = 0;
         List<Alien> deadAliens = new ArrayList<>();
         for (int i = 0; i < alienNum; i++){
+            //int numForEach = (int) Math.ceil(getSpeedOfBullet() / alienNum);
             Alien alienToShoot = aliens.get(i);
             if (!alienToShoot.isDead()){
                 if (!this.isOnAirOnly() || (this.isOnAirOnly() && alienToShoot.isCanFly())){
@@ -38,8 +39,10 @@ public class WeaponAll extends Weapon {
                     numBullet++;
                 }
             }
-            if (numBullet > getSpeedOfBullet()){
+            if (numBullet >= getSpeedOfBullet()){
                 break;
+            }else if (numBullet < getSpeedOfBullet() && i == alienNum - 1){
+                i = -1;
             }
         }
         return deadAliens;

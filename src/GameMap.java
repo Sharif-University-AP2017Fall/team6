@@ -58,43 +58,43 @@ public class GameMap {
         Dimension dimension;
 
 
-        dimension = new Dimension(70, 75);
+        dimension = new Dimension(73, 75);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(1, dimension);
 
-        dimension = new Dimension(240, 140);
+        dimension = new Dimension(240, 145);
         specifiedNumbers.put(2, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(380, 240);
+        dimension = new Dimension(385, 240);
         specifiedNumbers.put(3, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(450, 290);
+        dimension = new Dimension(450, 295);
         specifiedNumbers.put(4, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(450, 310);
+        dimension = new Dimension(450, 305);
         specifiedNumbers.put(5, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(440, 300);
+        dimension = new Dimension(445, 300);
         specifiedNumbers.put(6, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(460, 300);
+        dimension = new Dimension(455, 300);
         specifiedNumbers.put(7, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(210, 460);
+        dimension = new Dimension(210, 455);
         specifiedNumbers.put(8, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(520, 375);
+        dimension = new Dimension(522, 375);
         specifiedNumbers.put(9, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(600, 145);
+        dimension = new Dimension(600, 148);
         specifiedNumbers.put(10, dimension);
         specifiedLocations.put(dimension, null);
 
@@ -116,22 +116,8 @@ public class GameMap {
         //code for initializing specific locations.
     }
 
-    public void what(){
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            if (specifiedLocations.get(dimension) != null){
-                Weapon weapon = ((Weapon) specifiedLocations.get(dimension));
-                System.out.println("checking " + weapon.getName() + " in dimension " + dimension);
-                System.out.println("******");
-                for (int i = 0; i < 2; i++){
-                    System.out.println("Route number " + (i + 1));
-                    routes.get(i).aliensWithinRadius(weapon);
-                }
-            }
-        }
-    }
-
     public void nextSecond(){
-        /*updateTeslaStatus();
+        updateTeslaStatus();
         if (this.heroIsDead){
             this.secondsLeftToResurrectHero--;
             if (this.secondsLeftToResurrectHero == 0){
@@ -155,11 +141,10 @@ public class GameMap {
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
             }
-        }*/
+        }
         generateAliens();
         moveAliens();
-        shootAliensByWeapons();
-        //shootAliensByHeroAndSoldiers();
+        shootAliens();
         if (Alien.isSTART()){
             if (Alien.getNUM() <= 0){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
@@ -235,19 +220,19 @@ public class GameMap {
                 int whichAlien = (int)(Math.random() * 4);
                 switch (whichAlien){
                     case 0:
-                        System.out.println("Adding Albertonion to route " + routeNumber);
+                        //System.out.println("Adding Albertonion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Albertonion"), 0);
                         break;
                     case 1:
-                        System.out.println("Adding Algwasonion to route " + routeNumber);
+                       // System.out.println("Adding Algwasonion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Algwasonion"), 0);
                         break;
                     case 2:
-                        System.out.println("Adding Activinion to route " + routeNumber);
+                      //  System.out.println("Adding Activinion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Activionion"), 0);
                         break;
                     case 3:
-                        System.out.println("Adding Aironion to route " + routeNumber);
+                     //   System.out.println("Adding Aironion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Aironion"), 0);
                         break;
                 }
@@ -273,11 +258,11 @@ public class GameMap {
     }
 
     public boolean reachFlag(Alien alien){
-        System.out.println(alien.getName() + " reached flag.");
+        //System.out.println(alien.getName() + " reached flag.");
         for (int i = 0; i < 5; i++){
             if (reachedFlag[i] == null){
                 reachedFlag[i] = alien;
-                System.out.println((i + 1) + " aliens have reached flag.");
+               // System.out.println((i + 1) + " aliens have reached flag.");
                 if (i == 4){
                     return true;
                 }
@@ -307,14 +292,12 @@ public class GameMap {
                 }
                 int randomNumber = chooseRandomRoute();
                 System.out.println(alien.getName() + " was relocated to route number " + randomNumber);
-                Route whichRoute = routes.get(randomNumber);/*
-                System.out.println(whichRoute.getLines()[3].getStartPoint());
-                System.out.println(alien.getDimension());*/
+                Route whichRoute = routes.get(randomNumber);
                 int whichLine = whichRoute.whichLine(alien.getDimension());
                 whichRoute.addAlienToRoute(alien, whichLine);
             }
         }
-        //backToNormalSpeed();
+        backToNormalSpeed();
         return false;
     }
 
@@ -407,14 +390,16 @@ public class GameMap {
                     aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
-                aliensToShoot.removeAll(deadAliens);
-                if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
-                    reduceAllWeaponsPrice();
+                if (deadAliens != null){
+                    aliensToShoot.removeAll(deadAliens);
+                    if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
+                        reduceAllWeaponsPrice();
+                    }
+                    this.hero.addMoney(deadAliens.size() * 10);
+                    updateAchivements(deadAliens, "weapon");
+                    for (int i = 0; i < routes.size(); i++)
+                        this.removeAliensFromRoute(routes.get(i), deadAliens);
                 }
-                this.hero.addMoney(deadAliens.size() * 10);
-                updateAchivements(deadAliens, "weapon");
-                for (int i = 0; i < routes.size(); i++)
-                    this.removeAliensFromRoute(routes.get(i), deadAliens);
             }
         }
         //backToNormalSpeed();
@@ -572,7 +557,6 @@ class Route{
     private List<Dimension> intersections = new ArrayList<>();
     Map<Line, ArrayList<Alien>> alienMap = new HashMap<>();
 
-    /**** custom constructor *****/
     public Route(Line[] lines, List<Dimension> intersections) {
         for (int i = 0; i < 5; i++){
             this.lines[i] = lines[i];
@@ -591,14 +575,14 @@ class Route{
                 Alien currentAlienToMove = aliensToMove.get(j);
                 Dimension dimensionToMove = lines[i].moveAlienOnLine(currentAlienToMove);
                 if (dimensionToMove == null){ //has reached the end of current line and the start of next line
-                    System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
+                    //System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
                     dimensionToMove = lines[i].getEndPoint();
                     currentAlienToMove.move(dimensionToMove);
 
                     alienMap.get(lines[i]).remove(currentAlienToMove);
 
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
+                        //System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
                         reachedIntersection.add(currentAlienToMove);
                     }else{
                         alienMap.get(lines[i + 1]).add(currentAlienToMove);
@@ -606,7 +590,7 @@ class Route{
                 }else{
                     currentAlienToMove.move(dimensionToMove);
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection");
+                        //System.out.println(currentAlienToMove.getName() + " has reached intersection");
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }
@@ -637,29 +621,18 @@ class Route{
     }
 
     public List<Alien> aliensWithinRadius(Shooter shooter){
-        List<Integer> linesWithinRadius = new ArrayList<>();
-        List<Alien> aliensToShoot = new ArrayList<>();
-        System.out.println("Lines :" );
-        for (int i = 0; i < 5; i++){
-            Dimension nearestPoint = lines[i].getNearestPoint(shooter.getShootingPoint());
-            if (shooter.isWithinRadius(nearestPoint)){
-                linesWithinRadius.add(i);
-                System.out.println(i + 1);
-            }
-        }
+        List<Alien> toShoot = new ArrayList<>();
 
-        System.out.println("Aliens: ");
-        for (Integer withinRadius : linesWithinRadius) {
-            List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
-            for (int i = 0; i < aliensToCheck.size(); i++){
-                Alien currentAlienToCheck = aliensToCheck.get(i);
-                if (shooter.isWithinRadius(currentAlienToCheck.getDimension())){
-                    System.out.println(currentAlienToCheck.getName());
-                    aliensToShoot.add(currentAlienToCheck);
+        for (int i = 0; i < 5; i++){
+            List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
+            for (int j = 0; j < checking.size(); j++){
+                Alien a = checking.get(j);
+                if (shooter.isWithinRadius(a.getDimension())){
+                    toShoot.add(a);
                 }
             }
         }
-        return aliensToShoot;
+        return toShoot;
     }
 
     public List<Alien> getAliens(){
@@ -668,10 +641,6 @@ class Route{
             aliens.addAll(alienMap.get(lines[i]));
         }
         return aliens;
-    }
-
-    public Line[] getLines() {
-        return lines;
     }
 }
 
@@ -688,11 +657,6 @@ class Line{
         this.endPoint = endPoint;
     }
 
-    public Line(double slope, double intercept) {
-        this.slope = slope;
-        this.intercept = intercept;
-    }
-
     public Dimension moveAlienOnLine(Alien alien){
         double currentX = alien.getDimension().getX();
 
@@ -705,41 +669,15 @@ class Line{
         return null;
     }
 
-    /*** mathematical line calculations ****/
-
     public boolean isOnLine(Dimension dimension){
         double xToCheck = dimension.getX();
         double yToCheck = dimension.getY();
-
-        if (xToCheck > startPoint.getX() && xToCheck < endPoint.getX()){
+        if (Double.compare(xToCheck, startPoint.getX()) > 0 && Double.compare(xToCheck, endPoint.getX()) < 0){
             if (xToCheck * slope + intercept == yToCheck){
                 return true;
             }
         }
         return dimension.equals(startPoint);
-    }
-
-    public Line getPerpendicularToLine(Dimension point){
-        double slope = (double)-1 / this.slope;
-        double intercept = (double)point.getX() * -1 * slope + (double)point.getY();
-        return new Line(slope, intercept);
-    }
-
-    public Dimension getIntersectionWithLine(Line line){
-        double x = (this.intercept - line.getIntercept()) / (line.getSlope() - this.slope);
-        double y = x * slope + intercept;
-        return new Dimension(x, y);
-    }
-
-    public Dimension getNearestPoint(Dimension dimension){
-        Line perpendicularToThis = this.getPerpendicularToLine(dimension);
-        Dimension intersection = this.getIntersectionWithLine(perpendicularToThis);
-        if (this.isOnLine(intersection)){
-            return intersection;
-        }else if (dimension.distanceFrom(startPoint) < dimension.distanceFrom(endPoint)){
-            return startPoint;
-        }
-        return endPoint;
     }
 
     public Dimension getStartPoint() {
@@ -749,18 +687,10 @@ class Line{
     public Dimension getEndPoint() {
         return endPoint;
     }
-
-    public double getSlope() {
-        return slope;
-    }
-
-    public double getIntercept() {
-        return intercept;
-    }
 }
 
 class Wormhole {
-    private int leadsTo; //this equals the index of the Wormhole it points to.
+    private int leadsTo;
     private Dimension dimension;
     private double radius;
 

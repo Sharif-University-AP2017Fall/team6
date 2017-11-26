@@ -80,6 +80,11 @@ public class Alien implements Movable, Comparable{
     }
 
     public void reduceEnergy(int amount){
+        System.out.println(this.name);
+        System.out.println("*************");
+        System.out.println("current energy : "  + this.energy);
+        System.out.println("reduction amount : " + amount);
+        System.out.println("new energy : " + (this.energy - amount));
         this.energy -= amount;
     }
 
@@ -134,7 +139,7 @@ public class Alien implements Movable, Comparable{
 
     @Override
     public void move(Dimension dimension) {
-        System.out.println(name + " moved to dimension " + dimension);
+        //System.out.println(name + " moved to dimension " + dimension);
         setDimension(dimension);
     }
 

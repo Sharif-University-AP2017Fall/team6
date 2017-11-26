@@ -202,11 +202,11 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
-        System.out.println("*****************");
+        /*System.out.println("*****************");
         System.out.println("checking location : " + dimension);
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
         System.out.println("radius : " + this.radius * GameMap.UNIT);
-        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
@@ -304,7 +304,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
     }
     public  int getInitialPowerOfBullet(String a){
     switch (a.toLowerCase()){
-            case "machine Gun":
+            case "machine gun":
                 return 10;
             case "rocket":
                 return 20;

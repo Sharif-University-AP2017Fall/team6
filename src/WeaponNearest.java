@@ -34,7 +34,7 @@ public class WeaponNearest extends Weapon {
             Dimension shootingPoint = this.getShootingPoint();
             double distance = shootingPoint.distanceFrom(min.getDimension());
             for (int i = 1; i < canShoot.size(); i++){
-                if (distance > shootingPoint.distanceFrom(canShoot.get(i).getDimension())){
+                if (Double.compare(distance, shootingPoint.distanceFrom(canShoot.get(i).getDimension())) > 0){
                     min = canShoot.get(i);
                 }
             }
@@ -42,9 +42,9 @@ public class WeaponNearest extends Weapon {
             for (int numBullet = 0; numBullet < maxBullet; numBullet++){
                 min.reduceSpeed(this.getSpeedReduction() / 100);
                 if (min.isCanFly()){
-                    min.reduceSpeed(this.getPowerOfBulletAir());
+                    min.reduceEnergy(this.getPowerOfBulletAir());
                 }else{
-                    min.reduceSpeed(this.getPowerOfBullet());
+                    min.reduceEnergy(this.getPowerOfBullet());
                 }
                 if (min.isDead()){
                     List<Alien> deadAlien = new ArrayList<>();
