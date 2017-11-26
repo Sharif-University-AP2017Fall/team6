@@ -6,7 +6,43 @@ public class AlienCreeps {
     public GameMap gameMap = new GameMap(hero);
     public static void main(String[] args) {
         AlienCreeps game = new AlienCreeps();
-        game.launch();
+        game.initialize();
+        game.test();
+       // game.launch();
+    }
+
+    public void test(){
+        gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
+        for (int i = 0; i < 5; i++){
+            System.out.println("second " + (i + 1));
+            System.out.println("**********");
+            //gameMap.generateAliens();
+            gameMap.moveAliens();
+            gameMap.what();
+        }
+    }
+    public void initialize(){
+        System.out.println("Choose one of the weapons to put in 12 specified locations");
+        Weapon.showWeaponList();
+        System.out.println("Type \'start\' to start game");
+        String input = scanner.nextLine();
+        while (!input.equalsIgnoreCase("start")){
+            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]*")){
+                //System.out.println("lasjf");
+                String info[] = input.split(" ");
+                String weaponName = null;
+                int locationNum = 0;
+                if (info.length == 5){
+                    weaponName = info[1];
+                    locationNum = Integer.parseInt(info[4]);
+                }else{
+                    weaponName = info[1] + " " + info[2];
+                    locationNum = Integer.parseInt(info[5]);
+                }
+                gameMap.putWeaponInPlace(weaponName, locationNum);
+            }
+            input = scanner.nextLine();
+        }
     }
 
     public void launch(){

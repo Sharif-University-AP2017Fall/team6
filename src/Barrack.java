@@ -22,7 +22,9 @@ public class Barrack implements Mappable {
         this.dimension = dimension;
     }
 
-    public Barrack() {
+    public Barrack(Dimension dimension) {
+        this.mapTo(dimension);
+        this.price = 90;
         this.inUse = false;
         soldiersInDemand = 0;
         this.currentTime = 0;

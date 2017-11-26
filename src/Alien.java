@@ -1,6 +1,8 @@
 public class Alien implements Movable, Comparable{
     private static int NUM = 0;
+    private static int MAXNUM = 25;
     private static boolean START = false;
+
     private String name;
     private int energy;
     private int speed;
@@ -20,6 +22,8 @@ public class Alien implements Movable, Comparable{
 
     public Alien(String name) {
         NUM++;
+        //System.out.println("******* ****");
+        //System.out.println("num = " + NUM);
         START = true;
         this.name = name;
         switch (name){
@@ -122,6 +126,10 @@ public class Alien implements Movable, Comparable{
 
     public static boolean isSTART() {
         return START;
+    }
+
+    public static int getMAXNUM() {
+        return MAXNUM;
     }
 
     @Override

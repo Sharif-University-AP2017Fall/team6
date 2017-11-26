@@ -59,32 +59,32 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         initialRadius = getInitialRadius(a);
         setRadius(initialRadius);
 
-        switch (a){
-            case "Machine Gun":
+        switch (a.toLowerCase()){
+            case "machine gun":
                 setType(0);
                 setOnAirOnly(false);
                 break;
-            case "Rocket":
+            case "rocket":
                 setType(1);
                 setOnAirOnly(false);
                 break;
-            case "Laser":
+            case "laser":
                 setType(2);
                 setOnAirOnly(false);
                 break;
-            case "Antiaircraft":
+            case "antiaircraft":
                 setType(3);
                 setOnAirOnly(true);
                 break;
-            case "Freezer":
+            case "freezer":
                 setType(4);
                 setOnAirOnly(false);
                 break;
-            case "Tesla":
+            case "tesla":
                 setType(5);
                 setOnAirOnly(false);
             default:
-                System.out.println(a + "not Found");
+                System.out.println(a + " not Found");
                 break;
         }
     }
@@ -202,6 +202,11 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
+        System.out.println("*****************");
+        System.out.println("checking location : " + dimension);
+        System.out.println("distance : " + this.dimension.distanceFrom(dimension));
+        System.out.println("radius : " + this.radius * GameMap.UNIT);
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
@@ -241,142 +246,138 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
     }
 
     public static Weapon WeaponFactory(Dimension dimension,String type){
-         switch (type){
-            case "Machine Gun":               
+         switch (type.toLowerCase()){
+            case "machine gun":
                 return  new WeaponNearest(dimension,type);
-            case "Rocket":                
+            case "rocket":
                 return  new WeaponAll(dimension,type);
-            case "Laser":               
+            case "laser":
                 return  new WeaponNearest(dimension,type);
-            case "Antiaircraft":              
+            case "antiaircraft":
                 return  new WeaponNearest(dimension,type);
-            case "Freezer":
+            case "freezer":
                 return  new WeaponAll(dimension,type);
-             case "Tesla":
+             case "tesla":
                  NUM_USED_TESLA++;
                  TESLA_IN_USE = true;
                  return new WeaponAll(dimension, type);
             default:
-                System.out.println(type + "not Found");
+                System.out.println(type + " not Found");
                 break;
          }
     return null;
     }
 
     public static int getInitialPrice(String a){
-    switch (a){
-            case "Machine Gun":
+        switch (a.toLowerCase()){
+            case "machine gun":
                 return 100;
-            case "Rocket":
+            case "rocket":
                 return 180;
-            case "Laser":
+            case "laser":
                 return 150;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 180;
-            case "Freezer":
+            case "freezer":
                 return 170;
+            case "barrack":
+                return 90;
             default:
-                System.out.println(a+ " not found in -getInitialPrice- ");
                 return -1;
         }
     }
     public  int getInitialSpeedOfBullet(String a){
-    switch (a){
-            case "Machine Gun":
+    switch (a.toLowerCase()){
+            case "machine gun":
                 return 10;
-            case "Rocket":
+            case "rocket":
                 return 3;
-            case "Laser":
+            case "laser":
                 return 7;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 15;
-            case "Freezer":
+            case "freezer":
                 return 5;
             default:
-                System.out.println(a+ " not found in -getInitialSpeedOfBullet- ");
                 return -1;
         }
     }
     public  int getInitialPowerOfBullet(String a){
-    switch (a){
-            case "Machine Gun":
+    switch (a.toLowerCase()){
+            case "machine Gun":
                 return 10;
-            case "Rocket":
+            case "rocket":
                 return 20;
-            case "Laser":
+            case "laser":
                 return 10;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 0;
-            case "Freezer":
+            case "freezer":
                 return 5;
             default:
-                System.out.println(a+ " not found in -getInitialSpeedOfBullet- ");
                 return -1;
         }
     }
     public  int getInitialPowerOfBulletAir(String a){
-    switch (a){
-            case "Machine Gun":
+    switch (a.toLowerCase()){
+            case "machine gun":
                 return 5;
-            case "Rocket":
+            case "rocket":
                 return 10;
-            case "Laser":
+            case "laser":
                 return 7;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 12;
-            case "Freezer":
+            case "freezer":
                 return 3;
             default:
-                System.out.println(a+ " not found in -getInitialSpeedOfBulletAir- ");
                 return -1;
         }
     }
 
     public  int getInitialSpeedReduction(String a){
-    switch (a){
-            case "Machine Gun":
+    switch (a.toLowerCase()){
+            case "machine gun":
                 return 0;
-            case "Rocket":
+            case "rocket":
                 return 0;
-            case "Laser":
+            case "laser":
                 return 40;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 20;
-            case "Freezer":
+            case "freezer":
                 return 60;
             default:
-                System.out.println(a+ " not found in -getInitialSpeedReduction- ");
                 return -1;
         }
     }
 
     public  double getInitialRadius(String a){
-    switch (a){
-            case "Machine Gun":
+    switch (a.toLowerCase()){
+            case "machine gun":
                 return 1;
-            case "Rocket":
+            case "rocket":
                 return 2;
-            case "Laser":
+            case "laser":
                 return 1;
-            case "Antiaircraft":
+            case "antiaircraft":
                 return 1.5;
-            case "Freezer":
+            case "freezer":
                 return 1;
-        case "Tesla":
+            case "tesla":
                 return 2;
             default:
-                System.out.println(a+ " not found in -getInitialRadius- ");
                 return -1;
         }
     }
 
     public static void showWeaponList(){
-        System.out.println("-------------------------");
         System.out.println("Machine Gun\n" +
-                "Rocker\n" +
+                "Rocket\n" +
                 "Laser\n" +
                 "Antiaircraft\n" +
-                "Freezer\n");
+                "Freezer\n" +
+                "Barrack\n");
     }
 
     @Override

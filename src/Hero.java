@@ -112,11 +112,14 @@ public class Hero extends Warrior {
     }
 
     public Weapon buyWeapon(String nameOfWeapon, Dimension dimension){
-        if (this.getMoney() < Weapon.getInitialPrice(nameOfWeapon)){
+        if (this.getMoney() >= Weapon.getInitialPrice(nameOfWeapon)){
             Weapon bought = Weapon.WeaponFactory(dimension,nameOfWeapon);
-            if (bought!=null)
+            if (bought != null){
                 reduceMoney(bought.getPrice());
-            return bought;}   
+            }
+            return bought;
+        }
+        System.out.println("Not enough money");
         return null;
     }
 

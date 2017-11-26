@@ -8,6 +8,7 @@ public class GameMap {
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
     private Map<Dimension, Mappable> specifiedLocations = new HashMap<>();
+    private Map<Integer, Dimension> specifiedNumbers = new HashMap<>();
     private Barrack barrack;
 
     private Dimension flag;
@@ -41,6 +42,7 @@ public class GameMap {
         lines[4] = new Line(0.75, -300, breakPoints.get(4), flag);
         routes.add(new Route(lines, intersections));
 
+
         breakPoints.set(0, new Dimension(0, 600));
         breakPoints.set(1, new Dimension(150, 450));
         breakPoints.set(2, new Dimension(300, 450));
@@ -53,18 +55,56 @@ public class GameMap {
         lines[4] = new Line(-0.75, 900, breakPoints.get(4), flag);
         routes.add(new Route(lines, intersections));
 
-        specifiedLocations.put(new Dimension(240, 140), null);
-        specifiedLocations.put(new Dimension(70, 75), null);
-        specifiedLocations.put(new Dimension(380, 240), null);
-        specifiedLocations.put(new Dimension(450, 290), null);
-        specifiedLocations.put(new Dimension(450, 310), null);
-        specifiedLocations.put(new Dimension(440, 300), null);
-        specifiedLocations.put(new Dimension(460, 300), null);
-        specifiedLocations.put(new Dimension(210, 460), null);
-        specifiedLocations.put(new Dimension(520, 375), null);
-        specifiedLocations.put(new Dimension(600, 145), null);
-        specifiedLocations.put(new Dimension(710, 240), null);
-        //specifiedLocations.put(new Dimension())
+        Dimension dimension;
+
+
+        dimension = new Dimension(70, 75);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(1, dimension);
+
+        dimension = new Dimension(240, 140);
+        specifiedNumbers.put(2, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(380, 240);
+        specifiedNumbers.put(3, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(450, 290);
+        specifiedNumbers.put(4, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(450, 310);
+        specifiedNumbers.put(5, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(440, 300);
+        specifiedNumbers.put(6, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(460, 300);
+        specifiedNumbers.put(7, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(210, 460);
+        specifiedNumbers.put(8, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(520, 375);
+        specifiedNumbers.put(9, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(600, 145);
+        specifiedNumbers.put(10, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(710, 240);
+        specifiedNumbers.put(11, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(710, 360);
+        specifiedNumbers.put(12, dimension);
+        specifiedLocations.put(dimension, null);
 
         List<Dimension> wormholeDims = Dimension.randomDimension(6);
         wormholes.add(new Wormhole(1, wormholeDims.get(0)));
@@ -76,9 +116,22 @@ public class GameMap {
         //code for initializing specific locations.
     }
 
+    public void what(){
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) != null){
+                Weapon weapon = ((Weapon) specifiedLocations.get(dimension));
+                System.out.println("checking " + weapon.getName() + " in dimension " + dimension);
+                System.out.println("******");
+                for (int i = 0; i < 2; i++){
+                    System.out.println("Route number " + (i + 1));
+                    routes.get(i).aliensWithinRadius(weapon);
+                }
+            }
+        }
+    }
 
     public void nextSecond(){
-        updateTeslaStatus();
+        /*updateTeslaStatus();
         if (this.heroIsDead){
             this.secondsLeftToResurrectHero--;
             if (this.secondsLeftToResurrectHero == 0){
@@ -102,11 +155,11 @@ public class GameMap {
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
             }
-        }
+        }*/
         generateAliens();
         moveAliens();
         shootAliensByWeapons();
-        shootAliensByHeroAndSoldiers();
+        //shootAliensByHeroAndSoldiers();
         if (Alien.isSTART()){
             if (Alien.getNUM() <= 0){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
@@ -124,70 +177,80 @@ public class GameMap {
     }
 
     public void putWeaponInPlace(String weaponName, int whichPlace){
-        int i = 0;
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            i++;
-            if (i == whichPlace){
-                if (specifiedLocations.get(dimension) == null){
-                    Weapon bought = this.hero.buyWeapon(weaponName, dimension);
-                    if (bought != null){
-                        specifiedLocations.put(dimension, bought);
-                    }else{
-                        System.out.println("not enough money.");
+        if (whichPlace > specifiedLocations.keySet().size()){
+            System.out.println("There are only " + specifiedLocations.keySet().size() + " available places.");
+            return;
+        }
+        Dimension dimension = specifiedNumbers.get(whichPlace);
+        if (specifiedLocations.get(dimension) == null){
+            if (weaponName.equalsIgnoreCase("Barrack")){
+                if (this.barrack == null){
+                    if (hero.getMoney() >= 90){
+                        this.barrack = new Barrack(dimension);
+                        this.hero.reduceMoney(90);
                     }
                 }else{
-                    System.out.println("there is already a weapon in this location.");
+                    System.out.println("You already have a barrack.");
                 }
-                break;
+            }else{
+                Weapon bought = this.hero.buyWeapon(weaponName, dimension);
+                specifiedLocations.put(dimension, bought);
             }
+        }else{
+            System.out.println("There is already a weapon in this location.");
         }
     }
 
     public void upgradeWeaponInPlace(String weaponName, int whichPlace){
-        int i = 0;
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            i++;
-            if (i == whichPlace){
-                if (specifiedLocations.get(dimension) != null){
-                    Weapon toUpgrade = ((Weapon) specifiedLocations.get(dimension));
-                    if (toUpgrade.getName().equalsIgnoreCase(weaponName)){
-                        if (!hero.upgradeWeapon(toUpgrade)) {
-                            System.out.println("not enough money");
-                        }else{
-                            System.out.println("upgraded successfully");
-                        }
+        if (whichPlace > specifiedLocations.keySet().size()){
+            System.out.println("There are only " + specifiedLocations.keySet().size() + " available places.");
+            return;
+        }
+        Dimension dimension = specifiedNumbers.get(whichPlace);
+        if (specifiedLocations.get(dimension) != null){
+            if (!weaponName.equalsIgnoreCase("Barrack")){
+                Weapon toUpgrade = ((Weapon) specifiedLocations.get(dimension));
+                if (toUpgrade.getName().equalsIgnoreCase(weaponName)){
+                    if (!hero.upgradeWeapon(toUpgrade)){
+                        System.out.println("Not enough money.");
                     }else{
-                        System.out.println("incorrect name.");
+                        System.out.println("Upgraded successfully");
                     }
                 }else{
-                    System.out.println("there is no weapon in this place.");
+                    System.out.println("Incorrect name");
                 }
+            }else{
+                System.out.println("Can't upgrade barrack.");
             }
+        }else{
+            System.out.println("There is no weapon in this place");
         }
     }
 
     public void generateAliens(){
-        if ((int)(Math.random() * 4) == 0){
-            int routeNumber = chooseRandomRoute();
-            Route whichRoute = routes.get(routeNumber);
-            int whichAlien = (int)(Math.random() * 4);
-            switch (whichAlien){
-                case 0:
-                    System.out.println("Adding Albertonion to route " + routeNumber);
-                    whichRoute.addAlienToRoute(new Alien("Albertonion"), 0);
-                    break;
-                case 1:
-                    System.out.println("Adding Algwasonion to route " + routeNumber);
-                    whichRoute.addAlienToRoute(new Alien("Algwasonion"), 0);
-                    break;
-                case 2:
-                    System.out.println("Adding Activinion to route " + routeNumber);
-                    whichRoute.addAlienToRoute(new Alien("Activionion"), 0);
-                    break;
-                case 3:
-                    System.out.println("Adding Aironion to route " + routeNumber);
-                    whichRoute.addAlienToRoute(new Alien("Aironion"), 0);
-                    break;
+        if (Alien.getNUM() < Alien.getMAXNUM()){
+            if ((int)(Math.random() * 6) == 0){
+                int routeNumber = chooseRandomRoute();
+                Route whichRoute = routes.get(routeNumber);
+                int whichAlien = (int)(Math.random() * 4);
+                switch (whichAlien){
+                    case 0:
+                        System.out.println("Adding Albertonion to route " + routeNumber);
+                        whichRoute.addAlienToRoute(new Alien("Albertonion"), 0);
+                        break;
+                    case 1:
+                        System.out.println("Adding Algwasonion to route " + routeNumber);
+                        whichRoute.addAlienToRoute(new Alien("Algwasonion"), 0);
+                        break;
+                    case 2:
+                        System.out.println("Adding Activinion to route " + routeNumber);
+                        whichRoute.addAlienToRoute(new Alien("Activionion"), 0);
+                        break;
+                    case 3:
+                        System.out.println("Adding Aironion to route " + routeNumber);
+                        whichRoute.addAlienToRoute(new Alien("Aironion"), 0);
+                        break;
+                }
             }
         }
     }
@@ -214,8 +277,8 @@ public class GameMap {
         for (int i = 0; i < 5; i++){
             if (reachedFlag[i] == null){
                 reachedFlag[i] = alien;
+                System.out.println((i + 1) + " aliens have reached flag.");
                 if (i == 4){
-                    System.out.println("Game Over");
                     return true;
                 }
                 break;
@@ -240,13 +303,13 @@ public class GameMap {
             for (int j = 0; j < reachedIntersectionOrFlag.size(); j++){
                 Alien alien = reachedIntersectionOrFlag.get(j);
                 if (alien.getDimension().equals(flag)){
-                    if (reachFlag(alien)) {
-                        return true;
-                    }
+                    return reachFlag(alien);
                 }
                 int randomNumber = chooseRandomRoute();
                 System.out.println(alien.getName() + " was relocated to route number " + randomNumber);
-                Route whichRoute = routes.get(randomNumber);
+                Route whichRoute = routes.get(randomNumber);/*
+                System.out.println(whichRoute.getLines()[3].getStartPoint());
+                System.out.println(alien.getDimension());*/
                 int whichLine = whichRoute.whichLine(alien.getDimension());
                 whichRoute.addAlienToRoute(alien, whichLine);
             }
@@ -535,7 +598,7 @@ class Route{
                     alienMap.get(lines[i]).remove(currentAlienToMove);
 
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection 1");
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
                         reachedIntersection.add(currentAlienToMove);
                     }else{
                         alienMap.get(lines[i + 1]).add(currentAlienToMove);
@@ -543,7 +606,7 @@ class Route{
                 }else{
                     currentAlienToMove.move(dimensionToMove);
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection 2");
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection");
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }
@@ -565,29 +628,33 @@ class Route{
     }
 
     public int whichLine(Dimension dimension){
-        int which = -1;
         for (int i = 0; i < 5; i++){
             if (lines[i].isOnLine(dimension)){
-                which = i;
+                return i;
             }
         }
-        return which;
+        return -1;
     }
 
     public List<Alien> aliensWithinRadius(Shooter shooter){
         List<Integer> linesWithinRadius = new ArrayList<>();
         List<Alien> aliensToShoot = new ArrayList<>();
+        System.out.println("Lines :" );
         for (int i = 0; i < 5; i++){
             Dimension nearestPoint = lines[i].getNearestPoint(shooter.getShootingPoint());
             if (shooter.isWithinRadius(nearestPoint)){
                 linesWithinRadius.add(i);
+                System.out.println(i + 1);
             }
         }
+
+        System.out.println("Aliens: ");
         for (Integer withinRadius : linesWithinRadius) {
             List<Alien> aliensToCheck = alienMap.get(lines[withinRadius]);
             for (int i = 0; i < aliensToCheck.size(); i++){
                 Alien currentAlienToCheck = aliensToCheck.get(i);
                 if (shooter.isWithinRadius(currentAlienToCheck.getDimension())){
+                    System.out.println(currentAlienToCheck.getName());
                     aliensToShoot.add(currentAlienToCheck);
                 }
             }
@@ -601,6 +668,10 @@ class Route{
             aliens.addAll(alienMap.get(lines[i]));
         }
         return aliens;
+    }
+
+    public Line[] getLines() {
+        return lines;
     }
 }
 
@@ -640,12 +711,12 @@ class Line{
         double xToCheck = dimension.getX();
         double yToCheck = dimension.getY();
 
-        if (xToCheck >= startPoint.getX() && xToCheck <= endPoint.getX()){
+        if (xToCheck > startPoint.getX() && xToCheck < endPoint.getX()){
             if (xToCheck * slope + intercept == yToCheck){
                 return true;
             }
         }
-        return false;
+        return dimension.equals(startPoint);
     }
 
     public Line getPerpendicularToLine(Dimension point){
