@@ -36,9 +36,8 @@ public class Soldier extends Warrior {
     }
 
     public void showStatus(){
-        System.out.println("place: " + super.getDimension() +
-                "\tenergy left: " + super.getEnergy() +
-                "\n");
+        System.out.println("\tplace: " + super.getDimension() +
+                "\tenergy left: " + super.getEnergy());
     }
 
     @Override

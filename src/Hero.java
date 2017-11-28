@@ -161,16 +161,16 @@ public class Hero extends Warrior {
     public void showStatus(){
         System.out.println("place: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy() +
-                "\tnumber of aliens killed: " + achievement.getNumOfKilledByHero() +
-                "\n");
+                "\tnumber of aliens killed: " + achievement.getNumOfKilledByHero());
     }
 
     public void showKnightStatus(){
         for (int i = 0; i < 3; i++){
             if (soldiers[i] != null){
+                System.out.print("Soldier #" + (i + 1));
                 soldiers[i].showStatus();
             }else{
-                System.out.println("Soldier #" + (i + 1) + " is dead.");
+                System.out.println("Soldier #" + (i + 1) + " not found.");
             }
         }
     }

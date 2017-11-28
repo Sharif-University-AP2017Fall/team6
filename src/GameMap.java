@@ -270,6 +270,7 @@ public class GameMap {
                 if (this.barrack == null){
                     if (hero.getMoney() >= 90){
                         this.barrack = new Barrack(dimension);
+                        specifiedLocations.put(dimension, this.barrack);
                         this.hero.reduceMoney(90);
                         barrack.requestSoldier(hero.getResurrectionTime());
                         barrack.requestSoldier(hero.getResurrectionTime());
@@ -294,19 +295,24 @@ public class GameMap {
         }
         Dimension dimension = specifiedNumbers.get(whichPlace);
         if (specifiedLocations.get(dimension) != null){
-            if (!weaponName.equalsIgnoreCase("Barrack")){
+            if (!(specifiedLocations.get(dimension) instanceof Barrack)){
                 Weapon toUpgrade = ((Weapon) specifiedLocations.get(dimension));
                 if (toUpgrade.getName().equalsIgnoreCase(weaponName)){
                     if (!hero.upgradeWeapon(toUpgrade)){
                         System.out.println("Not enough money.");
                     }else{
                         System.out.println("Upgraded successfully");
+                        System.out.println(hero.getMoney());
                     }
                 }else{
                     System.out.println("Incorrect name");
                 }
             }else{
-                System.out.println("Can't upgrade barrack.");
+                if (weaponName.equalsIgnoreCase("Barrack")){
+                    System.out.println("Can't upgrade barrack.");
+                }else{
+                    System.out.println("Incorrect name");
+                }
             }
         }else{
             System.out.println("There is no weapon in this place");

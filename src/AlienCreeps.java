@@ -40,6 +40,8 @@ public class AlienCreeps {
                     locationNum = Integer.parseInt(info[5]);
                 }
                 gameMap.putWeaponInPlace(weaponName, locationNum);
+            }else{
+                System.out.println("invalid command");
             }
             input = scanner.nextLine();
         }
@@ -52,17 +54,25 @@ public class AlienCreeps {
         while (true){
             String input = scanner.nextLine();
             String info[] = input.split(" ");
-            if (input.matches("put [\\w]* in place [\\d]*")){
-                String weaponName = info[1];
-                int locationNum = Integer.parseInt(info[4]);
-                gameMap.putWeaponInPlace(weaponName, locationNum);
-            }else if(input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]*")){
+            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]*")) {
                 String weaponName = info[1];
                 int locationNum;
-                if (!info[2].equals("in"))
-                    {weaponName+=" "+info[2];
-                    locationNum = Integer.parseInt(info[5]);}
-                else{locationNum = Integer.parseInt(info[4]); }
+                if (!info[2].equals("in")) {
+                    weaponName += " " + info[2];
+                    locationNum = Integer.parseInt(info[5]);
+                } else {
+                    locationNum = Integer.parseInt(info[4]);
+                }
+                gameMap.putWeaponInPlace(weaponName, locationNum);
+            }else if(input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]*")) {
+                String weaponName = info[1];
+                int locationNum;
+                if (!info[2].equals("in")) {
+                    weaponName += " " + info[2];
+                    locationNum = Integer.parseInt(info[5]);
+                } else {
+                    locationNum = Integer.parseInt(info[4]);
+                }
                 gameMap.upgradeWeaponInPlace(weaponName, locationNum);
             }else if (input.matches("show details")){
                 gameMap.showRemainingAliens();
@@ -86,8 +96,13 @@ public class AlienCreeps {
                 hero.showKnightStatus();
             }else if(input.matches("weapons status")){
                 gameMap.getWeapons().forEach(System.out::println);
-            }else if(input.matches("status [\\w]* weapon")){
-                gameMap.getWeapons(info[2]).forEach(System.out::println);
+            }else if(input.matches("status [\\w]*[\\s]*[\\w]* weapon")){
+                //fix it for rocket
+                String weaponName = info[1];
+                if (!info[2].equals("in")) {
+                    weaponName += " " + info[2];
+                }
+                gameMap.getWeapons(weaponName).forEach(System.out::println);
             }else if(input.matches("show achievements")){
                 System.out.println(hero.getAchievement());
             }else if(input.matches("upgrade soldiers")){
