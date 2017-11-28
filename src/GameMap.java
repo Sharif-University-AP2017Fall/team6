@@ -60,53 +60,126 @@ public class GameMap {
         Dimension dimension;
 
 
-        dimension = new Dimension(73, 75);
+        dimension = new Dimension(52, 50);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(1, dimension);
 
-        dimension = new Dimension(240, 145);
+        dimension = new Dimension(73, 75);
+        specifiedLocations.put(dimension, null);
         specifiedNumbers.put(2, dimension);
-        specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(385, 240);
+        dimension = new Dimension(102, 100);
+        specifiedLocations.put(dimension, null);
         specifiedNumbers.put(3, dimension);
-        specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(450, 295);
+        dimension = new Dimension(200, 155);
+        specifiedLocations.put(dimension, null);
         specifiedNumbers.put(4, dimension);
-        specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(450, 305);
+        dimension = new Dimension(240, 145);
         specifiedNumbers.put(5, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(445, 300);
+        dimension = new Dimension(270, 155);
+        specifiedLocations.put(dimension, null);
         specifiedNumbers.put(6, dimension);
-        specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(455, 300);
+        dimension = new Dimension(350, 202);
+        specifiedLocations.put(dimension, null);
         specifiedNumbers.put(7, dimension);
-        specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(210, 455);
+        dimension = new Dimension(385, 240);
         specifiedNumbers.put(8, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(522, 375);
-        specifiedNumbers.put(9, dimension);
+        dimension = new Dimension(420, 268);
         specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(9, dimension);
 
-        dimension = new Dimension(600, 148);
+
+        dimension = new Dimension(450, 295);
         specifiedNumbers.put(10, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(710, 240);
+        dimension = new Dimension(450, 305);
         specifiedNumbers.put(11, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(710, 360);
+        dimension = new Dimension(445, 300);
         specifiedNumbers.put(12, dimension);
         specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(455, 300);
+        specifiedNumbers.put(13, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(175, 445);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(14, dimension);
+
+        dimension = new Dimension(210, 455);
+        specifiedNumbers.put(15, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(260, 445);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(16, dimension);
+
+        dimension = new Dimension(350, 402);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(17, dimension);
+
+        dimension = new Dimension(400, 348);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(18, dimension);
+
+        dimension = new Dimension(500, 352);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(19, dimension);
+
+        dimension = new Dimension(522, 375);
+        specifiedNumbers.put(20, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(550, 402);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(21, dimension);
+
+        dimension = new Dimension(500, 248);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(22, dimension);
+
+        dimension = new Dimension(550, 202);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(23, dimension);
+
+        dimension = new Dimension(600, 148);
+        specifiedNumbers.put(24, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(680, 212);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(25, dimension);
+
+        dimension = new Dimension(710, 240);
+        specifiedNumbers.put(26, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(750, 265);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(27, dimension);
+
+        dimension = new Dimension(680, 398);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(28, dimension);
+
+        dimension = new Dimension(710, 360);
+        specifiedNumbers.put(29, dimension);
+        specifiedLocations.put(dimension, null);
+
+        dimension = new Dimension(720, 325);
+        specifiedLocations.put(dimension, null);
+        specifiedNumbers.put(30, dimension);
 
         List<Dimension> wormholeDims = Dimension.randomDimension(6);
         wormholes.add(new Wormhole(1, wormholeDims.get(0)));
@@ -127,15 +200,17 @@ public class GameMap {
             resetRadius();
         }
 
-        randomWormhole();
+        randomizeWormholes();
 
         updateTeslaStatus();
+
         if (this.hero.isDead()){
             this.secondsLeftToResurrectHero--;
             if (this.secondsLeftToResurrectHero == 0){
                 this.hero.setEnergy(300);
             }
         }
+
         if (barrack != null){
             barrack.proceed();
             Soldier soldier = barrack.getSoldier();
@@ -153,18 +228,22 @@ public class GameMap {
                 }
             }
         }
+
         if (moveAliens()) {
             return true;
         }
+
         if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10){
             generateAliens(2);
         }else{
             generateAliens(4);
         }
+
         shootAliens();
+
         if (Alien.isSTART()){
             System.out.println("There are " + Alien.getNUM() + " aliens in total.");
-            if (Alien.getNUM() <= 0){
+            if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
                 return true;
             }
@@ -206,7 +285,7 @@ public class GameMap {
 
     public void upgradeSoldier(){
         if (canUpgradeSoldiers){
-            Soldier soldiers[] = new Soldier[3];
+            Soldier soldiers[] = this.hero.getSoldiers();
             int num = 0;
             for (int i = 0; i < 3; i++){
                 if (soldiers[i] != null){
@@ -234,8 +313,8 @@ public class GameMap {
         }
     }
 
-    public void randomWormhole(){
-        if (((int)Math.random() * 10) == 1){
+    public void randomizeWormholes(){
+        if ((int)(Math.random() * 5) == 1){
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
@@ -398,6 +477,7 @@ public class GameMap {
             for (int j = 0; j < reachedIntersectionOrFlag.size(); j++){
                 Alien alien = reachedIntersectionOrFlag.get(j);
                 if (alien.getDimension().equals(flag)){
+                    Alien.reduceNum(1);
                     return reachFlag(alien);
                 }
                 int randomNumber = chooseRandomRoute();
@@ -543,7 +623,7 @@ public class GameMap {
                     aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
-                if (deadAliens != null){
+                if (deadAliens != null && !deadAliens.isEmpty()){
                     System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
                     aliensToShoot.removeAll(deadAliens);
                     if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
@@ -553,6 +633,7 @@ public class GameMap {
                     updateAchivements(deadAliens, "weapon");
                     for (int i = 0; i < routes.size(); i++)
                         this.removeAliensFromRoute(routes.get(i), deadAliens);
+                    Alien.reduceNum(deadAliens.size());
                 }
             }
         }
@@ -584,12 +665,15 @@ public class GameMap {
                 if (this.hero.isDead()){
                     this.secondsLeftToResurrectHero = this.hero.getResurrectionTime();
                 }
+            }else{
+                System.out.println("no aliens in hero radius");
             }
         }
 
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++){
             if (soldiers[j] != null){
+                System.out.println("Soldier #" + (j + 1) + " start shooting");
                 List<Alien> toShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++){
                     toShoot.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
@@ -608,6 +692,8 @@ public class GameMap {
                         soldiers[j] = null;
                         barrack.requestSoldier(this.hero.getResurrectionTime());
                     }
+                }else{
+                    System.out.println("no aliens in soldier radius.");
                 }
             }
         }
@@ -616,6 +702,8 @@ public class GameMap {
         for (int i = 0; i < routes.size(); i++){
             this.removeAliensFromRoute(routes.get(i), dead);
         }
+
+        Alien.reduceNum(dead.size());
     }
 
     public void removeAliensFromRoute(Route route, List<Alien> deadAliens){
@@ -730,6 +818,14 @@ public class GameMap {
             number++;
         }
     }
+
+    /*public void showAlienDimension(){
+        List<Alien> all = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            all.addAll(routes.get(i).getAliens());
+        }
+        for (int i = 0; )
+    }*/
 
     @Override
     public String toString() {

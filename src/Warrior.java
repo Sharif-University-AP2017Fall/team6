@@ -109,6 +109,7 @@ public abstract class Warrior implements Movable, Shooter {
                     min.stop();
                     min.reduceEnergy(this.powerOfBullet);
                     if (min.isDead()){
+                        System.out.println("killed " + min.getName());
                         deadAlien.add(min);
                         numKilled++;
                         return deadAlien;
@@ -122,12 +123,12 @@ public abstract class Warrior implements Movable, Shooter {
 
     @Override
     public boolean isWithinRadius(Dimension dimension) {
-        System.out.println("hero");
+        /*System.out.println("hero");
         System.out.println("*****************");
-        System.out.println("checking location : " + dimension);
+        System.out.println("checking location : " + this.dimension);
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
         System.out.println("radius : " + this.radius * GameMap.UNIT);
-        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 

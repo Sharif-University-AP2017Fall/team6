@@ -162,6 +162,10 @@ public class Alien implements Movable, Comparable{
         return false;
     }
 
+    public static void reduceNum(int NUM) {
+        Alien.NUM -= NUM;
+    }
+
     public boolean isWithinRadius(Dimension dimension){
         /*System.out.println("*****************");
         System.out.println("checking location : " + dimension);

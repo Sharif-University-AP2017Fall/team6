@@ -24,7 +24,9 @@ public class AlienCreeps {
         }
     }
     public void initialize(){
-        System.out.println("Choose one of the weapons to put in 12 specified locations");
+        System.out.println("Choose one of the weapons to put in " +
+                gameMap.getSpecifiedLocations().keySet().size() +
+                " specified locations");
         Weapon.showWeaponList();
         System.out.println("Type \'start\' to start game");
         String input = scanner.nextLine();

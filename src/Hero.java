@@ -22,7 +22,7 @@ public class Hero extends Warrior {
     Hero (Dimension dimension){
         achievement = new Achievement();
         setDimension(dimension);
-        setMoney(1000);
+        setMoney(10000);
         setEnergy(300);
         setRadius(0.5);
         soldierDims[0] = new Dimension(15, 0);
@@ -84,6 +84,7 @@ public class Hero extends Warrior {
 
     public boolean addPowerLevel(){
         if (powerLevel < 3){
+            System.out.println("added one power level");
             powerLevel++;
             this.increaseBulletPower();
             this.increaseBulletSpeed();
@@ -103,6 +104,8 @@ public class Hero extends Warrior {
     }
 
     public boolean addExperienceLevel(int amount){
+        if (amount > 0)
+            System.out.println("adding experience level amount : " + amount);
         experienceLevel += amount;
         if (experienceLevel - powerLevel * 50 >= 50){
             if (addPowerLevel()) {

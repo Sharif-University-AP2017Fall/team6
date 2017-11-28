@@ -211,12 +211,12 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
-        System.out.println(this.getName());
+        /*System.out.println(this.getName());
         System.out.println("*****************");
-        System.out.println("checking location : " + dimension);
+        System.out.println("checking location : " + this.dimension);
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
         System.out.println("radius : " + this.radius * GameMap.UNIT);
-        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
