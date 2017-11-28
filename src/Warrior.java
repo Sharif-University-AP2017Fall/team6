@@ -93,7 +93,7 @@ public abstract class Warrior implements Movable, Shooter {
     public abstract boolean died();
 
     @Override
-    public abstract void move(Dimension dimension);
+    public abstract boolean move(Dimension dimension);
 
     @Override
     public List<Alien> shoot(List<Alien> aliens) {

@@ -32,9 +32,9 @@ public class Dimension {
                 (dimension.getY() - this.Y) * (dimension.getY() - this.Y));
     }
 
-    public boolean isWithinBounds(){
-        return X >= 0 && X <= GameMap.XBOUND
-                && Y >= 0 && Y <= GameMap.YBOUND;
+    public boolean isWithinBounds(double upperBoundX, double lowerBoundX, double upperBoundY, double lowerBoundY){
+        return X >= lowerBoundX && X <= upperBoundX
+                && Y >= lowerBoundY && Y <= upperBoundY;
     }
 
     public Dimension add(Dimension otherDimension){
@@ -44,8 +44,8 @@ public class Dimension {
     public static List<Dimension> randomDimension(int num){
         List<Dimension> ds = new ArrayList<>();
         for (int i = 0; i < num; i++){
-            double x = ((Math.random() * (GameMap.XBOUND - 20)) + 10);
-            double y = ((Math.random() * (GameMap.YBOUND - 20)) + 10);
+            double x = Math.round((Math.random() * (GameMap.XBOUND - 20)) + 20);
+            double y = Math.round((Math.random() * (GameMap.YBOUND - 20)) + 20);
             ds.add(new Dimension(x, y));
         }
         return ds;

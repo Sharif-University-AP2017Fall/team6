@@ -12,7 +12,6 @@ public class AlienCreeps {
     }
 
     public void test(){
-        //gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
         for (int i = 0; i < 50; i++){
             System.out.println("second " + (i + 1));
             System.out.println("**********");
@@ -43,6 +42,8 @@ public class AlienCreeps {
             }
             input = scanner.nextLine();
         }
+        System.out.println(gameMap);
+        System.out.println("Hero in : " + hero.getDimension());
     }
 
     public void launch(){

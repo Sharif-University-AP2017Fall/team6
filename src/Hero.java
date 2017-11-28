@@ -189,16 +189,25 @@ public class Hero extends Warrior {
     /**** Hero changes its dimension and his alive soldiers also change dimensions. ****/
 
     @Override
-    public void move(Dimension changeDimension) {
+    public boolean move(Dimension changeDimension) {
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
-        if (newDim.isWithinBounds()){
+        if (newDim.isWithinBounds(GameMap.XBOUND - 20,
+                20,
+                GameMap.YBOUND - 20,
+                20)
+                ){
+            System.out.println("moved hero to " + newDim);
             setDimension(newDim);
             for (int i = 0; i < 3; i++){
                 if (soldiers[i] != null){
                     soldiers[i].move(changeDimension);
                 }
             }
+            return true;
+        }else {
+            System.out.println("Can't move outside of 20 < x < 780 & 20 < y < 580.");
+            return false;
         }
     }
 }

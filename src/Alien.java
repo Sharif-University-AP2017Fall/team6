@@ -4,14 +4,16 @@ public class Alien implements Movable, Comparable{
     private static boolean START = false;
 
     private String name;
+    private Dimension dimension;
     private int energy;
     private int speed;
     private int initialSpeed;
     private int shootingSpeed;
     private int strength;
     private int type;
+
     private boolean canFly;
-    private Dimension dimension;
+    private double radius;
 
     public Dimension getDimension() {
         return dimension;
@@ -138,9 +140,10 @@ public class Alien implements Movable, Comparable{
     }
 
     @Override
-    public void move(Dimension dimension) {
+    public boolean move(Dimension dimension) {
         //System.out.println(name + " moved to dimension " + dimension);
         setDimension(dimension);
+        return true;
     }
 
     @Override
@@ -157,6 +160,15 @@ public class Alien implements Movable, Comparable{
             }
         }
         return false;
+    }
+
+    public boolean isWithinRadius(Dimension dimension){
+        /*System.out.println("*****************");
+        System.out.println("checking location : " + dimension);
+        System.out.println("distance : " + this.dimension.distanceFrom(dimension));
+        System.out.println("radius : " + this.radius * GameMap.UNIT);
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
+        return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
     @Override

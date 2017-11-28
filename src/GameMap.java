@@ -145,11 +145,24 @@ public class GameMap {
         generateAliens();
         moveAliens();
         shootAliens();
+        flyingAliensAttack();
         if (Alien.isSTART()){
             if (Alien.getNUM() <= 0){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
             }
         }
+    }
+
+    public void randomWormhole(){
+        if ((int)Math.random() == 0){
+            List<Dimension> wormholeDims = Dimension.randomDimension(6);
+            for (int i = 0; i < 6; i++){
+                wormholes.get(i).setDimension(wormholeDims.get(i));
+            }
+            System.out.println("New Wormhole Dimensions are:");
+            wormholeDims.forEach(System.out::println);
+        }
+
     }
 
     public void showRemainingAliens(){
@@ -325,23 +338,22 @@ public class GameMap {
         if (this.heroIsDead){
             System.out.println("Hero is dead :( Can't move hero.");
         }else{
-            this.hero.move(change);
-            Dimension newDim = hero.getDimension();
-            for (int i = 0; i < this.wormholes.size(); i++){
-                if (wormholes.get(i).isWithinRadius(newDim)){
-                    Wormhole in = wormholes.get(i);
-                    Wormhole out = wormholes.get(in.getLeadsTo());
-                    Dimension newChange = new Dimension(out.getDimension().getX() - in.getDimension().getX(),
-                            out.getDimension().getY() - in.getDimension().getY());
-                    System.out.println("hero went into wormhole " + (i + 1) + " and came out from wormhole " + (in.getLeadsTo() + 1));
-                    System.out.println("she says hi :)");
-                    this.hero.move(newChange);
-                    break;
+            if (this.hero.move(change)) {
+                Dimension newDim = hero.getDimension();
+                for (int i = 0; i < this.wormholes.size(); i++){
+                    if (wormholes.get(i).isWithinRadius(newDim)){
+                        Wormhole in = wormholes.get(i);
+                        Wormhole out = wormholes.get(in.getLeadsTo());
+                        Dimension newChange = new Dimension(out.getDimension().getX() - hero.getDimension().getX(),
+                                out.getDimension().getY() - hero.getDimension().getY());
+                        System.out.println("hero went into wormhole " + (i + 1) + " and came out from wormhole " + (in.getLeadsTo() + 1));
+                        System.out.println("she says hi :)");
+                        this.hero.move(newChange);
+                        break;
+                    }
                 }
             }
         }
-        //System.out.println(" after "+ hero);
-        
     }
 
     public void useTesla(Dimension dimension){
@@ -381,6 +393,43 @@ public class GameMap {
     public void shootAliens(){
         shootAliensByHeroAndSoldiers();
         shootAliensByWeapons();
+    }
+
+    public void flyingAliensAttack(){
+        List<Alien> flying = new ArrayList<>();
+        for (int i = 0;i < routes.size(); i++){
+            List<Alien> onRoute = routes.get(i).getAliens();
+            for (int j = 0;j < onRoute.size(); j++){
+                if (onRoute.get(j).isCanFly()){
+                    flying.add(onRoute.get(j));
+                }
+            }
+        }
+
+        for (int i = 0; i < flying.size(); i++){
+            Alien flyingAlien = flying.get(i);
+            Dimension alienDim = flyingAlien.getDimension();
+            Warrior min = null;
+            double minDistance = alienDim.distanceFrom(hero.getDimension());
+
+            if (flyingAlien.isWithinRadius(this.hero.getDimension())){
+                min = hero;
+            }
+
+            for (int j = 0; j < 3; j++){
+                Soldier s = this.hero.getSoldiers()[i];
+                if (flyingAlien.isWithinRadius(s.getDimension())){
+                    if(alienDim.distanceFrom(s.getDimension()) < minDistance){
+                        minDistance = alienDim.distanceFrom(s.getDimension());
+                        min = s;
+                    }
+                }
+            }
+
+            if (min != null){
+                flyingAlien.shoot(min);
+            }
+        }
     }
 
     public void shootAliensByWeapons(){
@@ -553,6 +602,19 @@ public class GameMap {
             number++;
         }
     }
+
+    @Override
+    public String toString() {
+        String map = "\n\n**** Game Map ****\n\n\n";
+       // System.out.println("to string");
+        for (int i = 0; i < routes.size(); i++){
+            map = map.concat("Route #" + (i + 1) + "\n");
+            map = map.concat("----------\n");
+            map = map.concat("Line Equations:\n\n");
+            map = map.concat(routes.get(i).toString());
+        }
+        return map;
+    }
 }
 
 class Route{
@@ -645,6 +707,17 @@ class Route{
         }
         return aliens;
     }
+
+    @Override
+    public String toString() {
+        String description = "";
+        for (int i = 0; i < 5; i++){
+            description = description.concat("Line #" + (i + 1) + "\n");
+            description = description.concat("*********\n");
+            description = description.concat(lines[i].toString());
+        }
+        return description;
+    }
 }
 
 class Line{
@@ -690,6 +763,47 @@ class Line{
     public Dimension getEndPoint() {
         return endPoint;
     }
+
+    @Override
+    public String toString() {
+        String equation = "";
+
+        if (slope == 0){
+            equation = "y = " + intercept;
+        }else{
+            if (slope == 1){
+                equation = equation.concat("y = x");
+            }else if (slope == -1){
+                equation = equation.concat("y = -x");
+            }else{
+                equation = equation.concat("y = " + slope + "x");
+            }
+
+            if (intercept > 0){
+                equation = equation.concat(" + " + intercept);
+            }else if (intercept < 0){
+                equation = equation.concat(" - " + (-1 * intercept));
+            }
+        }
+        /*else if(intercept == 0){
+            if (slope == 1){
+                equation = "y = x";
+            }else if (slope == -1){
+                equation = "y = -x";
+            }else {
+                equation = "y = " + slope + "x";
+            }
+        }else{
+            if (intercept > 0){
+                equation = "y = " + slope + "x + " + intercept;
+            }else{
+                equation = "y = " + slope + "x - " + (-1 * intercept);
+            }
+        }*/
+        return "Start Point: " + startPoint + "\n" +
+                "End Point: " + endPoint + "\n" +
+                "Equation: " + equation + "\n\n";
+    }
 }
 
 class Wormhole {
@@ -712,7 +826,7 @@ class Wormhole {
     }
 
     public boolean isWithinRadius(Dimension otherDim){
-        return otherDim.distanceFrom(dimension) <= radius;
+        return otherDim.distanceFrom(dimension) <= radius * GameMap.UNIT;
     }
 
     public Dimension getDimension() {
