@@ -20,6 +20,8 @@ public class GameMap {
     private boolean heroIsDead = false;
     private int secondsLeftToResurrectHero = 0;
 
+    private boolean canUpgradeSoldiers = true;
+
     public GameMap(Hero hero) {
         flag = new Dimension(800, 300);
         this.hero = hero;
@@ -113,10 +115,27 @@ public class GameMap {
         wormholes.add(new Wormhole(2, wormholeDims.get(3)));
         wormholes.add(new Wormhole(5, wormholeDims.get(4)));
         wormholes.add(new Wormhole(4, wormholeDims.get(5)));
-        //code for initializing specific locations.
     }
 
-    public void nextSecond(){
+    public boolean nextSecond(){
+        /*if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0){
+            reduceRadius();
+        }
+        if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == 4){
+            resetRadius();
+        }
+        if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0){
+            canUpgradeSoldiers = true;
+            Soldier soldiers[] = new Soldier[3];
+            for (int i = 0; i < 3; i++){
+                if (soldiers[i] != null){
+                    soldiers[i].resetRadious();
+                }
+            }
+        }
+
+        randomWormhole();
+
         updateTeslaStatus();
         if (this.heroIsDead){
             this.secondsLeftToResurrectHero--;
@@ -124,37 +143,103 @@ public class GameMap {
                 this.heroIsDead = false;
                 this.hero.setEnergy(300);
             }
-        }
+        }*/
         barrack.proceed();
         Soldier soldier = barrack.getSoldier();
+        barrack.removeSoldier();
         if (soldier != null){
             for (int i = 0; i < 3; i++){
                 if (hero.getSoldiers()[i] == null){
                     Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
                     soldier.setDimension(soldierDimension);
                     hero.getSoldiers()[i] = soldier;
+                    System.out.println("BARRACK MADE NEW SOLDIER");
+                    System.out.println("welcome soldier " + i);
+                    break;
                 }
             }
         }
-        if ((int)(Math.random() * 10) == 1){
+        /*if ((int)(Math.random() * 10) == 1){
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
             }
         }
-        generateAliens();
-        moveAliens();
+        if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10){
+            generateAliens(4);
+        }else{
+            generateAliens(8);
+        }
+        if (moveAliens()) {
+            return true;
+        }
         shootAliens();
         flyingAliensAttack();
         if (Alien.isSTART()){
             if (Alien.getNUM() <= 0){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
+                return true;
+            }
+        }*/
+        return false;
+    }
+
+    public void reduceRadius(){
+        for (int i = 0; i < 3; i++){
+            Soldier s = hero.getSoldiers()[i];
+            if (s != null){
+                s.reduceRadius();
+            }
+        }
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                Weapon w = ((Weapon) specifiedLocations.get(dimension));
+                w.reduceRadius();
             }
         }
     }
 
+    public void resetRadius(){
+        for (int i = 0; i < 3; i++){
+            Soldier s = hero.getSoldiers()[i];
+            if (s != null){
+                s.resetRadious();
+            }
+        }
+        for (Dimension dimension : specifiedLocations.keySet()) {
+            if (specifiedLocations.get(dimension) instanceof Weapon){
+                Weapon w = ((Weapon) specifiedLocations.get(dimension));
+                w.resetRadius();
+            }
+        }
+    }
+
+    public void upgradeSoldier(){
+        if (canUpgradeSoldiers){
+            Soldier soldiers[] = new Soldier[3];
+            int num = 0;
+            for (int i = 0; i < 3; i++){
+                if (soldiers[i] != null){
+                    num++;
+                }
+            }
+            if (hero.getMoney() >= num * 10){
+                hero.reduceMoney(num * 10);
+                for (int i = 0; i < 3; i++){
+                    if (soldiers[i] != null){
+                        soldiers[i].increaseRadius();
+                    }
+                }
+            }else{
+                System.out.println("Not enough money.");
+            }
+        }else{
+            System.out.println("Can't upgrade soldiers twice in one day. Try again tomorrow.");
+        }
+    }
+
     public void randomWormhole(){
-        if ((int)Math.random() == 0){
+        if ((int)Math.random() == 10){
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
@@ -186,6 +271,9 @@ public class GameMap {
                     if (hero.getMoney() >= 90){
                         this.barrack = new Barrack(dimension);
                         this.hero.reduceMoney(90);
+                        barrack.requestSoldier(hero.getResurrectionTime());
+                        barrack.requestSoldier(hero.getResurrectionTime());
+                        barrack.requestSoldier(hero.getResurrectionTime());
                     }
                 }else{
                     System.out.println("You already have a barrack.");
@@ -225,9 +313,9 @@ public class GameMap {
         }
     }
 
-    public void generateAliens(){
+    public void generateAliens(int probability){
         if (Alien.getNUM() < Alien.getMAXNUM()){
-            if ((int)(Math.random() * 6) == 0){
+            if ((int)(Math.random() * probability) == 0){
                 int routeNumber = chooseRandomRoute();
                 Route whichRoute = routes.get(routeNumber);
                 int whichAlien = (int)(Math.random() * 4);
@@ -395,7 +483,7 @@ public class GameMap {
         shootAliensByWeapons();
     }
 
-    public void flyingAliensAttack(){
+/*    public void flyingAliensAttack(){
         List<Alien> flying = new ArrayList<>();
         for (int i = 0;i < routes.size(); i++){
             List<Alien> onRoute = routes.get(i).getAliens();
@@ -430,7 +518,7 @@ public class GameMap {
                 flyingAlien.shoot(min);
             }
         }
-    }
+    }*/
 
     public void shootAliensByWeapons(){
         for (Dimension dimension : specifiedLocations.keySet()){
@@ -564,6 +652,10 @@ public class GameMap {
 
     public Hero getHero() {
         return hero;
+    }
+
+    public Barrack getBarrack() {
+        return barrack;
     }
 
     public List<Weapon> getWeapons(){

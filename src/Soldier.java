@@ -12,7 +12,7 @@
  */
 public class Soldier extends Warrior {
 
-    public void increaseRadious(){
+    public void increaseRadius(){
         setRadius(getRadius() * 1.1);
     }
 
@@ -20,12 +20,19 @@ public class Soldier extends Warrior {
             setRadius(0.5);
     }
 
+    public void reduceRadius(){
+        setRadius(getRadius() * 0.85);
+    }
+
     Soldier(Dimension dimension){
+        setEnergy(150);
+        setRadius(0.5);
         setDimension(dimension);
     }
 
     Soldier(){
-
+        setRadius(0.5);
+        setEnergy(150);
     }
 
     public void showStatus(){
@@ -36,8 +43,7 @@ public class Soldier extends Warrior {
 
     @Override
     public String toString() {
-        return "\tname: " + super.getName() +
-                "\nplace: " + super.getDimension() +
+        return "\tplace: " + super.getDimension() +
                 "\tenergy left : " + super.getEnergy() +
                 "\n";
     }
@@ -45,6 +51,7 @@ public class Soldier extends Warrior {
     @Override
     public boolean died() {
         return false;
+
     }
 
     public boolean resurrection(){return true;}

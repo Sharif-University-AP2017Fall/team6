@@ -10,7 +10,7 @@ import java.util.Map;
  * @author Tara
  */
 public class Hero extends Warrior {
-    private Soldier[] soldiers = new Soldier[3]; // remember to initialize!
+    private Soldier[] soldiers = new Soldier[3];
     private Dimension soldierDims[] = new Dimension[3];
     private int resurrectionTime;
     private int powerLevel;
@@ -24,12 +24,13 @@ public class Hero extends Warrior {
         setDimension(dimension);
         setMoney(1000);
         setEnergy(300);
+        setRadius(0.5);
         soldierDims[0] = new Dimension(15, 0);
         soldierDims[1] = new Dimension(-15, 0);
         soldierDims[2] = new Dimension(0, -15);
-        soldiers[0] = new Soldier(soldierDims[0].add(dimension));
-        soldiers[1] = new Soldier(soldierDims[1].add(dimension));
-        soldiers[2] = new Soldier(soldierDims[2].add(dimension));
+        soldiers[0] = null;
+        soldiers[1] = null;
+        soldiers[2] = null;
     }
 
     public int getPowerLevel() {
@@ -46,6 +47,10 @@ public class Hero extends Warrior {
 
     public void setExperienceLevel(int experienceLevel) {
         this.experienceLevel = experienceLevel;
+    }
+
+    public void setSoldiers(Soldier[] soldiers) {
+        this.soldiers = soldiers;
     }
 
     public int getResurrectionTime() {
@@ -138,7 +143,7 @@ public class Hero extends Warrior {
             this.reduceMoney(numAlive * 10);
             for (int i = 0; i < 3; i++){
                 if (soldiers[i] != null){
-                    soldiers[i].increaseRadious();
+                    soldiers[i].increaseRadius();
                 }
             }
             return true;
@@ -174,7 +179,6 @@ public class Hero extends Warrior {
     public String toString() {
         StringBuilder string = new StringBuilder();
         string.append("Hero " +
-                "\tname: " + super.getName() +
                 "\tplace: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy() +
                 "\n");

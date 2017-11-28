@@ -179,7 +179,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
             hero.reduceMoney(this.price);
             level++;
             upgradePower();
-            upgradeRadious();
+            upgradeRadius();
             return true;
         }
         return false;
@@ -190,8 +190,16 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         setPowerOfBullet((int)(this.powerOfBullet * 1.1));
     }
 
-    private void upgradeRadious(){
+    private void upgradeRadius(){
         setRadius(this.radius * 1.1);
+    }
+
+    public void reduceRadius(){
+        setRadius(this.radius * 0.85);
+    }
+
+    public void resetRadius(){
+        setRadius(this.initialRadius);
     }
 
     public void showStatus(){

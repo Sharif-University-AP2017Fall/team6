@@ -1,9 +1,14 @@
 import java.util.Scanner;
 
 public class AlienCreeps {
-    public static Scanner scanner = new Scanner(System.in);
-    public Hero hero = new Hero(new Dimension(0, 0));
-    public GameMap gameMap = new GameMap(hero);
+    private static int CURRENT_SECOND = 0;
+    private static int CURRENT_HOUR = 0;
+    private static int CURRENT_DAY = 0;
+
+    private Scanner scanner = new Scanner(System.in);
+    private Hero hero = new Hero(new Dimension(400, 300));
+    private GameMap gameMap = new GameMap(hero);
+
     public static void main(String[] args) {
         AlienCreeps game = new AlienCreeps();
         game.initialize();
@@ -15,9 +20,6 @@ public class AlienCreeps {
         for (int i = 0; i < 50; i++){
             System.out.println("second " + (i + 1));
             System.out.println("**********");
-            gameMap.generateAliens();
-            gameMap.moveAliens();
-            gameMap.shootAliensByWeapons();
         }
     }
     public void initialize(){
@@ -27,10 +29,9 @@ public class AlienCreeps {
         String input = scanner.nextLine();
         while (!input.equalsIgnoreCase("start")){
             if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]*")){
-                //System.out.println("lasjf");
                 String info[] = input.split(" ");
-                String weaponName = null;
-                int locationNum = 0;
+                String weaponName;
+                int locationNum;
                 if (info.length == 5){
                     weaponName = info[1];
                     locationNum = Integer.parseInt(info[4]);
@@ -47,7 +48,7 @@ public class AlienCreeps {
     }
 
     public void launch(){
-        //code to start game and put weapons in predefined locations.
+
         while (true){
             String input = scanner.nextLine();
             String info[] = input.split(" ");
@@ -68,7 +69,7 @@ public class AlienCreeps {
                 System.out.println(hero);
                 gameMap.getWeapons().forEach(System.out::println);
                 gameMap.showReachedFlag();
-            }else if (input.matches("move hero for \\([\\d]*,[\\s]*[\\d]*\\)")){
+            }else if (input.matches("move hero for \\(-*[\\d]*,[\\s]*-*[\\d]*\\)")){
                 String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
                 Dimension change = new Dimension(Integer.parseInt(dimInfo[0]),
                         Integer.parseInt(dimInfo[1]));
@@ -89,11 +90,36 @@ public class AlienCreeps {
                 gameMap.getWeapons(info[2]).forEach(System.out::println);
             }else if(input.matches("show achievements")){
                 System.out.println(hero.getAchievement());
-            }else if(input.matches("go ahead")){
-                gameMap.nextSecond();
+            }else if(input.matches("upgrade soldiers")){
+                gameMap.upgradeSoldier();
+            }else if(input.matches("show achievements")){
+                System.out.println(hero.getAchievement().toString());
+            }
+            else if(input.matches("go ahead")){
+                if (gameMap.nextSecond()) {
+                    if (CURRENT_SECOND < 9){
+                        CURRENT_SECOND++;
+                    }else if(CURRENT_HOUR < 23){
+                        CURRENT_HOUR++;
+                        CURRENT_SECOND = 0;
+                    }else {
+                        CURRENT_DAY++;
+                        CURRENT_HOUR = 0;
+                        CURRENT_DAY = 0;
+                    }
+                    return;
+                }
             }else{
                 System.out.println("invalid command");
             }
         }
+    }
+
+    public static int getCurrentSecond() {
+        return CURRENT_SECOND;
+    }
+
+    public static int getCurrentHour() {
+        return CURRENT_HOUR;
     }
 }
