@@ -118,25 +118,18 @@ public class GameMap {
     }
 
     public boolean nextSecond(){
-        /*if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0){
+        if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0){
+            System.out.println("Reducing soldiers' radius");
             reduceRadius();
         }
         if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == 4){
+            System.out.println("Soldiers' radius back to normal");
             resetRadius();
-        }
-        if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0){
-            canUpgradeSoldiers = true;
-            Soldier soldiers[] = new Soldier[3];
-            for (int i = 0; i < 3; i++){
-                if (soldiers[i] != null){
-                    soldiers[i].resetRadious();
-                }
-            }
         }
 
         randomWormhole();
 
-        updateTeslaStatus();
+        /*updateTeslaStatus();
         if (this.heroIsDead){
             this.secondsLeftToResurrectHero--;
             if (this.secondsLeftToResurrectHero == 0){
@@ -144,43 +137,39 @@ public class GameMap {
                 this.hero.setEnergy(300);
             }
         }*/
-        barrack.proceed();
-        Soldier soldier = barrack.getSoldier();
-        barrack.removeSoldier();
-        if (soldier != null){
-            for (int i = 0; i < 3; i++){
-                if (hero.getSoldiers()[i] == null){
-                    Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
-                    soldier.setDimension(soldierDimension);
-                    hero.getSoldiers()[i] = soldier;
-                    System.out.println("BARRACK MADE NEW SOLDIER");
-                    System.out.println("welcome soldier " + i);
-                    break;
+        if (barrack != null){
+            barrack.proceed();
+            Soldier soldier = barrack.getSoldier();
+            barrack.removeSoldier();
+            if (soldier != null){
+                for (int i = 0; i < 3; i++){
+                    if (hero.getSoldiers()[i] == null){
+                        Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
+                        soldier.setDimension(soldierDimension);
+                        hero.getSoldiers()[i] = soldier;
+                        System.out.println("BARRACK MADE NEW SOLDIER");
+                        System.out.println("welcome soldier " + i);
+                        break;
+                    }
                 }
-            }
-        }
-        /*if ((int)(Math.random() * 10) == 1){
-            List<Dimension> wormholeDims = Dimension.randomDimension(6);
-            for (int i = 0; i < 6; i++){
-                wormholes.get(i).setDimension(wormholeDims.get(i));
             }
         }
         if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10){
             generateAliens(4);
         }else{
-            generateAliens(8);
+            generateAliens(6);
         }
         if (moveAliens()) {
             return true;
         }
         shootAliens();
-        flyingAliensAttack();
         if (Alien.isSTART()){
+            System.out.println("There are " + Alien.getNUM() + " aliens in total.");
             if (Alien.getNUM() <= 0){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
                 return true;
             }
-        }*/
+        }
         return false;
     }
 
@@ -188,6 +177,7 @@ public class GameMap {
         for (int i = 0; i < 3; i++){
             Soldier s = hero.getSoldiers()[i];
             if (s != null){
+                System.out.println("Soldier #" + (i + 1));
                 s.reduceRadius();
             }
         }
@@ -203,7 +193,8 @@ public class GameMap {
         for (int i = 0; i < 3; i++){
             Soldier s = hero.getSoldiers()[i];
             if (s != null){
-                s.resetRadious();
+                System.out.println("Soldier #" + (i + 1));
+                s.resetRadius();
             }
         }
         for (Dimension dimension : specifiedLocations.keySet()) {
@@ -228,8 +219,10 @@ public class GameMap {
                 for (int i = 0; i < 3; i++){
                     if (soldiers[i] != null){
                         soldiers[i].increaseRadius();
+                        System.out.println("upgraded soldier #" + (i + 1));
                     }
                 }
+                canUpgradeSoldiers = false;
             }else{
                 System.out.println("Not enough money.");
             }
@@ -239,7 +232,7 @@ public class GameMap {
     }
 
     public void randomWormhole(){
-        if ((int)Math.random() == 10){
+        if (((int)Math.random() * 10) == 1){
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
             for (int i = 0; i < 6; i++){
                 wormholes.get(i).setDimension(wormholeDims.get(i));
@@ -251,12 +244,19 @@ public class GameMap {
     }
 
     public void showRemainingAliens(){
+        System.out.println("*** Aliens ***");
+        System.out.println("------------");
         ArrayList<Alien> remainingAliens = new ArrayList<>();
         for (int i = 0; i < routes.size(); i++){
             remainingAliens.addAll(routes.get(i).getAliens());
         }
-        Collections.sort(remainingAliens);
-        remainingAliens.forEach(System.out::println);
+        if (remainingAliens.size() > 0){
+            Collections.sort(remainingAliens);
+            remainingAliens.forEach(System.out::println);
+        }else{
+            System.out.println("No aliens.");
+        }
+        System.out.print("\n\n");
     }
 
     public void putWeaponInPlace(String weaponName, int whichPlace){
@@ -321,7 +321,7 @@ public class GameMap {
 
     public void generateAliens(int probability){
         if (Alien.getNUM() < Alien.getMAXNUM()){
-            if ((int)(Math.random() * probability) == 0){
+            if ((int)(Math.random() * probability) == 1){
                 int routeNumber = chooseRandomRoute();
                 Route whichRoute = routes.get(routeNumber);
                 int whichAlien = (int)(Math.random() * 4);
@@ -485,7 +485,7 @@ public class GameMap {
     }
 
     public void shootAliens(){
-        shootAliensByHeroAndSoldiers();
+        //shootAliensByHeroAndSoldiers();
         shootAliensByWeapons();
     }
 
@@ -537,6 +537,7 @@ public class GameMap {
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
                 if (deadAliens != null){
+                    System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
                     aliensToShoot.removeAll(deadAliens);
                     if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
                         reduceAllWeaponsPrice();
@@ -664,6 +665,16 @@ public class GameMap {
         return barrack;
     }
 
+    public void setCanUpgradeSoldiers() {
+        this.canUpgradeSoldiers = true;
+        Soldier soldiers[] = new Soldier[3];
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] != null){
+                soldiers[i].resetRadius();
+            }
+        }
+    }
+
     public List<Weapon> getWeapons(){
         List<Weapon> weapons = new ArrayList<>();
         for (Dimension dimension : specifiedLocations.keySet()) {
@@ -738,14 +749,14 @@ class Route{
                 Alien currentAlienToMove = aliensToMove.get(j);
                 Dimension dimensionToMove = lines[i].moveAlienOnLine(currentAlienToMove);
                 if (dimensionToMove == null){ //has reached the end of current line and the start of next line
-                    //System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
+                    System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
                     dimensionToMove = lines[i].getEndPoint();
                     currentAlienToMove.move(dimensionToMove);
 
                     alienMap.get(lines[i]).remove(currentAlienToMove);
 
                     if (intersections.contains(dimensionToMove)){
-                        //System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
                         reachedIntersection.add(currentAlienToMove);
                     }else{
                         alienMap.get(lines[i + 1]).add(currentAlienToMove);
@@ -753,7 +764,7 @@ class Route{
                 }else{
                     currentAlienToMove.move(dimensionToMove);
                     if (intersections.contains(dimensionToMove)){
-                        //System.out.println(currentAlienToMove.getName() + " has reached intersection");
+                        System.out.println(currentAlienToMove.getName() + " has reached intersection");
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }

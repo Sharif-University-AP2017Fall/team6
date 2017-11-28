@@ -199,7 +199,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
     }
 
     public void resetRadius(){
-        setRadius(this.initialRadius);
+        setRadius(this.radius * (double)100 / 85);
     }
 
     public void showStatus(){
@@ -210,11 +210,11 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
-        /*System.out.println("*****************");
+        System.out.println("*****************");
         System.out.println("checking location : " + dimension);
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
         System.out.println("radius : " + this.radius * GameMap.UNIT);
-        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
+        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
@@ -390,7 +390,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public String toString(){
-        return "name: " + this.name + " place: " + dimension + " level: " + this.level;
+        return "name: " + this.name + "\tplace: " + dimension + "\tlevel: " + this.level;
     }
 
     @Override

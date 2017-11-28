@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class AlienCreeps {
@@ -50,7 +51,7 @@ public class AlienCreeps {
     }
 
     public void launch(){
-
+       // gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
         while (true){
             String input = scanner.nextLine();
             String info[] = input.split(" ");
@@ -77,7 +78,10 @@ public class AlienCreeps {
             }else if (input.matches("show details")){
                 gameMap.showRemainingAliens();
                 System.out.println(hero);
+                System.out.println("*** Weapons ***");
+                System.out.println("----------");
                 gameMap.getWeapons().forEach(System.out::println);
+                System.out.print("\n\n");
                 gameMap.showReachedFlag();
             }else if (input.matches("move hero for \\(-*[\\d]*,[\\s]*-*[\\d]*\\)")){
                 String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
@@ -92,36 +96,43 @@ public class AlienCreeps {
             }else if(input.matches("hero status")){
                 hero.showStatus();
             }else if(input.matches("knights status")){
-                //if game map has barrack:
                 hero.showKnightStatus();
             }else if(input.matches("weapons status")){
                 gameMap.getWeapons().forEach(System.out::println);
             }else if(input.matches("status [\\w]*[\\s]*[\\w]* weapon")){
-                //fix it for rocket
                 String weaponName = info[1];
                 if (!info[2].equals("in")) {
                     weaponName += " " + info[2];
                 }
-                gameMap.getWeapons(weaponName).forEach(System.out::println);
+                List<Weapon> weapons = gameMap.getWeapons();
+                if (!weapons.isEmpty()){
+                    gameMap.getWeapons(weaponName).forEach(System.out::println);
+                }else {
+                    System.out.println("No " + weaponName + " found");
+                }
             }else if(input.matches("show achievements")){
                 System.out.println(hero.getAchievement());
             }else if(input.matches("upgrade soldiers")){
                 gameMap.upgradeSoldier();
             }else if(input.matches("show achievements")){
-                System.out.println(hero.getAchievement().toString());
+                System.out.print(hero.getAchievement().toString());
             }
             else if(input.matches("go ahead")){
+                if (CURRENT_SECOND < 9){ //9
+                    CURRENT_SECOND++;
+                }else if(CURRENT_HOUR < 23){ //23
+                    CURRENT_HOUR++;
+                    CURRENT_SECOND = 0;
+                }else {
+                    gameMap.setCanUpgradeSoldiers();
+                    CURRENT_DAY++;
+                    CURRENT_HOUR = 0;
+                    CURRENT_SECOND = 0;
+                }
+                /*System.out.println("Current second = " + CURRENT_SECOND);
+                System.out.println("Current hour = "  + CURRENT_HOUR);
+                System.out.println("Current day = " + CURRENT_DAY);*/
                 if (gameMap.nextSecond()) {
-                    if (CURRENT_SECOND < 9){
-                        CURRENT_SECOND++;
-                    }else if(CURRENT_HOUR < 23){
-                        CURRENT_HOUR++;
-                        CURRENT_SECOND = 0;
-                    }else {
-                        CURRENT_DAY++;
-                        CURRENT_HOUR = 0;
-                        CURRENT_DAY = 0;
-                    }
                     return;
                 }
             }else{

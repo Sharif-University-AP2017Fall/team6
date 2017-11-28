@@ -16,12 +16,16 @@ public class Soldier extends Warrior {
         setRadius(getRadius() * 1.1);
     }
 
-    public void resetRadious(){
-            setRadius(0.5);
+    public void resetRadius(){
+        System.out.println("previous reduced radius = " + getRadius());
+        setRadius(0.5);
+        System.out.println("normal radius = " + getRadius());
     }
 
     public void reduceRadius(){
+        System.out.println("previous radius = " + getRadius());
         setRadius(getRadius() * 0.85);
+        System.out.println("current radius = " + getRadius());
     }
 
     Soldier(Dimension dimension){
