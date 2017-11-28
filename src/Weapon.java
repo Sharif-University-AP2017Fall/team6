@@ -83,6 +83,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
             case "tesla":
                 setType(5);
                 setOnAirOnly(false);
+                break;
             default:
                 System.out.println(a + " not Found");
                 break;
@@ -210,6 +211,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     @Override
     public boolean isWithinRadius(Dimension dimension){
+        System.out.println(this.getName());
         System.out.println("*****************");
         System.out.println("checking location : " + dimension);
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
@@ -255,25 +257,26 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
 
     public static Weapon WeaponFactory(Dimension dimension,String type){
          switch (type.toLowerCase()){
-            case "machine gun":
-                return  new WeaponNearest(dimension,type);
-            case "rocket":
-                return  new WeaponAll(dimension,type);
-            case "laser":
-                return  new WeaponNearest(dimension,type);
-            case "antiaircraft":
-                return  new WeaponNearest(dimension,type);
-            case "freezer":
-                return  new WeaponAll(dimension,type);
-             case "tesla":
+             case "tesla":;
                  NUM_USED_TESLA++;
+                 SECONDS_LEFT_TO_USE_TESLA = 10;
                  TESLA_IN_USE = true;
                  return new WeaponAll(dimension, type);
-            default:
+             case "machine gun":
+                return  new WeaponNearest(dimension,type);
+             case "rocket":
+                return  new WeaponAll(dimension,type);
+             case "laser":
+                return  new WeaponNearest(dimension,type);
+             case "antiaircraft":
+                return  new WeaponNearest(dimension,type);
+             case "freezer":
+                return  new WeaponAll(dimension,type);
+             default:
                 System.out.println(type + " not Found");
                 break;
          }
-    return null;
+        return null;
     }
 
     public static int getInitialPrice(String a){

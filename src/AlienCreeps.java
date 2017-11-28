@@ -135,6 +135,8 @@ public class AlienCreeps {
                 if (gameMap.nextSecond()) {
                     return;
                 }
+            }else if (input.matches("show money")){
+                System.out.println(this.hero.getMoney());
             }else{
                 System.out.println("invalid command");
             }
