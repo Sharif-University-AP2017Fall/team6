@@ -92,33 +92,52 @@ public abstract class Warrior implements Movable, Shooter {
 
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
-        List<Alien> deadAlien = new ArrayList<>();
+        List<Alien> deadAliens = new ArrayList<>();
         if (!aliens.isEmpty()){
-            Alien min = aliens.get(0);
-            Dimension shootingPoint = this.getShootingPoint();
+            Alien min = findClosest(aliens);
+            /*Dimension shootingPoint = this.getShootingPoint();
             double distance = shootingPoint.distanceFrom(min.getDimension());
             int n = aliens.size();
             for (int i = 1; i < n; i++){
                 if (distance > shootingPoint.distanceFrom(aliens.get(i).getDimension())){
                     min = aliens.get(i);
                 }
-            }
+            }*/
             int maxBullet = this.getShootingSpeed();
             for (int numBullet = 0; numBullet < maxBullet; numBullet++){
                 if (!min.isCanFly()){
                     min.stop();
                     min.reduceEnergy(this.powerOfBullet);
                     if (min.isDead()){
-                        System.out.println("killed " + min.getName());
-                        deadAlien.add(min);
+                        deadAliens.add(min);
+                        aliens.remove(min);
                         numKilled++;
-                        return deadAlien;
+                        if (aliens.isEmpty()){
+                            return deadAliens;
+                        }else{
+                            min = findClosest(aliens);
+                        }
+                        //System.out.println("killed " + min.getName());
                     }
                 }
             }
             min.shoot(this);
         }
-        return deadAlien;
+        return deadAliens;
+    }
+
+    private Alien findClosest(List<Alien> aliens){
+        Alien min = aliens.get(0);
+        Dimension shootingPoint = this.getShootingPoint();
+        double distance = shootingPoint.distanceFrom(min.getDimension());
+        for (int i = 1; i < aliens.size(); i++){
+            double comparable = shootingPoint.distanceFrom(aliens.get(i).getDimension());
+            if (distance > comparable){
+                distance = comparable;
+                min = aliens.get(i);
+            }
+        }
+        return min;
     }
 
     @Override

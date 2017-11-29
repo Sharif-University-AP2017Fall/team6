@@ -84,7 +84,7 @@ public class Hero extends Warrior {
 
     public boolean addPowerLevel(){
         if (powerLevel < 3){
-            System.out.println("added one power level");
+            //System.out.println("added one power level");
             powerLevel++;
             this.increaseBulletPower();
             this.increaseBulletSpeed();
@@ -105,7 +105,7 @@ public class Hero extends Warrior {
 
     public boolean addExperienceLevel(int amount){
         if (amount > 0)
-            System.out.println("adding experience level amount : " + amount);
+            //System.out.println("adding experience level amount : " + amount);
         experienceLevel += amount;
         if (experienceLevel - powerLevel * 50 >= 50){
             if (addPowerLevel()) {
@@ -142,14 +142,20 @@ public class Hero extends Warrior {
                 numAlive++;
             }
         }
-        if (this.getMoney() >= numAlive * 10){
-            this.reduceMoney(numAlive * 10);
-            for (int i = 0; i < 3; i++){
-                if (soldiers[i] != null){
-                    soldiers[i].increaseRadius();
+        if (numAlive == 0){
+            System.out.println("There are no soldiers to upgrade.");
+        }else{
+            if (this.getMoney() >= numAlive * 10){
+                this.reduceMoney(numAlive * 10);
+                for (int i = 0; i < 3; i++){
+                    if (soldiers[i] != null){
+                        soldiers[i].increaseRadius();
+                    }
                 }
+                return true;
+            }else {
+                System.out.println("Not enough money");
             }
-            return true;
         }
         return false;
     }
@@ -213,7 +219,7 @@ public class Hero extends Warrior {
                 GameMap.YBOUND - 20,
                 20)
                 ){
-            System.out.println("moved hero to " + newDim);
+            //System.out.println("moved hero to " + newDim);
             setDimension(newDim);
             for (int i = 0; i < 3; i++){
                 if (soldiers[i] != null){

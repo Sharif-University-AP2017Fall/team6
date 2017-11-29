@@ -192,11 +192,11 @@ public class GameMap {
 
     public boolean nextSecond(){
         if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0){
-            System.out.println("Reducing soldiers' radius");
+            //System.out.println("Reducing soldiers' radius");
             reduceRadius();
         }
         if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == 4){
-            System.out.println("Soldiers' radius back to normal");
+            //System.out.println("Soldiers' radius back to normal");
             resetRadius();
         }
 
@@ -221,8 +221,8 @@ public class GameMap {
                         Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
                         soldier.setDimension(soldierDimension);
                         hero.getSoldiers()[i] = soldier;
-                        System.out.println("BARRACK MADE NEW SOLDIER");
-                        System.out.println("welcome soldier " + i);
+                        //System.out.println("BARRACK MADE NEW SOLDIER");
+                        //System.out.println("welcome soldier " + i);
                         break;
                     }
                 }
@@ -242,7 +242,7 @@ public class GameMap {
         shootAliens();
 
         if (Alien.isSTART()){
-            System.out.println("There are " + Alien.getNUM() + " aliens in total.");
+            //System.out.println("There are " + Alien.getNUM() + " aliens in total.");
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2){
                 System.out.println("CONGRATULATIONS! YOU WON :D");
                 return true;
@@ -255,7 +255,7 @@ public class GameMap {
         for (int i = 0; i < 3; i++){
             Soldier s = hero.getSoldiers()[i];
             if (s != null){
-                System.out.println("Soldier #" + (i + 1));
+                //System.out.println("Soldier #" + (i + 1));
                 s.reduceRadius();
             }
         }
@@ -271,7 +271,7 @@ public class GameMap {
         for (int i = 0; i < 3; i++){
             Soldier s = hero.getSoldiers()[i];
             if (s != null){
-                System.out.println("Soldier #" + (i + 1));
+                //System.out.println("Soldier #" + (i + 1));
                 s.resetRadius();
             }
         }
@@ -285,7 +285,8 @@ public class GameMap {
 
     public void upgradeSoldier(){
         if (canUpgradeSoldiers){
-            Soldier soldiers[] = this.hero.getSoldiers();
+            this.hero.upgradeSoldiers();
+            /*Soldier soldiers[] = this.hero.getSoldiers();
             int num = 0;
             for (int i = 0; i < 3; i++){
                 if (soldiers[i] != null){
@@ -298,7 +299,7 @@ public class GameMap {
                     for (int i = 0; i < 3; i++){
                         if (soldiers[i] != null){
                             soldiers[i].increaseRadius();
-                            System.out.println("upgraded soldier #" + (i + 1));
+                            //System.out.println("upgraded soldier #" + (i + 1));
                         }
                     }
                     canUpgradeSoldiers = false;
@@ -307,7 +308,7 @@ public class GameMap {
                 }
             }else{
                 System.out.println("There are no soldiers to upgrade.");
-            }
+            }*/
         }else{
             System.out.println("Can't upgrade soldiers twice in one day. Try again tomorrow.");
         }
@@ -383,8 +384,8 @@ public class GameMap {
                     if (!hero.upgradeWeapon(toUpgrade)){
                         System.out.println("Not enough money.");
                     }else{
-                        System.out.println("Upgraded successfully");
-                        System.out.println(hero.getMoney());
+                        //System.out.println("Upgraded successfully");
+                        //System.out.println(hero.getMoney());
                     }
                 }else{
                     System.out.println("Incorrect name");
@@ -481,7 +482,7 @@ public class GameMap {
                     return reachFlag(alien);
                 }
                 int randomNumber = chooseRandomRoute();
-                System.out.println(alien.getName() + " was relocated to route number " + randomNumber);
+                //System.out.println(alien.getName() + " was relocated to route number " + randomNumber);
                 Route whichRoute = routes.get(randomNumber);
                 int whichLine = whichRoute.whichLine(alien.getDimension());
                 whichRoute.addAlienToRoute(alien, whichLine);
@@ -501,6 +502,13 @@ public class GameMap {
                 if (m instanceof Weapon){
                     Weapon weapon = ((Weapon) m);
                     reducedSpeed.addAll(routes.get(i).aliensWithinRadius(weapon));
+                }
+            }
+            reducedSpeed.addAll(routes.get(i).aliensWithinRadius(this.hero));
+            for (int j = 0; j < 3; j++){
+                Soldier soldier = hero.getSoldiers()[j];
+                if (soldier != null){
+                    reducedSpeed.addAll(routes.get(i).aliensWithinRadius(soldier));
                 }
             }
         }
@@ -529,6 +537,7 @@ public class GameMap {
                         break;
                     }
                 }
+                backToNormalSpeed();
             }
         }
     }
@@ -546,7 +555,7 @@ public class GameMap {
                     reduceAllWeaponsPrice();
                 }
                 /*** test ***/
-                aliensToKill.forEach(System.out::println);
+                //aliensToKill.forEach(System.out::println);
 
                 this.hero.addMoney(aliensToKill.size() * 10);
                 updateAchivements(aliensToKill, "weapon");
@@ -624,7 +633,7 @@ public class GameMap {
                 }
                 List<Alien> deadAliens = weapon.shoot(aliensToShoot);
                 if (deadAliens != null && !deadAliens.isEmpty()){
-                    System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
+                    //System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
                     aliensToShoot.removeAll(deadAliens);
                     if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
                         reduceAllWeaponsPrice();
@@ -646,7 +655,7 @@ public class GameMap {
         List<Alien> dead = new ArrayList<>();
 
         if (!this.hero.isDead()){
-            System.out.println("hero start shooting");
+            //System.out.println("hero start shooting");
             List<Alien> toShoot = new ArrayList<>();
             for (int i = 0; i < routes.size(); i++){
                 toShoot.addAll(routes.get(i).aliensWithinRadius(this.hero));
@@ -666,14 +675,14 @@ public class GameMap {
                     this.secondsLeftToResurrectHero = this.hero.getResurrectionTime();
                 }
             }else{
-                System.out.println("no aliens in hero radius");
+                //System.out.println("no aliens in hero radius");
             }
         }
 
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++){
             if (soldiers[j] != null){
-                System.out.println("Soldier #" + (j + 1) + " start shooting");
+                //System.out.println("Soldier #" + (j + 1) + " start shooting");
                 List<Alien> toShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++){
                     toShoot.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
@@ -693,7 +702,7 @@ public class GameMap {
                         barrack.requestSoldier(this.hero.getResurrectionTime());
                     }
                 }else{
-                    System.out.println("no aliens in soldier radius.");
+                    //System.out.println("no aliens in soldier radius.");
                 }
             }
         }
@@ -864,14 +873,14 @@ class Route{
                 Alien currentAlienToMove = aliensToMove.get(j);
                 Dimension dimensionToMove = lines[i].moveAlienOnLine(currentAlienToMove);
                 if (dimensionToMove == null){ //has reached the end of current line and the start of next line
-                    System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
+                    //System.out.println(currentAlienToMove.getName() + " has reached end of line " + i);
                     dimensionToMove = lines[i].getEndPoint();
                     currentAlienToMove.move(dimensionToMove);
 
                     alienMap.get(lines[i]).remove(currentAlienToMove);
 
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
+                        //System.out.println(currentAlienToMove.getName() + " has reached intersection that is also end of line");
                         reachedIntersection.add(currentAlienToMove);
                     }else{
                         alienMap.get(lines[i + 1]).add(currentAlienToMove);
@@ -879,7 +888,7 @@ class Route{
                 }else{
                     currentAlienToMove.move(dimensionToMove);
                     if (intersections.contains(dimensionToMove)){
-                        System.out.println(currentAlienToMove.getName() + " has reached intersection");
+                        //System.out.println(currentAlienToMove.getName() + " has reached intersection");
                         alienMap.get(lines[i]).remove(currentAlienToMove);
                         reachedIntersection.add(currentAlienToMove);
                     }
@@ -1009,21 +1018,6 @@ class Line{
                 equation = equation.concat(" - " + (-1 * intercept));
             }
         }
-        /*else if(intercept == 0){
-            if (slope == 1){
-                equation = "y = x";
-            }else if (slope == -1){
-                equation = "y = -x";
-            }else {
-                equation = "y = " + slope + "x";
-            }
-        }else{
-            if (intercept > 0){
-                equation = "y = " + slope + "x + " + intercept;
-            }else{
-                equation = "y = " + slope + "x - " + (-1 * intercept);
-            }
-        }*/
         return "Start Point: " + startPoint + "\n" +
                 "End Point: " + endPoint + "\n" +
                 "Equation: " + equation + "\n\n";

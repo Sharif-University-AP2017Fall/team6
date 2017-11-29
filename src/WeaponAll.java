@@ -40,7 +40,7 @@ public class WeaponAll extends Weapon {
                     alienToShoot.reduceEnergy(this.getPowerOfBullet());
                 }
                 if (alienToShoot.isDead()){
-                    System.out.println(alienToShoot.getName() + " died.");
+                //    System.out.println(alienToShoot.getName() + " died.");
                     deadAliens.add(alienToShoot);
                 }
                 numBullet++;

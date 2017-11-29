@@ -20,6 +20,7 @@ public class WeaponNearest extends Weapon {
     @Override
     public List<Alien> shoot(List<Alien> aliens){
         List<Alien> canShoot = new ArrayList<>();
+        List<Alien> deadAlien = new ArrayList<>();
         if (this.isOnAirOnly()){
             for (int i = 0; i < aliens.size(); i++){
                 if (aliens.get(i).isCanFly()){
@@ -30,14 +31,14 @@ public class WeaponNearest extends Weapon {
             canShoot.addAll(aliens);
         }
         if (!canShoot.isEmpty()){
-            Alien min = canShoot.get(0);
-            Dimension shootingPoint = this.getShootingPoint();
+            Alien min = findClosest(canShoot);
+            /*Dimension shootingPoint = this.getShootingPoint();
             double distance = shootingPoint.distanceFrom(min.getDimension());
             for (int i = 1; i < canShoot.size(); i++){
                 if (Double.compare(distance, shootingPoint.distanceFrom(canShoot.get(i).getDimension())) > 0){
                     min = canShoot.get(i);
                 }
-            }
+            }*/
             int maxBullet = this.getSpeedOfBullet();
             for (int numBullet = 0; numBullet < maxBullet; numBullet++){
                 min.reduceSpeed(this.getSpeedReduction() / 100);
@@ -47,13 +48,31 @@ public class WeaponNearest extends Weapon {
                     min.reduceEnergy(this.getPowerOfBullet());
                 }
                 if (min.isDead()){
-                    System.out.println(min.getName() + " died.");
-                    List<Alien> deadAlien = new ArrayList<>();
+                    //  System.out.println(min.getName() + " died.");
                     deadAlien.add(min);
-                    return deadAlien;
+                    canShoot.remove(min);
+                    if (!canShoot.isEmpty()){
+                        min = findClosest(canShoot);
+                    }else{
+                        return deadAlien;
+                    }
                 }
             }
         }
         return null;
+    }
+
+    private Alien findClosest(List<Alien> aliens){
+        Alien min = aliens.get(0);
+        Dimension shootingPoint = this.getShootingPoint();
+        double distance = min.getDimension().distanceFrom(shootingPoint);
+        for (int i = 1; i < aliens.size(); i++){
+            double comparable = shootingPoint.distanceFrom(aliens.get(i).getDimension());
+            if (distance > comparable){
+                distance = comparable;
+                min = aliens.get(i);
+            }
+        }
+        return min;
     }
 }

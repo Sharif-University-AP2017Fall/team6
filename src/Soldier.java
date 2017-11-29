@@ -17,15 +17,15 @@ public class Soldier extends Warrior {
     }
 
     public void resetRadius(){
-        System.out.println("previous reduced radius = " + getRadius());
+    //    System.out.println("previous reduced radius = " + getRadius());
         setRadius(0.5);
-        System.out.println("normal radius = " + getRadius());
+      //  System.out.println("normal radius = " + getRadius());
     }
 
     public void reduceRadius(){
-        System.out.println("previous radius = " + getRadius());
+//        System.out.println("previous radius = " + getRadius());
         setRadius(getRadius() * 0.85);
-        System.out.println("current radius = " + getRadius());
+  //      System.out.println("current radius = " + getRadius());
     }
 
     Soldier(Dimension dimension){
@@ -64,7 +64,7 @@ public class Soldier extends Warrior {
         Dimension newDimension = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
         if (newDimension.isWithinBounds(GameMap.XBOUND, 0, GameMap.YBOUND, 0)){
-            System.out.println("Soldier moved to " + newDimension);
+            //System.out.println("Soldier moved to " + newDimension);
             setDimension(newDimension);
             return true;
         }
