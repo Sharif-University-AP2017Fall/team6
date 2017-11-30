@@ -14,43 +14,44 @@ import java.util.List;
  */
 public class WeaponAll extends Weapon {
 
-    public WeaponAll(Dimension dimension, String type) {
+    WeaponAll(Dimension dimension, String type) {
         super(dimension, type);
     }
+
     @Override
-    public List<Alien> shoot(List<Alien> aliens){
+    public List<Alien> shoot(List<Alien> aliens) {
         List<Alien> canShoot = new ArrayList<>();
         List<Alien> deadAliens = new ArrayList<>();
-        for (int i = 0; i < aliens.size(); i++){
-            if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())){
+        for (int i = 0; i < aliens.size(); i++) {
+            if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())) {
                 canShoot.add(aliens.get(i));
             }
         }
 
         //int alienNum = aliens.size();
         int numBullet = 0;
-        for (int i = 0; i < canShoot.size(); i++){
+        for (int i = 0; i < canShoot.size(); i++) {
             //int numForEach = (int) Math.ceil(getSpeedOfBullet() / alienNum);
             Alien alienToShoot = canShoot.get(i);
-            if (!alienToShoot.isDead()){
+            if (!alienToShoot.isDead()) {
                 alienToShoot.reduceSpeed(this.getSpeedReduction() / 100);
-                if (alienToShoot.isCanFly()){
+                if (alienToShoot.isCanFly()) {
                     alienToShoot.reduceEnergy(this.getPowerOfBulletAir());
-                }else{
+                } else {
                     alienToShoot.reduceEnergy(this.getPowerOfBullet());
                 }
-                if (alienToShoot.isDead()){
-                //    System.out.println(alienToShoot.getName() + " died.");
+                if (alienToShoot.isDead()) {
+                    //    System.out.println(alienToShoot.getName() + " died.");
                     deadAliens.add(alienToShoot);
                 }
                 numBullet++;
             }
-            if (numBullet >= getSpeedOfBullet()){
+            if (numBullet >= getSpeedOfBullet()) {
                 break;
-            }else if (numBullet < getSpeedOfBullet() && i == canShoot.size() - 1){
+            } else if (numBullet < getSpeedOfBullet() && i == canShoot.size() - 1) {
                 i = -1;
             }
-            if (canShoot.size() == deadAliens.size()){
+            if (canShoot.size() == deadAliens.size()) {
                 break;
             }
         }

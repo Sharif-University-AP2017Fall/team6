@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon implements Mappable, Shooter, Comparable{
+public abstract class Weapon implements Mappable, Shooter, Comparable {
 
     private String name;
     private Dimension dimension;
@@ -33,18 +33,18 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
     private int initialSpeedReduction;
     private double initialRadius;
 
-    public static int NUM_USED_TESLA = 0;
-    public static int SECONDS_LEFT_TO_USE_TESLA = 10;
-    public static boolean TESLA_IN_USE = false;
+    static int NUM_USED_TESLA = 0;
+    static int SECONDS_LEFT_TO_USE_TESLA = 10;
+    static boolean TESLA_IN_USE = false;
 
-    Weapon(Dimension dimension,String type){
+    Weapon(Dimension dimension, String type) {
         mapTo(dimension);
         setName(type);
         setType(type);
-        
+
     }
 
-    private void setType(String a){
+    private void setType(String a) {
         setLevel(1);
 
         initialPrice = Weapon.getInitialPrice(a);
@@ -60,7 +60,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         initialRadius = getInitialRadius(a);
         setRadius(initialRadius);
 
-        switch (a.toLowerCase()){
+        switch (a.toLowerCase()) {
             case "machine gun":
                 setType(0);
                 setOnAirOnly(false);
@@ -91,23 +91,23 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         }
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
-    public int getPrice() {
+    int getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    private void setPrice(int price) {
         this.price = price;
     }
 
-    public void reducePrice(double percentage){
+    void reducePrice(double percentage) {
         setPrice((int) (this.price * percentage));
     }
 
@@ -115,39 +115,39 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         return level;
     }
 
-    public void setLevel(int level) {
+    private void setLevel(int level) {
         this.level = level;
     }
 
-    public boolean isOnAirOnly() {
+    boolean isOnAirOnly() {
         return onAirOnly;
     }
 
-    public void setOnAirOnly(boolean onAirOnly) {
+    private void setOnAirOnly(boolean onAirOnly) {
         this.onAirOnly = onAirOnly;
     }
 
-    public double getRadius() {
+    double getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
+    void setRadius(double radius) {
         this.radius = radius;
     }
 
-    public int getSpeedOfBullet() {
+    int getSpeedOfBullet() {
         return speedOfBullet;
     }
 
-    public void setSpeedOfBullet(int speedOfBullet) {
+    private void setSpeedOfBullet(int speedOfBullet) {
         this.speedOfBullet = speedOfBullet;
     }
 
-    public int getPowerOfBullet() {
+    int getPowerOfBullet() {
         return powerOfBullet;
     }
 
-    public void setPowerOfBullet(int powerOfBullet) {
+    private void setPowerOfBullet(int powerOfBullet) {
         this.powerOfBullet = powerOfBullet;
     }
 
@@ -155,29 +155,29 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         return type;
     }
 
-    public void setType(int type) {
+    private void setType(int type) {
         this.type = type;
     }
 
-    public int getSpeedReduction() {
+    int getSpeedReduction() {
         return speedReduction;
     }
 
-    public void setSpeedReduction(int speedReduction) {
+    private void setSpeedReduction(int speedReduction) {
         this.speedReduction = speedReduction;
     }
 
-    public int getPowerOfBulletAir() {
+    int getPowerOfBulletAir() {
         return powerOfBulletAir;
     }
 
-    public void setPowerOfBulletAir(int powerOfBulletAir) {
+    private void setPowerOfBulletAir(int powerOfBulletAir) {
         this.powerOfBulletAir = powerOfBulletAir;
     }
 
-    public boolean upgrade(Hero hero){
-        if ((double)hero.getMoney() > (this.price * 1.2) && level < 3){
-            setPrice((int)(this.price * 1.2));
+    boolean upgrade(Hero hero) {
+        if ((double) hero.getMoney() > (this.price * 1.2) && level < 3) {
+            setPrice((int) (this.price * 1.2));
             hero.reduceMoney(this.price);
             level++;
             upgradePower();
@@ -187,31 +187,25 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         return false;
     }
 
-    private void upgradePower(){
-        setPowerOfBulletAir((int)(this.powerOfBulletAir * 1.1));
-        setPowerOfBullet((int)(this.powerOfBullet * 1.1));
+    private void upgradePower() {
+        setPowerOfBulletAir((int) (this.powerOfBulletAir * 1.1));
+        setPowerOfBullet((int) (this.powerOfBullet * 1.1));
     }
 
-    private void upgradeRadius(){
+    private void upgradeRadius() {
         setRadius(this.radius * 1.1);
     }
 
-    public void reduceRadius(){
+    void reduceRadius() {
         setRadius(this.radius * 0.85);
     }
 
-    public void resetRadius(){
-        setRadius(this.radius * (double)100 / 85);
-    }
-
-    public void showStatus(){
-        System.out.println("place: " + dimension +
-                "\tlevel: " + level +
-                "\n");
+    void resetRadius() {
+        setRadius(this.radius * (double) 100 / 85);
     }
 
     @Override
-    public boolean isWithinRadius(Dimension dimension){
+    public boolean isWithinRadius(Dimension dimension) {
         /*System.out.println(this.getName());
         System.out.println("*****************");
         System.out.println("checking location : " + this.dimension);
@@ -234,54 +228,33 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         this.dimension = dimension;
     }
 
-    public static Weapon search(List<Weapon> weapon,String nameSearch){
-        int n = weapon.size();
-        Weapon searching;
-        for (int i = 0; i < n; i++){
-            searching = weapon.get(i);
-            if (searching != null && searching.getName().equalsIgnoreCase(nameSearch)){
-                return searching;
-            }
-        }
-        return null;
-    }
-
-    public static Weapon search(List<Weapon> weapon,int x,int y){
-        int n=weapon.size();
-        Weapon searching;
-        for (int i=0;i<n;i++){
-
-
-        }
-        return null;
-    }
-
-    public static Weapon WeaponFactory(Dimension dimension,String type){
-         switch (type.toLowerCase()){
-             case "tesla":;
-                 NUM_USED_TESLA++;
-                 SECONDS_LEFT_TO_USE_TESLA = 10;
-                 TESLA_IN_USE = true;
-                 return new WeaponAll(dimension, type);
-             case "machine gun":
-                return  new WeaponNearest(dimension,type);
-             case "rocket":
-                return  new WeaponAll(dimension,type);
-             case "laser":
-                return  new WeaponNearest(dimension,type);
-             case "antiaircraft":
-                return  new WeaponNearest(dimension,type);
-             case "freezer":
-                return  new WeaponAll(dimension,type);
-             default:
+    static Weapon WeaponFactory(Dimension dimension, String type) {
+        switch (type.toLowerCase()) {
+            case "tesla":
+                ;
+                NUM_USED_TESLA++;
+                SECONDS_LEFT_TO_USE_TESLA = 10;
+                TESLA_IN_USE = true;
+                return new WeaponAll(dimension, type);
+            case "machine gun":
+                return new WeaponNearest(dimension, type);
+            case "rocket":
+                return new WeaponAll(dimension, type);
+            case "laser":
+                return new WeaponNearest(dimension, type);
+            case "antiaircraft":
+                return new WeaponNearest(dimension, type);
+            case "freezer":
+                return new WeaponAll(dimension, type);
+            default:
                 System.out.println(type + " not Found");
                 break;
-         }
+        }
         return null;
     }
 
-    public static int getInitialPrice(String a){
-        switch (a.toLowerCase()){
+    static int getInitialPrice(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 100;
             case "rocket":
@@ -298,9 +271,9 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
-    
-    public  int getInitialSpeedOfBullet(String a){
-    switch (a.toLowerCase()){
+
+    private int getInitialSpeedOfBullet(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 10;
             case "rocket":
@@ -315,9 +288,9 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
-    
-    public  int getInitialPowerOfBullet(String a){
-    switch (a.toLowerCase()){
+
+    private int getInitialPowerOfBullet(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 10;
             case "rocket":
@@ -332,9 +305,9 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
-    
-    public  int getInitialPowerOfBulletAir(String a){
-    switch (a.toLowerCase()){
+
+    private int getInitialPowerOfBulletAir(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 5;
             case "rocket":
@@ -350,8 +323,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         }
     }
 
-    public  int getInitialSpeedReduction(String a){
-    switch (a.toLowerCase()){
+    private int getInitialSpeedReduction(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 0;
             case "rocket":
@@ -367,8 +340,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         }
     }
 
-    public  double getInitialRadius(String a){
-    switch (a.toLowerCase()){
+    private double getInitialRadius(String a) {
+        switch (a.toLowerCase()) {
             case "machine gun":
                 return 1;
             case "rocket":
@@ -385,9 +358,9 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
-    
-    public boolean naturalDisatserWeapon(){
-        
+
+    boolean naturalDisasterWeapon() {
+
         setLevel(1);
         setPrice(initialPrice);
         setSpeedOfBullet(initialSpeedOfBullet);
@@ -395,13 +368,13 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         setPowerOfBulletAir(initialPowerOfBulletAir);
         setSpeedReduction(initialSpeedReduction);
         setRadius(initialRadius);
-        System.out.println(this.name +"weapon in "+ this.dimension +" was hit by a natural disaster :(( ");
-        
+        System.out.println(this.name + "weapon in " + this.dimension + " was hit by a natural disaster :(( ");
+
         return true;
-        
+
     }
-    
-    public static void showWeaponList(){
+
+    static void showWeaponList() {
         System.out.println("Machine Gun\n" +
                 "Rocket\n" +
                 "Laser\n" +
@@ -411,7 +384,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "name: " + this.name + "\tplace: " + dimension + "\tlevel: " + this.level;
     }
 

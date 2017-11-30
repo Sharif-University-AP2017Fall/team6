@@ -1,4 +1,4 @@
-public class Alien implements Movable, Comparable{
+public class Alien implements Movable, Comparable {
     private static int NUM = 0;
     private static int MAXNUM = 25;
     private static boolean START = false;
@@ -13,22 +13,22 @@ public class Alien implements Movable, Comparable{
     private int type;
 
     private boolean canFly;
-    private double radius;
 
     public Dimension getDimension() {
         return dimension;
     }
+
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 
-    public Alien(String name) {
+    Alien(String name) {
         NUM++;
         //System.out.println("******* ****");
         //System.out.println("num = " + NUM);
         START = true;
         this.name = name;
-        switch (name){
+        switch (name) {
             case "Albertonion":
                 this.energy = 250;
                 this.speed = 8;
@@ -68,20 +68,20 @@ public class Alien implements Movable, Comparable{
         }
     }
 
-    public void reduceSpeed(double reductionPercentage){
+    void reduceSpeed(double reductionPercentage) {
         int reduceAmount = (int) (this.speed * reductionPercentage);
         this.speed -= reduceAmount;
     }
 
-    public void stop(){
+    void stop() {
         this.speed = 0;
     }
 
-    public void backToNormalSpeed(){
+    void backToNormalSpeed() {
         this.speed = this.initialSpeed;
     }
 
-    public void reduceEnergy(int amount){
+    void reduceEnergy(int amount) {
        /* System.out.println(this.name);
         System.out.println("*************");
         System.out.println("current energy : "  + this.energy);
@@ -90,52 +90,31 @@ public class Alien implements Movable, Comparable{
         this.energy -= amount;
     }
 
-    public boolean isDead(){
+    boolean isDead() {
         return energy <= 0;
     }
 
-    public void fire(Warrior warrior){}
-    
-    public boolean gotShot(Warrior a){return false;}
-    public boolean gotShot(Weapon a){return false;}
-    
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public int getEnergy() {
-        return energy;
-    }
-
-    public int getSpeed() {
+    int getSpeed() {
         return speed;
     }
 
-    public int getShootingSpeed() {
-        return shootingSpeed;
-    }
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public boolean isCanFly() {
+    boolean isCanFly() {
         return canFly;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public static int getNUM() {
+    static int getNUM() {
         return NUM;
     }
 
-    public static boolean isSTART() {
+    static boolean isSTART() {
         return START;
     }
 
-    public static int getMAXNUM() {
+    static int getMAXNUM() {
         return MAXNUM;
     }
 
@@ -148,31 +127,22 @@ public class Alien implements Movable, Comparable{
 
     @Override
     public String toString() {
-        return  "name: " + name + "\tplace: " + dimension + "\tenergy left: " + energy;
+        return "name: " + name + "\tplace: " + dimension + "\tenergy left: " + energy;
     }
 
-    public boolean shoot(Warrior warrior){
+    boolean shoot(Warrior warrior) {
         int maxBullet = shootingSpeed;
-        for (int i = 0; i < maxBullet; i++){
+        for (int i = 0; i < maxBullet; i++) {
             warrior.reduceEnergy(strength);
-            if (warrior.isDead()){
+            if (warrior.isDead()) {
                 return true;
             }
         }
         return false;
     }
 
-    public static void reduceNum(int NUM) {
+    static void reduceNum(int NUM) {
         Alien.NUM -= NUM;
-    }
-
-    public boolean isWithinRadius(Dimension dimension){
-        /*System.out.println("*****************");
-        System.out.println("checking location : " + dimension);
-        System.out.println("distance : " + this.dimension.distanceFrom(dimension));
-        System.out.println("radius : " + this.radius * GameMap.UNIT);
-        System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
-        return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 
     @Override

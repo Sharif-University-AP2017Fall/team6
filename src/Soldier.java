@@ -1,45 +1,32 @@
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
 /**
  *
  * @author Tara
  */
 public class Soldier extends Warrior {
 
-    public void increaseRadius(){
+    void increaseRadius() {
         setRadius(getRadius() * 1.1);
     }
 
-    public void resetRadius(){
-    //    System.out.println("previous reduced radius = " + getRadius());
+    void resetRadius() {
+        //    System.out.println("previous reduced radius = " + getRadius());
         setRadius(0.5);
-      //  System.out.println("normal radius = " + getRadius());
+        //  System.out.println("normal radius = " + getRadius());
     }
 
-    public void reduceRadius(){
+    void reduceRadius() {
 //        System.out.println("previous radius = " + getRadius());
         setRadius(getRadius() * 0.85);
-  //      System.out.println("current radius = " + getRadius());
+        //      System.out.println("current radius = " + getRadius());
     }
 
-    Soldier(Dimension dimension){
-        setEnergy(150);
-        setRadius(0.5);
-        setDimension(dimension);
-    }
-
-    Soldier(){
+    Soldier() {
         setRadius(0.5);
         setEnergy(150);
     }
 
-    public void showStatus(){
+    void showStatus() {
         System.out.println("\tplace: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy());
     }
@@ -52,18 +39,10 @@ public class Soldier extends Warrior {
     }
 
     @Override
-    public boolean died() {
-        return false;
-
-    }
-
-    public boolean resurrection(){return true;}
-
-    @Override
     public boolean move(Dimension changeDimension) {
         Dimension newDimension = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
-        if (newDimension.isWithinBounds(GameMap.XBOUND, 0, GameMap.YBOUND, 0)){
+        if (newDimension.isWithinBounds(GameMap.XBOUND, 0, GameMap.YBOUND, 0)) {
             //System.out.println("Soldier moved to " + newDimension);
             setDimension(newDimension);
             return true;
