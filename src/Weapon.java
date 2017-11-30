@@ -41,6 +41,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
         mapTo(dimension);
         setName(type);
         setType(type);
+        
     }
 
     private void setType(String a){
@@ -297,6 +298,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
+    
     public  int getInitialSpeedOfBullet(String a){
     switch (a.toLowerCase()){
             case "machine gun":
@@ -313,6 +315,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
+    
     public  int getInitialPowerOfBullet(String a){
     switch (a.toLowerCase()){
             case "machine gun":
@@ -329,6 +332,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
+    
     public  int getInitialPowerOfBulletAir(String a){
     switch (a.toLowerCase()){
             case "machine gun":
@@ -381,7 +385,22 @@ public abstract class Weapon implements Mappable, Shooter, Comparable{
                 return -1;
         }
     }
-
+    
+    public boolean naturalDisatserWeapon(){
+        
+        setLevel(1);
+        setPrice(initialPrice);
+        setSpeedOfBullet(initialSpeedOfBullet);
+        setPowerOfBullet(initialPowerOfBullet);
+        setPowerOfBulletAir(initialPowerOfBulletAir);
+        setSpeedReduction(initialSpeedReduction);
+        setRadius(initialRadius);
+        System.out.println(this.name +"weapon in "+ this.dimension +" was hit by a natural disaster :(( ");
+        
+        return true;
+        
+    }
+    
     public static void showWeaponList(){
         System.out.println("Machine Gun\n" +
                 "Rocket\n" +

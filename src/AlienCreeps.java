@@ -54,6 +54,7 @@ public class AlienCreeps {
 
     public void launch(){
        // gameMap.getRoutes().get(0).addAlienToRoute(new Alien("Activionion"), 0);
+        
         while (true){
             String input = scanner.nextLine();
             String info[] = input.split(" ");
@@ -120,13 +121,21 @@ public class AlienCreeps {
                 System.out.print(hero.getAchievement().toString());
             }
             else if(input.matches("go ahead")){
+                if (CURRENT_SECOND==0 && CURRENT_HOUR==0 && CURRENT_DAY==0)
+                    {
+                    gameMap.randomWeather();
+                    }
                 if (CURRENT_SECOND < 9){ //9
                     CURRENT_SECOND++;
+                    gameMap.plague();
                 }else if(CURRENT_HOUR < 23){ //23
+                    gameMap.superNaturalHelp();
+                    gameMap.naturalDisater();
                     CURRENT_HOUR++;
                     CURRENT_SECOND = 0;
                 }else {
                     gameMap.setCanUpgradeSoldiers();
+                    gameMap.randomWeather();
                     CURRENT_DAY++;
                     CURRENT_HOUR = 0;
                     CURRENT_SECOND = 0;

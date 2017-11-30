@@ -19,8 +19,11 @@ public class GameMap {
 
     private boolean heroIsDead = false;
     private int secondsLeftToResurrectHero = 0;
+    private int weatherCondition=0;
+    private double weatherConditionConstant=1;
 
     private boolean canUpgradeSoldiers = true;
+    private boolean SuperNaturalHelp = false;
 
     public GameMap(Hero hero) {
         flag = new Dimension(800, 300);
@@ -412,18 +415,22 @@ public class GameMap {
                     case 0:
                         //System.out.println("Adding Albertonion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Albertonion"), 0);
+                        System.out.println("An Albertonion entered!!");
                         break;
                     case 1:
                        // System.out.println("Adding Algwasonion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Algwasonion"), 0);
+                        System.out.println("An Algwasonion entered!!");
                         break;
                     case 2:
                       //  System.out.println("Adding Activinion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Activionion"), 0);
+                        System.out.println("An Activionion entered!!");
                         break;
                     case 3:
                      //   System.out.println("Adding Aironion to route " + routeNumber);
                         whichRoute.addAlienToRoute(new Alien("Aironion"), 0);
+                        System.out.println("An Aironion entered!!");
                         break;
                 }
             }
@@ -836,6 +843,135 @@ public class GameMap {
         for (int i = 0; )
     }*/
 
+    public int randomWeather(){
+    
+    int weather=(int)(Math.random()*6);
+    System.out.println("Today's weather forcast:");
+    switch(weather){
+        case 0:
+            System.out.println("\t Sunny");
+            updateRadiusWeather(1/weatherConditionConstant);
+            weatherConditionConstant=1;
+            break;
+        case 1:
+            System.out.println("\t Partly Clouldy");
+            updateRadiusWeather(0.95/weatherConditionConstant);
+            weatherConditionConstant=0.95;
+            break;
+        case 2:
+            System.out.println("\t Rainy");
+            updateRadiusWeather(0.9/weatherConditionConstant);
+            weatherConditionConstant=0.9;
+            break;
+        case 3:
+            System.out.println("\t Thunders expected");
+            updateRadiusWeather(0.95/weatherConditionConstant);
+            weatherConditionConstant=0.95;
+            break;
+        case 4:
+            System.out.println("\t Hail O.o");
+            updateRadiusWeather(0.8/weatherConditionConstant);
+            weatherConditionConstant=0.8;
+            break;
+        case 5:
+            System.out.println("\t What a Cool and pleasing day to kill Aliens");
+            updateRadiusWeather(1.5/weatherConditionConstant);
+            weatherConditionConstant=1.5;
+            break;      
+
+    }
+    
+    weatherCondition=weather;
+    return weather;
+    }
+    
+    private void updateRadiusWeather(double a){
+        List<Weapon> weapon=getWeapons();
+        double currentR;
+        if (a<0){
+            a=-a;
+        }
+        for (int i=0;i<weapon.size();i++){
+            currentR=weapon.get(i).getRadius();
+            weapon.get(i).setRadius(currentR*a);
+        }
+        currentR=hero.getRadius();
+        hero.setRadius(currentR);
+        Soldier[] soldiers=hero.getSoldiers();
+        for (int i=0;i<soldiers.length;i++){
+            if (soldiers[i]!=null){
+                currentR=soldiers[i].getRadius();
+                soldiers[i].setRadius(a*currentR);
+            }
+        }
+        if(a>1){
+            System.out.println("\t Radius has increased by "+a+" :)");
+        }
+        else if (a==1){
+            System.out.println("\t normal weather condition, no change in radius");
+        }
+        else{
+            System.out.println("\t Radius has decreased by "+a+" :(");
+        }
+        
+    } 
+    
+    public int getWeather()
+        {return weatherCondition;
+    }
+    
+    public void naturalDisater(){
+        int prob=(int)(Math.random()*3);
+        if (prob==2){
+            List<Weapon> weapon=getWeapons();
+            int prob2=(int)Math.random()*weapon.size();
+            weapon.get(prob2).naturalDisatserWeapon();
+            
+        }
+    
+    
+    }
+    
+    public void superNaturalHelp(){
+      if (!SuperNaturalHelp){ 
+         int prob=(int)(Math.random()*3);
+         
+         if (prob==2){
+                List<Alien> aliensToKill = new ArrayList<>();
+                for (int i = 0; i < routes.size(); i++){
+                    aliensToKill.addAll(routes.get(i).getAliens());
+                }
+                this.hero.addExperienceLevel(aliensToKill.size() * 5);
+                this.hero.addMoney(aliensToKill.size() * 10);
+                updateAchivements(aliensToKill, "hero");
+                for (int i = 0; i < routes.size(); i++){
+                    this.removeAliensFromRoute(routes.get(i), aliensToKill);
+                
+                 }
+                SuperNaturalHelp=true;
+                System.out.println("Super  Natural  Help :)))))");
+            }
+
+      }
+    }
+    
+    public void plague(){
+        int prob=(int)(Math.random()*10);
+        
+        if (prob==2){
+            Soldier[] soldiers=hero.getSoldiers();
+            soldiers[0]=null;
+            soldiers[1]=null;
+            soldiers[2]=null;
+            hero.setSoldiers(soldiers);
+            barrack.requestSoldier(hero.getResurrectionTime());
+            barrack.requestSoldier(hero.getResurrectionTime());
+            barrack.requestSoldier(hero.getResurrectionTime());
+            System.out.println("Unfortunately your Soldiers died as a result of a plague epidemic :(");
+        }
+    }
+    
+    
     @Override
     public String toString() {
         String map = "\n\n**** Game Map ****\n\n\n";
