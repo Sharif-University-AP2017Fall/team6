@@ -102,9 +102,9 @@ public class Hero extends Warrior {
         this.resurrectionTime = (int) ((5.0 - (((double) this.experienceLevel / 100) + (double) this.powerLevel)) * 0.99);
     }
 
-    Weapon buyWeapon(String nameOfWeapon, Dimension dimension) {
+    Weapon buyWeapon(String nameOfWeapon, Dimension dimension, int locationNum) {
         if (this.getMoney() >= Weapon.getInitialPrice(nameOfWeapon)) {
-            Weapon bought = Weapon.WeaponFactory(dimension, nameOfWeapon);
+            Weapon bought = Weapon.WeaponFactory(dimension, nameOfWeapon, locationNum);
             if (bought != null) {
                 reduceMoney(bought.getPrice());
             }

@@ -1,9 +1,12 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Barrack implements Mappable {
     private int price;
     private Dimension dimension;
     private boolean inUse;
     private int soldiersInDemand;
-    private int timeNeeded; //pay attention :))) vip :)) we know it, you don't. hahahhahaha :)))
+    private List<Integer> timeNeeded;
     private int currentTime;
     private Soldier training;
 
@@ -13,6 +16,7 @@ public class Barrack implements Mappable {
         this.dimension = dimension;
         this.inUse = false;
         this.currentTime = 0;
+        timeNeeded = new ArrayList<>();
     }
 
     @Override
@@ -27,12 +31,13 @@ public class Barrack implements Mappable {
         soldiersInDemand = 0;
         this.currentTime = 0;
         this.training = null;
+        timeNeeded = new ArrayList<>();
     }
 
     void requestSoldier(int timeNeeded) {
         //   System.out.println("adding one soldier in line");
         // System.out.println("waiting time = " + timeNeeded);
-        this.timeNeeded = timeNeeded;
+        this.timeNeeded.add(timeNeeded);
         inUse = true;
         soldiersInDemand++;
     }
@@ -43,14 +48,15 @@ public class Barrack implements Mappable {
             currentTime++;
             //        System.out.println("current time is " + currentTime);
             //       System.out.println("time left is " + (timeNeeded - currentTime));
-            if (currentTime >= timeNeeded) {
+            if (currentTime >= timeNeeded.get(0)) {
                 training = new Soldier();
                 currentTime = 0;
+                timeNeeded.remove(0);
                 soldiersInDemand--;
                 //           System.out.println(soldiersInDemand + " soldiers left to make");
                 if (soldiersInDemand == 0) {
                     inUse = false;
-                    timeNeeded = 0;
+                    //timeNeeded = 0;
                 }
             }
         } else {
@@ -59,11 +65,11 @@ public class Barrack implements Mappable {
     }
 
     Soldier getSoldier() {
-        if (inUse) {
+        /*if (inUse) {
             if (training == null) {
                 //          System.out.println("not ready yet");
             }
-        }
+        }*/
         return training;
     }
 

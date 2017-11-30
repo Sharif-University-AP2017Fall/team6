@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class WeaponNearest extends Weapon {
 
-    WeaponNearest(Dimension dimension, String type) {
-        super(dimension, type);
+    WeaponNearest(Dimension dimension, String type, int locationNum) {
+        super(dimension, type, locationNum);
     }
 
     @Override

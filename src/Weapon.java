@@ -15,6 +15,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
 
     private String name;
     private Dimension dimension;
+    private int locationNum;
     private int type; //not sure if this is necessary
     private int price;
     private int level;
@@ -37,11 +38,11 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
     static int SECONDS_LEFT_TO_USE_TESLA = 10;
     static boolean TESLA_IN_USE = false;
 
-    Weapon(Dimension dimension, String type) {
+    Weapon(Dimension dimension, String type, int locationNum) {
         mapTo(dimension);
         setName(type);
         setType(type);
-
+        this.locationNum = locationNum;
     }
 
     private void setType(String a) {
@@ -228,24 +229,23 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
         this.dimension = dimension;
     }
 
-    static Weapon WeaponFactory(Dimension dimension, String type) {
+    static Weapon WeaponFactory(Dimension dimension, String type, int locationNum) {
         switch (type.toLowerCase()) {
             case "tesla":
-                ;
                 NUM_USED_TESLA++;
                 SECONDS_LEFT_TO_USE_TESLA = 10;
                 TESLA_IN_USE = true;
-                return new WeaponAll(dimension, type);
+                return new WeaponAll(dimension, type, locationNum);
             case "machine gun":
-                return new WeaponNearest(dimension, type);
+                return new WeaponNearest(dimension, type, locationNum);
             case "rocket":
-                return new WeaponAll(dimension, type);
+                return new WeaponAll(dimension, type, locationNum);
             case "laser":
-                return new WeaponNearest(dimension, type);
+                return new WeaponNearest(dimension, type, locationNum);
             case "antiaircraft":
-                return new WeaponNearest(dimension, type);
+                return new WeaponNearest(dimension, type, locationNum);
             case "freezer":
-                return new WeaponAll(dimension, type);
+                return new WeaponAll(dimension, type, locationNum);
             default:
                 System.out.println(type + " not Found");
                 break;
@@ -385,7 +385,15 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
 
     @Override
     public String toString() {
-        return "name: " + this.name + "\tplace: " + dimension + "\tlevel: " + this.level;
+        if (this.locationNum > 0){
+            return "name: " + this.name + "" +
+                    "\tplace: " + this.dimension + "" +
+                    "\tlocation number: " + this.locationNum + "" +
+                    "\tlevel: " + this.level;
+        }
+        return "name: " + this.name + "" +
+                "\tplace: " + this.dimension + "" +
+                "\tlevel: " + this.level;
     }
 
     @Override

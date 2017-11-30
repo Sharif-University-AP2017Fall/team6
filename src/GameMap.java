@@ -23,6 +23,9 @@ public class GameMap {
     private boolean canUpgradeSoldiers = true;
     private boolean SuperNaturalHelp = false;
 
+    private boolean hasBurrowed = false;
+    private Bank bank = new Bank();
+
     GameMap(Hero hero) {
         flag = new Dimension(800, 300);
         this.hero = hero;
@@ -192,6 +195,23 @@ public class GameMap {
     }
 
     boolean nextSecond() {
+        if (hasBurrowed){
+            if (bank.isDue(AlienCreeps.getCurrentDay() - 1)){
+                if (!bank.payBack(this.hero)) {
+                    for (Dimension dimension : specifiedLocations.keySet()) {
+                        if (!(specifiedLocations.get(dimension) instanceof Barrack)){
+                            specifiedLocations.replace(dimension, null);
+                        }
+                    }
+                    System.out.println("You have failed to pay the bank back. All weapons have been destroyed.");
+                }
+                hasBurrowed = false;
+            }else{
+                if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0)
+                System.out.println("You have " + (bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) + " day(s) left to pay the bank back.");
+            }
+        }
+
         if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0) {
             //System.out.println("Reducing soldiers' radius");
             reduceRadius();
@@ -287,6 +307,7 @@ public class GameMap {
     void upgradeSoldier() {
         if (canUpgradeSoldiers) {
             this.hero.upgradeSoldiers();
+            canUpgradeSoldiers = false;
         } else {
             System.out.println("Can't upgrade soldiers twice in one day. Try again tomorrow.");
         }
@@ -340,6 +361,8 @@ public class GameMap {
         if (whichPlace > specifiedLocations.keySet().size()) {
             System.out.println("There are only " + specifiedLocations.keySet().size() + " available places.");
             return;
+        }else if (whichPlace <= 0){
+            System.out.println("Invalid number.");
         }
         Dimension dimension = specifiedNumbers.get(whichPlace);
         if (specifiedLocations.get(dimension) == null) {
@@ -357,7 +380,7 @@ public class GameMap {
                     System.out.println("You already have a barrack.");
                 }
             } else {
-                Weapon bought = this.hero.buyWeapon(weaponName, dimension);
+                Weapon bought = this.hero.buyWeapon(weaponName, dimension, whichPlace);
                 specifiedLocations.put(dimension, bought);
             }
         } else {
@@ -379,7 +402,7 @@ public class GameMap {
                         System.out.println("Not enough money.");
                     } else {
                         //System.out.println("Upgraded successfully");
-                        //System.out.println(hero.getMoney());
+                        //System.out.println(hero.payBack());
                     }
                 } else {
                     System.out.println("Incorrect name");
@@ -452,6 +475,7 @@ public class GameMap {
                 reachedFlag[i] = alien;
                 // System.out.println((i + 1) + " aliens have reached flag.");
                 if (i == 4) {
+                    System.out.println("GAME OVER");
                     return true;
                 }
                 break;
@@ -543,7 +567,7 @@ public class GameMap {
         if (Weapon.NUM_USED_TESLA < 2) {
             if (!Weapon.TESLA_IN_USE) {
 
-                Weapon tesla = Weapon.WeaponFactory(dimension, "Tesla");
+                Weapon tesla = Weapon.WeaponFactory(dimension, "Tesla", 0);
                 List<Alien> aliensToKill = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
                     aliensToKill.addAll(routes.get(i).aliensWithinRadius(tesla));
@@ -747,14 +771,13 @@ public class GameMap {
     }
 
     public void showAvailableLocations() {
-        int number = 1;
         System.out.println("Available locations are: ");
         System.out.println("-------------------------");
-        for (Dimension dimension : specifiedLocations.keySet()) {
-            if (specifiedLocations.get(dimension) == null) {
-                System.out.println(number + " - " + dimension);
+        for (Integer integer : specifiedNumbers.keySet()) {
+            Dimension dimension = specifiedNumbers.get(integer);
+            if (specifiedLocations.get(dimension) == null){
+                System.out.println(integer + " - " + dimension);
             }
-            number++;
         }
     }
 
@@ -876,6 +899,23 @@ public class GameMap {
             barrack.requestSoldier(hero.getResurrectionTime());
             barrack.requestSoldier(hero.getResurrectionTime());
             System.out.println("Unfortunately your Soldiers died as a result of a plague epidemic :(");
+        }
+    }
+
+    void burrowMoney(int amount){
+        this.hasBurrowed = true;
+        bank.lendMoney(this.hero, amount);
+        bank.setDueDate(AlienCreeps.getCurrentDay() + 3);
+    }
+
+    void payBack() {
+        if (this.hasBurrowed) {
+            if (!bank.payBack(this.hero)) {
+                System.out.println("You don't have enough money to pay the bank back.");
+            } else {
+                System.out.println("Thank you for paying back in time :)");
+                this.hasBurrowed = false;
+            }
         }
     }
 

@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class WeaponAll extends Weapon {
 
-    WeaponAll(Dimension dimension, String type) {
-        super(dimension, type);
+    WeaponAll(Dimension dimension, String type, int locationNum) {
+        super(dimension, type, locationNum);
     }
 
     @Override

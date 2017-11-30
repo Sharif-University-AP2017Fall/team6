@@ -96,7 +96,7 @@ public class AlienCreeps {
                 gameMap.getWeapons().forEach(System.out::println);
             } else if (input.matches("status [\\w]*[\\s]*[\\w]* weapon")) {
                 String weaponName = info[1];
-                if (!info[2].equals("in")) {
+                if (!info[2].equals("weapon")) {
                     weaponName += " " + info[2];
                 }
                 List<Weapon> weapons = gameMap.getWeapons();
@@ -115,10 +115,10 @@ public class AlienCreeps {
                 if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
                     gameMap.randomWeather();
                 }
-                if (CURRENT_SECOND < 9) { //9
+                if (CURRENT_SECOND < 1) { //9
                     CURRENT_SECOND++;
                     gameMap.plague();
-                } else if (CURRENT_HOUR < 23) { //23
+                } else if (CURRENT_HOUR < 2) { //23
                     gameMap.superNaturalHelp();
                     gameMap.naturalDisater();
                     CURRENT_HOUR++;
@@ -138,6 +138,14 @@ public class AlienCreeps {
                 }
             } else if (input.matches("show money")) {
                 System.out.println(this.hero.getMoney());
+            } else if (input.matches("burrow [\\d]* from intergalactic bank")) {
+                gameMap.burrowMoney(Integer.parseInt(info[1]));
+            } else if (input.matches("pay the intergalactic bank back")) {
+                gameMap.payBack();
+            } else if (input.matches("show map")) {
+                System.out.println(gameMap);
+            } else if (input.matches("show available locations")) {
+                gameMap.showAvailableLocations();
             } else {
                 System.out.println("invalid command");
             }
@@ -150,5 +158,9 @@ public class AlienCreeps {
 
     static int getCurrentHour() {
         return CURRENT_HOUR;
+    }
+
+    static int getCurrentDay() {
+        return CURRENT_DAY;
     }
 }
