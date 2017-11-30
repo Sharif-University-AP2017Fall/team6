@@ -24,7 +24,7 @@ public class AlienCreeps {
         System.out.println("Type \'start\' to start game");
         String input = scanner.nextLine();
         while (!input.equalsIgnoreCase("start")) {
-            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]*")) {
+            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
                 String info[] = input.split(" ");
                 String weaponName;
                 int locationNum;
@@ -50,7 +50,7 @@ public class AlienCreeps {
         while (true) {
             String input = scanner.nextLine();
             String info[] = input.split(" ");
-            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]*")) {
+            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
                 String weaponName = info[1];
                 int locationNum;
                 if (!info[2].equals("in")) {
@@ -60,7 +60,7 @@ public class AlienCreeps {
                     locationNum = Integer.parseInt(info[4]);
                 }
                 gameMap.putWeaponInPlace(weaponName, locationNum);
-            } else if (input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]*")) {
+            } else if (input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
                 String weaponName = info[1];
                 int locationNum;
                 if (!info[2].equals("in")) {
@@ -78,12 +78,12 @@ public class AlienCreeps {
                 gameMap.getWeapons().forEach(System.out::println);
                 System.out.print("\n\n");
                 gameMap.showReachedFlag();
-            } else if (input.matches("move hero for \\(-*[\\d]*,[\\s]*-*[\\d]*\\)")) {
+            } else if (input.matches("move hero for \\(-*[\\d]+,[\\s]*-*[\\d]+\\)")) {
                 String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
                 Dimension change = new Dimension(Integer.parseInt(dimInfo[0]),
                         Integer.parseInt(dimInfo[1]));
                 gameMap.moveHero(change);
-            } else if (input.matches("tesla in \\([\\d]*,[\\s]*[\\d]*\\)")) {
+            } else if (input.matches("tesla in \\([\\d]+,[\\s]*[\\d]+\\)")) {
                 String dimInfo[] = input.substring(10, input.length() - 1).split(",[\\s]*");
                 Dimension dimension = new Dimension(Integer.parseInt(dimInfo[0]),
                         Integer.parseInt(dimInfo[1]));
@@ -138,7 +138,7 @@ public class AlienCreeps {
                 }
             } else if (input.matches("show money")) {
                 System.out.println(this.hero.getMoney());
-            } else if (input.matches("burrow [\\d]* from intergalactic bank")) {
+            } else if (input.matches("burrow [\\d]+ from intergalactic bank")) {
                 gameMap.burrowMoney(Integer.parseInt(info[1]));
             } else if (input.matches("pay the intergalactic bank back")) {
                 gameMap.payBack();
