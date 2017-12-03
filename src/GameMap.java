@@ -255,9 +255,9 @@ public class GameMap {
         }
 
         if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10) {
-            generateAliens(1);
-        } else {
             generateAliens(2);
+        } else {
+            generateAliens(3);
         }
 
         shootAliens();
