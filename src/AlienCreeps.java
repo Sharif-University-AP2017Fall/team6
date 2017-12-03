@@ -115,10 +115,10 @@ public class AlienCreeps {
                 if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
                     gameMap.randomWeather();
                 }
-                if (CURRENT_SECOND < 1) { //9
+                if (CURRENT_SECOND < 9) { //9
                     CURRENT_SECOND++;
                     gameMap.plague();
-                } else if (CURRENT_HOUR < 2) { //23
+                } else if (CURRENT_HOUR < 23) { //23
                     gameMap.superNaturalHelp();
                     gameMap.naturalDisater();
                     CURRENT_HOUR++;
