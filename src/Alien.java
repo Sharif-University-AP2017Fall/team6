@@ -82,11 +82,11 @@ public class Alien implements Movable, Comparable {
     }
 
     void reduceEnergy(int amount) {
-       /* System.out.println(this.name);
+        System.out.println(this.name);
         System.out.println("*************");
         System.out.println("current energy : "  + this.energy);
         System.out.println("reduction amount : " + amount);
-        System.out.println("new energy : " + (this.energy - amount));*/
+        System.out.println("new energy : " + (this.energy - amount));
         this.energy -= amount;
     }
 
@@ -134,6 +134,7 @@ public class Alien implements Movable, Comparable {
         int maxBullet = shootingSpeed;
         for (int i = 0; i < maxBullet; i++) {
             warrior.reduceEnergy(strength);
+            System.out.println(name + " reduced hero's energy");
             if (warrior.isDead()) {
                 return true;
             }

@@ -24,6 +24,8 @@ public class Soldier extends Warrior {
     Soldier() {
         setRadius(0.5);
         setEnergy(150);
+        setShootingSpeed(5);
+        setPowerOfBullet(10);
     }
 
     void showStatus() {

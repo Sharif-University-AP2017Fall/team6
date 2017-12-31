@@ -24,6 +24,8 @@ public class Hero extends Warrior {
         setMoney(10000);
         setEnergy(300);
         setRadius(0.5);
+        setShootingSpeed(7);
+        setPowerOfBullet(20);
         soldierDims[0] = new Dimension(15, 0);
         soldierDims[1] = new Dimension(-15, 0);
         soldierDims[2] = new Dimension(0, -15);

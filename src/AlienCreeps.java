@@ -5,6 +5,7 @@ public class AlienCreeps {
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
     private static int CURRENT_DAY = 0;
+    Thread gameTime;
 
     private Scanner scanner = new Scanner(System.in);
     private Hero hero = new Hero(new Dimension(400, 300));
@@ -46,6 +47,43 @@ public class AlienCreeps {
     }
 
     private void launch() {
+
+        Runnable r = () -> {
+            while (true){
+                try {
+                    Thread.sleep(4500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
+                    gameMap.randomWeather();
+                }
+                if (CURRENT_SECOND < 9) { //9
+                    CURRENT_SECOND++;
+                    gameMap.plague();
+                } else if (CURRENT_HOUR < 23) { //23
+                    gameMap.superNaturalHelp();
+                    gameMap.naturalDisaster();
+                    CURRENT_HOUR++;
+                    CURRENT_SECOND = 0;
+                } else {
+                    gameMap.setCanUpgradeSoldiers();
+                    gameMap.randomWeather();
+                    CURRENT_DAY++;
+                    CURRENT_HOUR = 0;
+                    CURRENT_SECOND = 0;
+                }
+                System.out.println("------------------------");
+                System.out.println("Current second = " + CURRENT_SECOND);
+                System.out.println("Current hour = "  + CURRENT_HOUR);
+                System.out.println("Current day = " + CURRENT_DAY);
+                if (gameMap.nextSecond()) {
+                    return;
+                }
+            }
+        };
+        gameTime = new Thread(r);
+        gameTime.start();
 
         while (true) {
             String input = scanner.nextLine();
@@ -111,31 +149,6 @@ public class AlienCreeps {
                 gameMap.upgradeSoldier();
             } else if (input.matches("show achievements")) {
                 System.out.print(hero.getAchievement().toString());
-            } else if (input.matches("go ahead")) {
-                if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
-                    gameMap.randomWeather();
-                }
-                if (CURRENT_SECOND < 9) { //9
-                    CURRENT_SECOND++;
-                    gameMap.plague();
-                } else if (CURRENT_HOUR < 23) { //23
-                    gameMap.superNaturalHelp();
-                    gameMap.naturalDisater();
-                    CURRENT_HOUR++;
-                    CURRENT_SECOND = 0;
-                } else {
-                    gameMap.setCanUpgradeSoldiers();
-                    gameMap.randomWeather();
-                    CURRENT_DAY++;
-                    CURRENT_HOUR = 0;
-                    CURRENT_SECOND = 0;
-                }
-                /*System.out.println("Current second = " + CURRENT_SECOND);
-                System.out.println("Current hour = "  + CURRENT_HOUR);
-                System.out.println("Current day = " + CURRENT_DAY);*/
-                if (gameMap.nextSecond()) {
-                    return;
-                }
             } else if (input.matches("show money")) {
                 System.out.println(this.hero.getMoney());
             } else if (input.matches("burrow [\\d]+ from intergalactic bank")) {

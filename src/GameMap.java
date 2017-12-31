@@ -213,11 +213,9 @@ public class GameMap {
         }
 
         if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0) {
-            //System.out.println("Reducing soldiers' radius");
             reduceRadius();
         }
         if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == 4) {
-            //System.out.println("Soldiers' radius back to normal");
             resetRadius();
         }
 
@@ -263,7 +261,6 @@ public class GameMap {
         shootAliens();
 
         if (Alien.isSTART()) {
-            //System.out.println("There are " + Alien.getNUM() + " aliens in total.");
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
                 System.out.println("CONGRATULATIONS! YOU WON :D");
                 return true;
@@ -854,12 +851,13 @@ public class GameMap {
         return weatherCondition;
     }
 
-    void naturalDisater() {
+    void naturalDisaster() {
         int prob = (int) (Math.random() * 3);
         if (prob == 2) {
             List<Weapon> weapon = getWeapons();
             int prob2 = (int) Math.random() * weapon.size();
-            weapon.get(prob2).naturalDisasterWeapon();
+            if (!weapon.isEmpty())
+                weapon.get(prob2).naturalDisasterWeapon();
 
         }
     }
@@ -895,9 +893,11 @@ public class GameMap {
             soldiers[1] = null;
             soldiers[2] = null;
             hero.setSoldiers(soldiers);
-            barrack.requestSoldier(hero.getResurrectionTime());
-            barrack.requestSoldier(hero.getResurrectionTime());
-            barrack.requestSoldier(hero.getResurrectionTime());
+            if (barrack != null){
+                barrack.requestSoldier(hero.getResurrectionTime());
+                barrack.requestSoldier(hero.getResurrectionTime());
+                barrack.requestSoldier(hero.getResurrectionTime());
+            }
             System.out.println("Unfortunately your Soldiers died as a result of a plague epidemic :(");
         }
     }
@@ -1009,6 +1009,7 @@ class Route {
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
                 if (shooter.isWithinRadius(a.getDimension())) {
+                    System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                     toShoot.add(a);
                 }
             }

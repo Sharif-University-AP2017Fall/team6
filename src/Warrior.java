@@ -20,6 +20,14 @@ public abstract class Warrior implements Movable, Shooter {
         return radius;
     }
 
+    public void setShootingSpeed(int shootingSpeed) {
+        this.shootingSpeed = shootingSpeed;
+    }
+
+    public void setPowerOfBullet(int powerOfBullet) {
+        this.powerOfBullet = powerOfBullet;
+    }
+
     public Dimension getDimension() {
         return dimension;
     }
