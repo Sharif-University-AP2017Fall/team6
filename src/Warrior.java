@@ -16,6 +16,10 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
     private int numKilled;
 
+    protected boolean shouldShoot;
+    protected List<Alien> toShoot;
+    protected List<Alien> killed;
+
     double getRadius() {
         return radius;
     }
@@ -79,32 +83,92 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     @Override
     public abstract void move(Dimension dimension);
 
+    private Object lock = new Object();
+
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
         List<Alien> deadAliens = new ArrayList<>();
+        Alien min = null;
         if (!aliens.isEmpty()) {
-            Alien min = findClosest(aliens);
+            min = findClosest(aliens);
             int maxBullet = this.getShootingSpeed();
+
             for (int numBullet = 0; numBullet < maxBullet; numBullet++) {
-                if (!min.isCanFly()) {
-                    min.stop();
-                    min.reduceEnergy(this.powerOfBullet);
-                    if (min.isDead()) {
-                        deadAliens.add(min);
-                        aliens.remove(min);
-                        numKilled++;
-                        if (aliens.isEmpty()) {
-                            return deadAliens;
-                        } else {
-                            min = findClosest(aliens);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (lock){
+                    if (!min.isCanFly()) {
+                        min.stop();
+                        min.reduceEnergy(this.powerOfBullet);
+                        min.setShoot(true);
+                        min.setToShoot(this);
+                        // TODO thread related alien response shooting
+                        if (min.isDead()) {
+                            deadAliens.add(min);
+                            min.setShoot(false);
+                            min.setToShoot(null);
+                            aliens.remove(min);
+                            numKilled++;
+                            if (aliens.isEmpty()) {
+                                System.out.println("finished shooting");
+                                try {
+                                    Thread.sleep(10);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                synchronized (lock){
+                                    stopShooting();
+                                }
+                                return deadAliens;
+                            } else {
+                                min = findClosest(aliens);
+                            }
+                            //System.out.println("killed " + min.getName());
                         }
-                        //System.out.println("killed " + min.getName());
                     }
                 }
             }
-            min.shoot(this);
+            //min.shoot(this);
+        }
+        System.out.println("finished shooting");
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock){
+            stopShooting();
+            if (min != null){
+                min.setToShoot(null);
+                min.setShoot(false);
+            }
         }
         return deadAliens;
+    }
+
+    public List<Alien> getKilled() {
+        return killed;
+    }
+
+    public void resetKilled(){
+        killed = new ArrayList<>();
+    }
+
+    public void setShouldShoot(List<Alien> toShoot){
+        this.shouldShoot = true;
+        this.toShoot = toShoot;
+        resetKilled();
+    }
+
+    public void stopShooting(){
+        this.shouldShoot = false;
+    }
+
+    public boolean isShouldShoot() {
+        return shouldShoot;
     }
 
     private Alien findClosest(List<Alien> aliens) {

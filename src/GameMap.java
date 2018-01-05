@@ -671,11 +671,11 @@ public class GameMap {
     }
 
     private void shootAliens() {
-     //   heroAndSoldiersShoot();
+        heroAndSoldiersShoot();
         weaponsShoot();
     }
 
-    private Object lock = new Object();
+    private Object lock1 = new Object();
 
     private void weaponsShoot() {
         for (Dimension dimension : specifiedLocations.keySet()) {
@@ -700,7 +700,7 @@ public class GameMap {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        synchronized (lock){
+                        synchronized (lock1){
                             if (!weapon.isShouldShoot()){
                                 break;
                             }
@@ -725,6 +725,8 @@ public class GameMap {
         //backToNormalSpeed();
     }
 
+    private Object lock2 = new Object();
+
     private void heroAndSoldiersShoot() {
         List<Alien> dead = new ArrayList<>();
 
@@ -736,6 +738,20 @@ public class GameMap {
             }
 
             if (!toShoot.isEmpty()) {
+                hero.setShouldShoot(toShoot);
+
+                while (hero.isShouldShoot()){
+                    try {
+                        Thread.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (lock2){
+                        if (!hero.isShouldShoot()){
+                            break;
+                        }
+                    }
+                }
                 List<Alien> killedByHero = this.hero.shoot(toShoot);
                 if (!killedByHero.isEmpty()) {
                     if (this.hero.addExperienceLevel(killedByHero.size() * 15)) {
@@ -763,6 +779,21 @@ public class GameMap {
                 }
 
                 if (!toShoot.isEmpty()) {
+                    soldiers[j].setShouldShoot(toShoot);
+
+                    while (soldiers[j].isShouldShoot()){
+                        try {
+                            Thread.sleep(2);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        synchronized (lock2){
+                            if (!hero.isShouldShoot()){
+                                break;
+                            }
+                        }
+                    }
+
                     List<Alien> killedBySoldier = soldiers[j].shoot(toShoot);
                     if (!killedBySoldier.isEmpty()) {
                         if (this.hero.addExperienceLevel(killedBySoldier.size() * 5)) {
@@ -1057,7 +1088,6 @@ class Route {
 
                 if (destination == null) {
                     destination = lines[i].getEndPoint();
-
                     current.setMoveTo(destination);
                    // current.setMove(true);
 
@@ -1070,9 +1100,7 @@ class Route {
                         alienMap.get(lines[i + 1]).add(current);
                     }
                 } else {
-                    //System.out.println("moving "+ current.getName());
                     current.setMoveTo(destination);
-                //    current.setMove(true);
                     if (intersections.contains(destination)) {
                         alienMap.get(lines[i]).remove(current);
                         reachedIntersection.add(current);

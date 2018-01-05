@@ -81,6 +81,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     void stop() {
         this.speed = 0;
+        this.moveTo = this.currentDim;
         this.shouldMove = false;
     }
 
@@ -173,8 +174,10 @@ public class Alien implements Movable, Comparable, Runnable {
     }
 
     public void setMoveTo(Dimension moveTo) {
-        this.shouldMove = true;
-        this.moveTo = moveTo;
+        if (speed > 0){
+            this.shouldMove = true;
+            this.moveTo = moveTo;
+        }
       //  System.out.println(name + " should move to " + moveTo);
     }
 
@@ -203,15 +206,13 @@ public class Alien implements Movable, Comparable, Runnable {
         System.out.println("Created " + name);
 
         while (true){
-           // System.out.println("checking " + name);
-         //   System.out.println(name + " " + shouldMove);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             if (shouldShoot){
-                int sleepMilliseconds = 5000 / shootingSpeed;
+                int sleepMilliseconds = 5000 / shootingSpeed; //TODO change 5000 later
                 try {
                     Thread.sleep(sleepMilliseconds);
                 } catch (InterruptedException e) {
@@ -238,6 +239,9 @@ public class Alien implements Movable, Comparable, Runnable {
                       //  System.out.println(name + " has to move to " + moveTo);
                         move(newDim);
                       //  System.out.println("$$$$$$$$");
+                    }
+                    if (!shouldMove){
+                        break;
                     }
                 }
                 if (currentDim.equals(moveTo)){

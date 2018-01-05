@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 /**
  *
@@ -37,6 +39,7 @@ public class Hero extends Warrior {
         soldiers[2] = null;
 
         shouldMove = false;
+        super.shouldShoot = false;
     }
 
     void setSoldiers(Soldier[] soldiers) {
@@ -276,6 +279,10 @@ public class Hero extends Warrior {
                 }
                 //System.out.println("hero reached destination");
                 setShouldMove(false);
+            }
+
+            if (shouldShoot){
+                killed.addAll(shoot(toShoot));
             }
         }
     }

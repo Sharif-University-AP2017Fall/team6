@@ -47,6 +47,9 @@ public class Soldier extends Warrior {
 
     @Override
     public void run() {
+        if (shouldShoot){
+            killed.addAll(shoot(toShoot));
+        }
 
     }
 }
