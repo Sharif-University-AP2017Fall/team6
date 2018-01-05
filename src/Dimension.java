@@ -19,6 +19,14 @@ public class Dimension {
         return Y;
     }
 
+    public void setX(double x) {
+        X = x;
+    }
+
+    public void setY(double y) {
+        Y = y;
+    }
+
     double distanceFrom(Dimension dimension) {
         return Math.sqrt((dimension.getX() - this.X) * (dimension.getX() - this.X) +
                 (dimension.getY() - this.Y) * (dimension.getY() - this.Y));
@@ -51,6 +59,8 @@ public class Dimension {
     @Override
     public boolean equals(Object obj) {
         Dimension otherDimension = ((Dimension) obj);
-        return otherDimension.getY() == this.Y && otherDimension.getX() == this.X;
+        double yDif = otherDimension.getY() - this.Y;
+        double xDif = otherDimension.getX() - this.X;
+        return (yDif <= 1 && yDif >= -1) && (xDif <= 1 && xDif >= -1);
     }
 }

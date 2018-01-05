@@ -6,9 +6,9 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Warrior implements Movable, Shooter {
+public abstract class Warrior implements Movable, Shooter, Runnable {
     private double radius;
-    private Dimension dimension;
+    protected Dimension dimension;
 
     private int powerOfBullet;
     private int shootingSpeed;
@@ -46,6 +46,7 @@ public abstract class Warrior implements Movable, Shooter {
 
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
+        //System.out.println("moved to " + dimension);
     }
 
     void setEnergy(int energy) {
@@ -68,8 +69,15 @@ public abstract class Warrior implements Movable, Shooter {
         this.shootingSpeed = (int) (this.shootingSpeed * 1.1);
     }
 
+    void correctDim(){
+        double x = Math.round(dimension.getX() * 10);
+        double y = Math.round(dimension.getY() * 10);
+        Dimension newDim = new Dimension(x / 10,
+                y / 10);
+        setDimension(newDim);
+    }
     @Override
-    public abstract boolean move(Dimension dimension);
+    public abstract void move(Dimension dimension);
 
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
@@ -102,9 +110,9 @@ public abstract class Warrior implements Movable, Shooter {
     private Alien findClosest(List<Alien> aliens) {
         Alien min = aliens.get(0);
         Dimension shootingPoint = this.getShootingPoint();
-        double distance = shootingPoint.distanceFrom(min.getDimension());
+        double distance = shootingPoint.distanceFrom(min.getCurrentDim());
         for (int i = 1; i < aliens.size(); i++) {
-            double comparable = shootingPoint.distanceFrom(aliens.get(i).getDimension());
+            double comparable = shootingPoint.distanceFrom(aliens.get(i).getCurrentDim());
             if (distance > comparable) {
                 distance = comparable;
                 min = aliens.get(i);

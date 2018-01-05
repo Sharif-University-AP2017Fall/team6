@@ -18,6 +18,9 @@ public class Hero extends Warrior {
     private int money;
     private Achievement achievement;
 
+    private boolean shouldMove;
+    private Dimension moveTo;
+
     Hero(Dimension dimension) {
         achievement = new Achievement();
         setDimension(dimension);
@@ -32,6 +35,8 @@ public class Hero extends Warrior {
         soldiers[0] = null;
         soldiers[1] = null;
         soldiers[2] = null;
+
+        shouldMove = false;
     }
 
     void setSoldiers(Soldier[] soldiers) {
@@ -187,26 +192,113 @@ public class Hero extends Warrior {
     /**** Hero changes its dimension and his alive soldiers also change dimensions. ****/
 
     @Override
-    public boolean move(Dimension changeDimension) {
+    public void move(Dimension changeDimension) {
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
+
+        setDimension(newDim);
+        correctDim();
+    //    System.out.println("hero moved to " + newDim);
+        for (int i = 0; i < 3; i++) {
+            if (soldiers[i] != null) {
+                soldiers[i].move(changeDimension);
+                soldiers[i].correctDim();
+            }
+        }
+    }
+
+    private Object lock = new Object();
+
+    @Override
+    public void run() {
+        while (true){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (shouldMove){
+
+                //TODO improve calculations
+                Dimension moveFrom = super.dimension;
+                double deltaX = (moveTo.getX() - moveFrom.getX());
+                double deltaY = (moveTo.getY() - moveFrom.getY());
+                double slope = deltaY / deltaX;
+
+                int signX = 0;
+                if (deltaX > 0){
+                    signX = 1;
+                }else if (deltaX < 0){
+                    signX = -1;
+                }
+
+                deltaX = 10.0 * signX;
+                deltaY = deltaX * slope;
+
+                Dimension changeDim = new Dimension(deltaX, deltaY);
+                while (!super.dimension.equals(moveTo)){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (lock){
+                        double xRemain = (moveTo.getX() - super.dimension.getX());
+
+                        if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
+                            changeDim.setX(xRemain);
+                        }
+                        double yRemain = (moveTo.getY() - super.dimension.getY());
+                        if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
+                            changeDim.setY(yRemain);
+                        }
+                        move(changeDim);
+                    }
+                }
+                /*for (int i = 0; i < 10; i++){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (lock){
+                        move(changeDim);
+                    }
+                }*/
+             //   if (super.dimension.equals(moveTo)){
+              //      System.out.println("hero reached destination");
+                    setShouldMove(false);
+               // }
+            }
+        }
+    }
+
+    public boolean setShouldMove(Dimension changeDim){
+        Dimension newDim = new Dimension(getShootingPoint().getX() + changeDim.getX(),
+                getShootingPoint().getY() + changeDim.getY());
+
         if (newDim.isWithinBounds(GameMap.XBOUND - 20,
                 20,
                 GameMap.YBOUND - 20,
                 20)
                 ) {
-            //System.out.println("moved hero to " + newDim);
-            setDimension(newDim);
-            for (int i = 0; i < 3; i++) {
-                if (soldiers[i] != null) {
-                    soldiers[i].move(changeDimension);
-                }
-            }
-            return true;
+            this.shouldMove = true;
+            this.moveTo = newDim;
+        //    System.out.println( "hero should move to " + moveTo);
         } else {
             System.out.println("Can't move outside of 20 < x < 780 & 20 < y < 580.");
-            return false;
+            this.shouldMove = false;
         }
+        return this.shouldMove;
+    }
+
+    public void setShouldMove(boolean shouldMove){
+        this.shouldMove = shouldMove;
+    }
+
+    public boolean isShouldMove() {
+        return shouldMove;
     }
 }
 

@@ -59,9 +59,9 @@ public class WeaponNearest extends Weapon {
     private Alien findClosest(List<Alien> aliens) {
         Alien min = aliens.get(0);
         Dimension shootingPoint = this.getShootingPoint();
-        double distance = min.getDimension().distanceFrom(shootingPoint);
+        double distance = min.getCurrentDim().distanceFrom(shootingPoint);
         for (int i = 1; i < aliens.size(); i++) {
-            double comparable = shootingPoint.distanceFrom(aliens.get(i).getDimension());
+            double comparable = shootingPoint.distanceFrom(aliens.get(i).getCurrentDim());
             if (distance > comparable) {
                 distance = comparable;
                 min = aliens.get(i);

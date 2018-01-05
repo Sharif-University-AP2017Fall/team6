@@ -1,3 +1,3 @@
 public interface Movable {
-    boolean move(Dimension dimension);
+    void move(Dimension dimension);
 }

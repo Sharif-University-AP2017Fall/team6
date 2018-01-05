@@ -41,14 +41,16 @@ public class Soldier extends Warrior {
     }
 
     @Override
-    public boolean move(Dimension changeDimension) {
+    public void move(Dimension changeDimension) {
         Dimension newDimension = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
-        if (newDimension.isWithinBounds(GameMap.XBOUND, 0, GameMap.YBOUND, 0)) {
-            //System.out.println("Soldier moved to " + newDimension);
-            setDimension(newDimension);
-            return true;
-        }
-        return false;
+
+        setDimension(newDimension);
+    //    System.out.println("soldier moved to " + newDimension);
+    }
+
+    @Override
+    public void run() {
+
     }
 }
