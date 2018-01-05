@@ -61,6 +61,6 @@ public class Dimension {
         Dimension otherDimension = ((Dimension) obj);
         double yDif = otherDimension.getY() - this.Y;
         double xDif = otherDimension.getX() - this.X;
-        return (yDif <= 1 && yDif >= -1) && (xDif <= 1 && xDif >= -1);
+        return (yDif < 1 && yDif > -1) && (xDif < 1 && xDif > -1);
     }
 }

@@ -198,7 +198,7 @@ public class Hero extends Warrior {
 
         setDimension(newDim);
         correctDim();
-    //    System.out.println("hero moved to " + newDim);
+     //   System.out.println("hero moved to " + newDim);
         for (int i = 0; i < 3; i++) {
             if (soldiers[i] != null) {
                 soldiers[i].move(changeDimension);
@@ -233,8 +233,26 @@ public class Hero extends Warrior {
                     signX = -1;
                 }
 
-                deltaX = 10.0 * signX;
-                deltaY = deltaX * slope;
+                int signY = 0;
+                if (deltaY > 0){
+                    signY = 1;
+                }else if(deltaY < 0){
+                    signY = -1;
+                }
+
+                if (signX == 0 && signY == 0){
+                    deltaX = 0;
+                    deltaY = 0;
+                }else if (signX == 0){
+                    deltaX = 0;
+                    deltaY = 10.0 * signY;
+                }else if (signY == 0){
+                    deltaY = 0;
+                    deltaX = 10.0 * signX;
+                }else{
+                    deltaX = 10.0 * signX;
+                    deltaY = deltaX * slope;
+                }
 
                 Dimension changeDim = new Dimension(deltaX, deltaY);
                 while (!super.dimension.equals(moveTo)){
@@ -256,20 +274,8 @@ public class Hero extends Warrior {
                         move(changeDim);
                     }
                 }
-                /*for (int i = 0; i < 10; i++){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (lock){
-                        move(changeDim);
-                    }
-                }*/
-             //   if (super.dimension.equals(moveTo)){
-              //      System.out.println("hero reached destination");
-                    setShouldMove(false);
-               // }
+                //System.out.println("hero reached destination");
+                setShouldMove(false);
             }
         }
     }

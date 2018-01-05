@@ -28,7 +28,7 @@ public class Alien implements Movable, Comparable, Runnable {
         //System.out.println("******* ****");
         //System.out.println("num = " + NUM);
         START = true;
-        this.name = name + NUM;
+        this.name = name + NUM; //TODO delete NUM from this
         switch (name) {
             case "Albertonion":
                 this.energy = 250;
@@ -115,7 +115,7 @@ public class Alien implements Movable, Comparable, Runnable {
     @Override
     public void move(Dimension dimension) {
         setCurrentDim(dimension);
-      //  System.out.println(name + " moved to " + currentDim);
+        System.out.println(name + " moved to " + currentDim);
     }
 
     @Override
@@ -175,7 +175,7 @@ public class Alien implements Movable, Comparable, Runnable {
     public void setMoveTo(Dimension moveTo) {
         this.shouldMove = true;
         this.moveTo = moveTo;
-        System.out.println(name + " should move to " + moveTo);
+      //  System.out.println(name + " should move to " + moveTo);
     }
 
     /**** STATIC METHODS ****/
@@ -241,7 +241,7 @@ public class Alien implements Movable, Comparable, Runnable {
                     }
                 }
                 if (currentDim.equals(moveTo)){
-                    System.out.println(name + " reached destination.");
+              //      System.out.println(name + " reached destination.");
                     shouldMove = false;
                 }
             }

@@ -198,13 +198,13 @@ public class GameMap {
 
         oneTimeActions();
 
-        /*if (moveAliens()) {
+        if (moveAliens()) {
             return true;
-        }*/
+        }
 
 
 
-      //  shootAliens();
+        shootAliens();
 
         if (Alien.isSTART()) {
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
@@ -250,7 +250,7 @@ public class GameMap {
 
         /***** SEEING WHETHER WE CAN USE TESLA AGAIN OR NOT ****/
 
-  //      updateTeslaStatus();
+        updateTeslaStatus();
 
         /**** SEEING IF HERO CAN COME BACK TO LIFE OR NOT ****/
 
@@ -283,11 +283,11 @@ public class GameMap {
 
         /**** GENERATING ALIENS EVERY SECONS ***/
 
-        /*if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10) {
+        if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10) {
             generateAliens(2);
         } else {
             generateAliens(3);
-        }*/
+        }
     }
 
     private void reduceRadius() {
@@ -406,6 +406,8 @@ public class GameMap {
                 }
             } else {
                 Weapon bought = this.hero.buyWeapon(weaponName, dimension, whichPlace);
+                Thread weaponLifeCycle = new Thread(bought);
+                weaponLifeCycle.start();
                 specifiedLocations.put(dimension, bought);
             }
         } else {
@@ -624,11 +626,9 @@ public class GameMap {
                 hero.setShouldMove(newChange);
                 this.hero.move(newChange);
                 return true;
-            }else{
-                System.out.println("isn't within radius");
             }
         }
-        //System.out.println("DIDN'T FIND ANY WORMHOLES");
+        System.out.print("");
         return false;
     }
 
@@ -671,38 +671,61 @@ public class GameMap {
     }
 
     private void shootAliens() {
-        shootAliensByHeroAndSoldiers();
-        shootAliensByWeapons();
+     //   heroAndSoldiersShoot();
+        weaponsShoot();
     }
 
-    private void shootAliensByWeapons() {
+    private Object lock = new Object();
+
+    private void weaponsShoot() {
         for (Dimension dimension : specifiedLocations.keySet()) {
             Mappable m = specifiedLocations.get(dimension);
             if (m instanceof Weapon) {
                 Weapon weapon = ((Weapon) m);
-                List<Alien> aliensToShoot = new ArrayList<>();
+                List<Alien> toShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
-                    aliensToShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
+                    toShoot.addAll(routes.get(i).aliensWithinRadius(weapon));
                 }
-                List<Alien> deadAliens = weapon.shoot(aliensToShoot);
-                if (deadAliens != null && !deadAliens.isEmpty()) {
-                    //System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
-                    aliensToShoot.removeAll(deadAliens);
-                    if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
-                        reduceAllWeaponsPrice();
+
+                if (!toShoot.isEmpty()){
+                    /*try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }*/
+                    weapon.setShouldShoot(toShoot);
+                    while (weapon.isShouldShoot()){
+                        try {
+                            Thread.sleep(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        synchronized (lock){
+                            if (!weapon.isShouldShoot()){
+                                break;
+                            }
+                        }
                     }
-                    this.hero.addMoney(deadAliens.size() * 10);
-                    updateAchievements(deadAliens, "weapon");
-                    for (int i = 0; i < routes.size(); i++)
-                        this.removeAliensFromRoute(routes.get(i), deadAliens);
-                    Alien.reduceNum(deadAliens.size());
+                    List<Alien> deadAliens = weapon.getKilled();
+                    if (deadAliens != null && !deadAliens.isEmpty()) {
+                        //System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
+                        toShoot.removeAll(deadAliens);
+                        if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
+                            reduceAllWeaponsPrice();
+                        }
+                        this.hero.addMoney(deadAliens.size() * 10);
+                        updateAchievements(deadAliens, "weapon");
+                        for (int i = 0; i < routes.size(); i++)
+                            this.removeAliensFromRoute(routes.get(i), deadAliens);
+                        Alien.reduceNum(deadAliens.size());
+                    }
                 }
             }
         }
         //backToNormalSpeed();
     }
 
-    private void shootAliensByHeroAndSoldiers() {
+    private void heroAndSoldiersShoot() {
         List<Alien> dead = new ArrayList<>();
 
         if (!this.hero.isDead()) {
@@ -1094,6 +1117,7 @@ class Route {
             List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
+                //System.out.println("checking alien " + a.getName());
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
                     System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                     toShoot.add(a);

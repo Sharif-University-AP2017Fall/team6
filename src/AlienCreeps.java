@@ -91,7 +91,7 @@ public class AlienCreeps {
                     synchronized (lock){
                         if (gameMap.nextSecond()) {
                             gameOver = true;
-                            Thread.currentThread().stop();
+                            gameTime.stop();
                             System.exit(0);
                             return;
                         }
@@ -102,87 +102,89 @@ public class AlienCreeps {
         gameTime = new Thread(r1);
         gameTime.start();
 
-        Runnable r2 = new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    System.out.println("taking input");
-                    String input = scanner.nextLine();
-                    String info[] = input.split(" ");
-                    if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
-                        String weaponName = info[1];
-                        int locationNum;
-                        if (!info[2].equals("in")) {
-                            weaponName += " " + info[2];
-                            locationNum = Integer.parseInt(info[5]);
-                        } else {
-                            locationNum = Integer.parseInt(info[4]);
-                        }
-                        gameMap.putWeaponInPlace(weaponName, locationNum);
-                    } else if (input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
-                        String weaponName = info[1];
-                        int locationNum;
-                        if (!info[2].equals("in")) {
-                            weaponName += " " + info[2];
-                            locationNum = Integer.parseInt(info[5]);
-                        } else {
-                            locationNum = Integer.parseInt(info[4]);
-                        }
-                        gameMap.upgradeWeaponInPlace(weaponName, locationNum);
-                    } else if (input.matches("show details")) {
-                        gameMap.showRemainingAliens();
-                        System.out.println(hero);
-                        System.out.println("*** Weapons ***");
-                        System.out.println("----------");
-                        gameMap.getWeapons().forEach(System.out::println);
-                        System.out.print("\n\n");
-                        gameMap.showReachedFlag();
-                    } else if (input.matches("move hero for \\(-*[\\d]+,[\\s]*-*[\\d]+\\)")) {
-                        String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
-                        Dimension change = new Dimension(Integer.parseInt(dimInfo[0]),
-                                Integer.parseInt(dimInfo[1]));
-                        gameMap.moveHero(change);
-                    } else if (input.matches("tesla in \\([\\d]+,[\\s]*[\\d]+\\)")) {
-                        String dimInfo[] = input.substring(10, input.length() - 1).split(",[\\s]*");
-                        Dimension dimension = new Dimension(Integer.parseInt(dimInfo[0]),
-                                Integer.parseInt(dimInfo[1]));
-                        gameMap.useTesla(dimension);
-                    } else if (input.matches("hero status")) {
-                        hero.showStatus();
-                    } else if (input.matches("knights status")) {
-                        hero.showKnightStatus();
-                    } else if (input.matches("weapons status")) {
-                        gameMap.getWeapons().forEach(System.out::println);
-                    } else if (input.matches("status [\\w]*[\\s]*[\\w]* weapon")) {
-                        String weaponName = info[1];
-                        if (!info[2].equals("weapon")) {
-                            weaponName += " " + info[2];
-                        }
-                        List<Weapon> weapons = gameMap.getWeapons();
-                        if (!weapons.isEmpty()) {
-                            gameMap.getWeapons(weaponName).forEach(System.out::println);
-                        } else {
-                            System.out.println("No " + weaponName + " found");
-                        }
-                    } else if (input.matches("show achievements")) {
-                        System.out.println(hero.getAchievement());
-                    } else if (input.matches("upgrade soldiers")) {
-                        gameMap.upgradeSoldier();
-                    } else if (input.matches("show achievements")) {
-                        System.out.print(hero.getAchievement().toString());
-                    } else if (input.matches("show money")) {
-                        System.out.println(hero.getMoney());
-                    } else if (input.matches("burrow [\\d]+ from intergalactic bank")) {
-                        gameMap.burrowMoney(Integer.parseInt(info[1]));
-                    } else if (input.matches("pay the intergalactic bank back")) {
-                        gameMap.payBack();
-                    } else if (input.matches("show map")) {
-                        System.out.println(gameMap);
-                    } else if (input.matches("show available locations")) {
-                        gameMap.showAvailableLocations();
+        Runnable r2 = () -> {
+            while (true) {
+                //System.out.println("taking input");
+                String input = scanner.nextLine();
+                String info[] = input.split(" ");
+                if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
+                    String weaponName = info[1];
+                    int locationNum;
+                    if (!info[2].equals("in")) {
+                        weaponName += " " + info[2];
+                        locationNum = Integer.parseInt(info[5]);
                     } else {
-                        System.out.println("invalid command");
+                        locationNum = Integer.parseInt(info[4]);
                     }
+                    gameMap.putWeaponInPlace(weaponName, locationNum);
+                } else if (input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
+                    String weaponName = info[1];
+                    int locationNum;
+                    if (!info[2].equals("in")) {
+                        weaponName += " " + info[2];
+                        locationNum = Integer.parseInt(info[5]);
+                    } else {
+                        locationNum = Integer.parseInt(info[4]);
+                    }
+                    gameMap.upgradeWeaponInPlace(weaponName, locationNum);
+                } else if (input.matches("show details")) {
+                    gameMap.showRemainingAliens();
+                    System.out.println(hero);
+                    System.out.println("*** Weapons ***");
+                    System.out.println("----------");
+                    gameMap.getWeapons().forEach(System.out::println);
+                    System.out.print("\n\n");
+                    gameMap.showReachedFlag();
+                } else if (input.matches("move hero for \\(-*[\\d]+,[\\s]*-*[\\d]+\\)")) {
+                    String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
+                    Dimension change = new Dimension(Integer.parseInt(dimInfo[0]),
+                            Integer.parseInt(dimInfo[1]));
+                    gameMap.moveHero(change);
+                } else if (input.matches("tesla in \\([\\d]+,[\\s]*[\\d]+\\)")) {
+                    String dimInfo[] = input.substring(10, input.length() - 1).split(",[\\s]*");
+                    Dimension dimension = new Dimension(Integer.parseInt(dimInfo[0]),
+                            Integer.parseInt(dimInfo[1]));
+                    gameMap.useTesla(dimension);
+                } else if (input.matches("hero status")) {
+                    hero.showStatus();
+                } else if (input.matches("knights status")) {
+                    hero.showKnightStatus();
+                } else if (input.matches("weapons status")) {
+                    gameMap.getWeapons().forEach(System.out::println);
+                } else if (input.matches("status [\\w]*[\\s]*[\\w]* weapon")) {
+                    String weaponName = info[1];
+                    if (!info[2].equals("weapon")) {
+                        weaponName += " " + info[2];
+                    }
+                    List<Weapon> weapons = gameMap.getWeapons();
+                    if (!weapons.isEmpty()) {
+                        gameMap.getWeapons(weaponName).forEach(System.out::println);
+                    } else {
+                        System.out.println("No " + weaponName + " found");
+                    }
+                } else if (input.matches("show achievements")) {
+                    System.out.println(hero.getAchievement());
+                } else if (input.matches("upgrade soldiers")) {
+                    gameMap.upgradeSoldier();
+                } else if (input.matches("show achievements")) {
+                    System.out.print(hero.getAchievement().toString());
+                } else if (input.matches("show money")) {
+                    System.out.println(hero.getMoney());
+                } else if (input.matches("burrow [\\d]+ from intergalactic bank")) {
+                    gameMap.burrowMoney(Integer.parseInt(info[1]));
+                } else if (input.matches("pay the intergalactic bank back")) {
+                    gameMap.payBack();
+                } else if (input.matches("show map")) {
+                    System.out.println(gameMap);
+                } else if (input.matches("show available locations")) {
+                    gameMap.showAvailableLocations();
+                } else {
+                    System.out.println("invalid command");
+                }
+
+                if (gameOver){
+                    gameInput.stop();
+                    return;
                 }
             }
         };

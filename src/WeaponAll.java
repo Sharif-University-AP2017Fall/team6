@@ -18,42 +18,61 @@ public class WeaponAll extends Weapon {
         super(dimension, type, locationNum);
     }
 
+    private Object lock = new Object();
+
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
         List<Alien> canShoot = new ArrayList<>();
         List<Alien> deadAliens = new ArrayList<>();
+
         for (int i = 0; i < aliens.size(); i++) {
             if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())) {
                 canShoot.add(aliens.get(i));
             }
         }
 
-        //int alienNum = aliens.size();
         int numBullet = 0;
+        int maxBullet = getSpeedOfBullet();
         for (int i = 0; i < canShoot.size(); i++) {
-            //int numForEach = (int) Math.ceil(getSpeedOfBullet() / alienNum);
-            Alien alienToShoot = canShoot.get(i);
-            if (!alienToShoot.isDead()) {
-                alienToShoot.reduceSpeed(this.getSpeedReduction() / 100);
-                if (alienToShoot.isCanFly()) {
-                    alienToShoot.reduceEnergy(this.getPowerOfBulletAir());
-                } else {
-                    alienToShoot.reduceEnergy(this.getPowerOfBullet());
+            Alien ai = canShoot.get(i);
+
+            if (!ai.isDead()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                if (alienToShoot.isDead()) {
-                    //    System.out.println(alienToShoot.getName() + " died.");
-                    deadAliens.add(alienToShoot);
+                synchronized (lock){
+                    ai.reduceSpeed(this.getSpeedReduction() / 100);
+                    if (ai.isCanFly()) {
+                        ai.reduceEnergy(this.getPowerOfBulletAir());
+                    } else {
+                        ai.reduceEnergy(this.getPowerOfBullet());
+                    }
+                    if (ai.isDead()) {
+                        System.out.println(getName() + " killed " + ai.getName());
+                        deadAliens.add(ai);
+                    }
+                    numBullet++;
                 }
-                numBullet++;
             }
-            if (numBullet >= getSpeedOfBullet()) {
+            if (numBullet >= maxBullet) { //no longer have any bullets
                 break;
-            } else if (numBullet < getSpeedOfBullet() && i == canShoot.size() - 1) {
+            } else if (numBullet < getSpeedOfBullet() && i == canShoot.size() - 1) { //still have bullets, start killing from top
                 i = -1;
             }
-            if (canShoot.size() == deadAliens.size()) {
+            if (canShoot.size() == deadAliens.size()) { //killed all aliens
                 break;
             }
+        }
+        System.out.println("finished shooting");
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock){
+            stopShooting();
         }
         return deadAliens;
     }

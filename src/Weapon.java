@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author Tara
  */
-public abstract class Weapon implements Mappable, Shooter, Comparable {
+public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable {
 
     private String name;
     private Dimension dimension;
@@ -34,11 +35,16 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
     private int initialSpeedReduction;
     private double initialRadius;
 
+    private boolean shouldShoot;
+    private List<Alien> toShoot;
+    private List<Alien> killed;
+
     static int NUM_USED_TESLA = 0;
     static int SECONDS_LEFT_TO_USE_TESLA = 10;
     static boolean TESLA_IN_USE = false;
 
     Weapon(Dimension dimension, String type, int locationNum) {
+        this.shouldShoot = false;
         mapTo(dimension);
         setName(type);
         setType(type);
@@ -227,6 +233,42 @@ public abstract class Weapon implements Mappable, Shooter, Comparable {
     @Override
     public void mapTo(Dimension dimension) {
         this.dimension = dimension;
+    }
+
+    @Override
+    public void run() {
+        while (true){
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (shouldShoot){
+                killed.addAll(shoot(toShoot));
+            }
+        }
+    }
+
+    public List<Alien> getKilled() {
+        return killed;
+    }
+
+    public void resetKilled(){
+        killed = new ArrayList<>();
+    }
+
+    public void setShouldShoot(List<Alien> toShoot){
+        this.shouldShoot = true;
+        this.toShoot = toShoot;
+        resetKilled();
+    }
+
+    public void stopShooting(){
+        this.shouldShoot = false;
+    }
+
+    public boolean isShouldShoot() {
+        return shouldShoot;
     }
 
     static Weapon WeaponFactory(Dimension dimension, String type, int locationNum) {
