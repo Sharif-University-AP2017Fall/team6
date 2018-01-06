@@ -1,3 +1,5 @@
+import sun.jvm.hotspot.gc_implementation.g1.G1HeapRegionTable;
+
 public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
@@ -28,7 +30,7 @@ public class Alien implements Movable, Comparable, Runnable {
         //System.out.println("******* ****");
         //System.out.println("num = " + NUM);
         START = true;
-        this.name = name + NUM; //TODO delete NUM from this
+        this.name = name;// + NUM; //TODO delete NUM from this
         switch (name) {
             case "Albertonion":
                 this.energy = 250;
@@ -79,23 +81,41 @@ public class Alien implements Movable, Comparable, Runnable {
         this.speed -= reduceAmount;
     }
 
+    private Object lock3 = new Object();
+
     void stop() {
-        this.speed = 0;
-        this.moveTo = this.currentDim;
-        this.shouldMove = false;
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock3) {
+            this.speed = 0;
+            this.moveTo = this.currentDim;
+            this.shouldMove = false;
+        }
     }
 
     void backToNormalSpeed() {
         this.speed = this.initialSpeed;
     }
 
+    private Object lock4 = new Object();
+
     void reduceEnergy(int amount) {
-        System.out.println(this.name);
-        System.out.println("*************");
-        System.out.println("current energy : "  + this.energy);
-        System.out.println("reduction amount : " + amount);
-        System.out.println("new energy : " + (this.energy - amount));
-        this.energy -= amount;
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock4) {
+            /*System.out.println(this.name);
+            System.out.println("*************");
+            System.out.println("current energy : " + this.energy);
+            System.out.println("reduction amount : " + amount);
+            System.out.println("new energy : " + (this.energy - amount));*/
+            this.energy -= amount;
+        }
     }
 
 
@@ -124,14 +144,42 @@ public class Alien implements Movable, Comparable, Runnable {
         return "name: " + name + "\tplace: " + currentDim + "\tenergy left: " + energy;
     }
 
+    private Object lock2 = new Object();
+
     boolean shoot(Warrior warrior) {
         int maxBullet = shootingSpeed;
         for (int i = 0; i < maxBullet; i++) {
-            warrior.reduceEnergy(strength);
-            System.out.println(name + " reduced hero's energy");
-            if (warrior.isDead()) {
-                return true;
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            synchronized (lock2) {
+                if (energy > 0) {
+                    warrior.reduceEnergy(strength);
+                    //       System.out.println(name + " reduced hero's energy");
+                } else {
+                    setShoot(false);
+                    setToShoot(null);
+                    return false;
+                }
+                if (warrior.isDead()) {
+                    setShoot(false);
+                    setToShoot(null);
+                    return true;
+                }
+            }
+            //     System.out.println(name + " has " + (maxBullet - i) + " bullets left");
+        }
+        // System.out.println(name + " finished shooting");
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock2) {
+            setShoot(false);
+            setToShoot(null);
         }
         return false;
     }
@@ -160,25 +208,45 @@ public class Alien implements Movable, Comparable, Runnable {
         return shootingSpeed;
     }
 
+    private Object lock5 = new Object();
+
     public void setShoot(boolean shoot) {
-        this.shouldShoot = shoot;
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock5) {
+            this.shouldShoot = shoot;
+        }
     }
 
+    private Object lock6 = new Object();
+
     public void setToShoot(Warrior toShoot) {
-        this.toShoot = toShoot;
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock6) {
+            this.toShoot = toShoot;
+        }
     }
 
     public void setMove(boolean move) {
-        //System.out.println("should move " + name);
         this.shouldMove = move;
     }
 
     public void setMoveTo(Dimension moveTo) {
-        if (speed > 0){
+        if (speed > 0) {
             this.shouldMove = true;
             this.moveTo = moveTo;
         }
-      //  System.out.println(name + " should move to " + moveTo);
+    }
+
+    public Dimension getMoveTo() {
+        return moveTo;
     }
 
     /**** STATIC METHODS ****/
@@ -199,62 +267,49 @@ public class Alien implements Movable, Comparable, Runnable {
         Alien.NUM -= NUM;
     }
 
-    private Object lock = new Object();
+    private Object lock1 = new Object();
 
     @Override
     public void run() {
-        System.out.println("Created " + name);
+        //     System.out.println("Created " + name);
 
-        while (true){
+        while (true) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (shouldShoot){
-                int sleepMilliseconds = 5000 / shootingSpeed; //TODO change 5000 later
-                try {
-                    Thread.sleep(sleepMilliseconds);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
+            if (shouldShoot) {
                 shoot(toShoot);
 
-            }if (shouldMove){
-              //  System.out.println(name + " started moving to " + moveTo);
+            }
+            if (shouldMove) {
                 Dimension moveFrom = currentDim;
                 double deltaX = (moveTo.getX() - moveFrom.getX()) / 10;
                 double deltaY = (moveTo.getY() - moveFrom.getY()) / 10;
-                for (int i = 0; i < 10; i++){
+                for (int i = 0; i < 10; i++) {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    synchronized (lock){
+                    synchronized (lock1) {
                         Dimension newDim = new Dimension(currentDim.getX() + deltaX,
                                 currentDim.getY() + deltaY);
-                     //   System.out.println("$$$$$$$$");
-                      //  System.out.println(name + " has to move to " + moveTo);
-                        move(newDim);
-                      //  System.out.println("$$$$$$$$");
+                        if (speed > 0) {
+                            move(newDim);
+                        }
                     }
-                    if (!shouldMove){
+                    if (!shouldMove) {
                         break;
                     }
                 }
-                if (currentDim.equals(moveTo)){
-              //      System.out.println(name + " reached destination.");
+                if (currentDim.equals(moveTo)) {
+                    //      System.out.println(name + " reached destination.");
                     shouldMove = false;
                 }
             }
         }
-
-    }
-
-    public Dimension getMoveTo() {
-        return moveTo;
     }
 }
 

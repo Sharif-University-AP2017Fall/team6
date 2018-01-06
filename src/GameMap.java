@@ -202,8 +202,6 @@ public class GameMap {
             return true;
         }
 
-
-
         shootAliens();
 
         if (Alien.isSTART()) {
@@ -231,7 +229,9 @@ public class GameMap {
                 hasBurrowed = false;
             }else{
                 if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0)
-                    System.out.println("You have " + (bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) + " day(s) left to pay the bank back.");
+                    System.out.println("You have " +
+                            (bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) +
+                            " day(s) left to pay the bank back.");
             }
         }
 
@@ -332,7 +332,7 @@ public class GameMap {
     }
 
     private void randomizeWormholes() {
-        if ((int) (Math.random() * 2) == 0) { //5, 1
+        if ((int) (Math.random() * 5) == 1) {
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
 
             /*** check that they're not on the routes ***/
@@ -357,9 +357,9 @@ public class GameMap {
 
             System.out.println("New Wormhole Dimensions are:");
             wormholeDims.forEach(System.out::println);
-            Dimension changeDim = new Dimension(wormholeDims.get(0).getX() - this.hero.dimension.getX(),
-                    wormholeDims.get(0).getY() - this.hero.dimension.getY());
-            System.out.println("move hero for " + changeDim);
+         //   Dimension changeDim = new Dimension(wormholeDims.get(0).getX() - this.hero.dimension.getX(),
+           //         wormholeDims.get(0).getY() - this.hero.dimension.getY());
+         //   System.out.println("move hero for " + changeDim);
         }
 
     }
@@ -428,7 +428,7 @@ public class GameMap {
                     if (!hero.upgradeWeapon(toUpgrade)) {
                         System.out.println("Not enough money.");
                     } else {
-                        //System.out.println("Upgraded successfully");
+                        System.out.println("Upgraded successfully");
                         //System.out.println(hero.payBack());
                     }
                 } else {
@@ -447,9 +447,9 @@ public class GameMap {
     }
 
     private void generateAliens(int probabilityInv) {
-        System.out.println("***********");
-        System.out.println("GENERATING ALIENS ");
-        System.out.println("***********");
+   //     System.out.println("***********");
+     //   System.out.println("GENERATING ALIENS ");
+       // System.out.println("***********");
         if (Alien.getNUM() < Alien.getMAXNUM()) {
             if ((int) (Math.random() * probabilityInv) == 0) {
 
@@ -472,6 +472,7 @@ public class GameMap {
                         break;
                 }
                 newAlien = new Alien(name);
+                System.out.println(name + " entered!");
                 Thread alienLifeCycle = new Thread(newAlien);
                 alienLifeCycle.start();
 
@@ -479,9 +480,6 @@ public class GameMap {
                 Route whichRoute = routes.get(routeNumber);
 
                 whichRoute.addAlienToRoute(newAlien, 0);
-
-                /*newAlien.setCurrentDim(whichRoute.getLines()[0].getStartPoint());
-                whichRoute.getAlienMap().get(0).add(newAlien);*/
             }
         }
     }
@@ -504,11 +502,9 @@ public class GameMap {
     }
 
     private boolean reachFlag(Alien alien) {
-        //System.out.println(alien.getName() + " reached flag.");
         for (int i = 0; i < 5; i++) {
             if (reachedFlag[i] == null) {
                 reachedFlag[i] = alien;
-                // System.out.println((i + 1) + " aliens have reached flag.");
                 if (i == 4) {
                     System.out.println("GAME OVER");
                     return true;
@@ -530,13 +526,12 @@ public class GameMap {
     }
 
     private boolean moveAliens() {
-        System.out.println("•••••••••••••");
-        System.out.println("MOVING ALIENS");
-        System.out.println(Alien.getNUM() + " aliens to move");
-        System.out.println("•••••••••••••");
+  //      System.out.println("•••••••••••••");
+   //     System.out.println("MOVING ALIENS");
+    //    System.out.println(Alien.getNUM() + " aliens to move");
+     //   System.out.println("•••••••••••••");
 
         for (int i = 0; i < routes.size(); i++) {
-            //System.out.println("moving aliens on route " + i);
             List<Alien> reachBreak = routes.get(i).moveAliensOnRoute();
 
             for (int j = 0; j < reachBreak.size(); j++) {
@@ -549,10 +544,9 @@ public class GameMap {
 
 
                 int randomNumber = chooseRandomRoute();
-                System.out.println(alien.getName() + " WAS RELOCATED TO ROUTE " + randomNumber);
+        //        System.out.println(alien.getName() + " WAS RELOCATED TO ROUTE " + randomNumber);
 
                 Route randomRoute = routes.get(randomNumber);
-                //int whichLine = randomRoute.whichLine(alien.getCurrentDim());
                 randomRoute.addAlienToRoute(alien, 3);
             }
         }
@@ -621,7 +615,10 @@ public class GameMap {
                 Wormhole out = wormholes.get(in.getLeadsTo());
                 Dimension newChange = new Dimension(out.getDimension().getX() - hero.getDimension().getX(),
                         out.getDimension().getY() - hero.getDimension().getY());
-                System.out.println("hero went into wormhole " + (i + 1) + " and came out from wormhole " + (in.getLeadsTo() + 1));
+                System.out.println("hero went into wormhole " +
+                        (i + 1) +
+                        " and came out from wormhole " +
+                        (in.getLeadsTo() + 1));
                 System.out.println("she says hi :)");
                 hero.setShouldMove(newChange);
                 this.hero.move(newChange);
@@ -688,11 +685,6 @@ public class GameMap {
                 }
 
                 if (!toShoot.isEmpty()){
-                    /*try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
                     weapon.setShouldShoot(toShoot);
                     while (weapon.isShouldShoot()){
                         try {
@@ -708,7 +700,6 @@ public class GameMap {
                     }
                     List<Alien> deadAliens = weapon.getKilled();
                     if (deadAliens != null && !deadAliens.isEmpty()) {
-                        //System.out.println(weapon.getName() + " killed " + deadAliens.size() + " aliens.");
                         toShoot.removeAll(deadAliens);
                         if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
                             reduceAllWeaponsPrice();
@@ -731,7 +722,6 @@ public class GameMap {
         List<Alien> dead = new ArrayList<>();
 
         if (!this.hero.isDead()) {
-            //System.out.println("hero start shooting");
             List<Alien> toShoot = new ArrayList<>();
             for (int i = 0; i < routes.size(); i++) {
                 toShoot.addAll(routes.get(i).aliensWithinRadius(this.hero));
@@ -752,7 +742,7 @@ public class GameMap {
                         }
                     }
                 }
-                List<Alien> killedByHero = this.hero.shoot(toShoot);
+                List<Alien> killedByHero = this.hero.getKilled();
                 if (!killedByHero.isEmpty()) {
                     if (this.hero.addExperienceLevel(killedByHero.size() * 15)) {
                         reduceAllWeaponsPrice();
@@ -765,14 +755,13 @@ public class GameMap {
                     this.secondsLeftToResurrectHero = this.hero.getResurrectionTime();
                 }
             } else {
-                //System.out.println("no aliens in hero radius");
+              //  System.out.println("no aliens in hero radius");
             }
         }
 
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++) {
             if (soldiers[j] != null) {
-                //System.out.println("Soldier #" + (j + 1) + " start shooting");
                 List<Alien> toShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
                     toShoot.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
@@ -1089,12 +1078,10 @@ class Route {
                 if (destination == null) {
                     destination = lines[i].getEndPoint();
                     current.setMoveTo(destination);
-                   // current.setMove(true);
-
                     alienMap.get(lines[i]).remove(current);
 
                     if (intersections.contains(destination)) {
-                        System.out.println(current.getName() + " REACHED INTERSECTION");
+                    //    System.out.println(current.getName() + " REACHED INTERSECTION");
                         reachedIntersection.add(current);
                     } else {
                         alienMap.get(lines[i + 1]).add(current);
@@ -1113,8 +1100,6 @@ class Route {
 
     void addAlienToRoute(Alien alien, int lineNumber) {
         alien.move(lines[lineNumber].getStartPoint());
-        /*alien.setMoveTo(lines[lineNumber].getStartPoint());
-        alien.setMove(true);*/
         alienMap.get(lines[lineNumber]).add(alien);
     }
 
@@ -1129,7 +1114,7 @@ class Route {
     }
 
     int whichLine(Dimension dimension) {
-        System.out.println("checking dimension " + dimension);
+  //      System.out.println("checking dimension " + dimension);
         for (int i = 0; i < 5; i++) {
             if (lines[i].isOnLine(dimension)) {
                 return i;
@@ -1145,7 +1130,6 @@ class Route {
             List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
-                //System.out.println("checking alien " + a.getName());
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
                     System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                     toShoot.add(a);

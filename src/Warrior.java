@@ -61,8 +61,20 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
         return energy < 0;
     }
 
+
+    private Object lock2 = new Object();
     void reduceEnergy(int a) {
         energy = energy - a;
+        //TODO check if the below line is correct
+        /*try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock2){
+            energy -= a;
+        }*/
+
     }
 
     void increaseBulletPower() {
@@ -88,9 +100,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     @Override
     public List<Alien> shoot(List<Alien> aliens) {
         List<Alien> deadAliens = new ArrayList<>();
-        Alien min = null;
         if (!aliens.isEmpty()) {
-            min = findClosest(aliens);
+            Alien min = findClosest(aliens);
             int maxBullet = this.getShootingSpeed();
 
             for (int numBullet = 0; numBullet < maxBullet; numBullet++) {
@@ -105,15 +116,15 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                         min.reduceEnergy(this.powerOfBullet);
                         min.setShoot(true);
                         min.setToShoot(this);
-                        // TODO thread related alien response shooting
+                //        System.out.println("hero has " + (maxBullet - numBullet) + " bullets left");
                         if (min.isDead()) {
-                            deadAliens.add(min);
                             min.setShoot(false);
                             min.setToShoot(null);
+                            deadAliens.add(min);
                             aliens.remove(min);
                             numKilled++;
                             if (aliens.isEmpty()) {
-                                System.out.println("finished shooting");
+                 //               System.out.println("hero killed all and finished shooting");
                                 try {
                                     Thread.sleep(10);
                                 } catch (InterruptedException e) {
@@ -128,12 +139,15 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                             }
                             //System.out.println("killed " + min.getName());
                         }
+                    } else {
+           //             System.out.println("hero's bullet won't reach " + min.getName());
+                        min = findClosest(aliens);
                     }
                 }
             }
             //min.shoot(this);
         }
-        System.out.println("finished shooting");
+ //       System.out.println("hero finished shooting");
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -141,10 +155,6 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
         }
         synchronized (lock){
             stopShooting();
-            if (min != null){
-                min.setToShoot(null);
-                min.setShoot(false);
-            }
         }
         return deadAliens;
     }
