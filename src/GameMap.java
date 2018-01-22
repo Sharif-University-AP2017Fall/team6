@@ -1,8 +1,11 @@
+
+import javafx.scene.input.KeyEvent;
+
 import java.util.*;
 
 public class GameMap {
-    static double XBOUND = 800;
-    static double YBOUND = 600;
+    static double XBOUND = 895;
+    static double YBOUND = 700;
     static int UNIT = 15;
 
     private List<Route> routes = new ArrayList<>();
@@ -604,6 +607,20 @@ public class GameMap {
         }
     }
 
+    void moveHero(KeyEvent event){
+        if (this.hero.isDead()){
+            System.out.println("Hero is dead :( can't move hero.");
+        }else{
+            if (this.hero.setShouldMove(event)){
+                while (this.hero.isShouldMove()){
+                    if (checkWormhole()){
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     public boolean checkWormhole(){
         //System.out.println("CHECKING WORMHOLE DIMS");
         Dimension newDim = hero.getDimension();
@@ -613,14 +630,14 @@ public class GameMap {
 
                 Wormhole in = wormholes.get(i);
                 Wormhole out = wormholes.get(in.getLeadsTo());
-                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getDimension().getX(),
-                        out.getDimension().getY() - hero.getDimension().getY());
+                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getShootingPoint().getX(),
+                        out.getDimension().getY() - hero.getShootingPoint().getY());
                 System.out.println("hero went into wormhole " +
                         (i + 1) +
                         " and came out from wormhole " +
                         (in.getLeadsTo() + 1));
                 System.out.println("she says hi :)");
-                hero.setShouldMove(newChange);
+              //  hero.setShouldMove(newChange);
                 this.hero.move(newChange);
                 return true;
             }
@@ -1254,7 +1271,7 @@ class Wormhole {
     }
 
     boolean isWithinRadius(Dimension otherDim) {
-        return otherDim.distanceFrom(dimension) <= radius * GameMap.UNIT;
+        return otherDim.distanceFrom(dimension) < 10;// radius * GameMap.UNIT;
     }
 
     public Dimension getDimension() {

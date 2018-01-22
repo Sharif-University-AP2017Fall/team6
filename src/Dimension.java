@@ -44,8 +44,8 @@ public class Dimension {
     static List<Dimension> randomDimension(int num) {
         List<Dimension> ds = new ArrayList<>();
         for (int i = 0; i < num; i++) {
-            double x = Math.round((Math.random() * (GameMap.XBOUND - 20)) + 20);
-            double y = Math.round((Math.random() * (GameMap.YBOUND - 20)) + 20);
+            double x = Math.round((Math.random() * (GameMap.XBOUND - 50)) + 20);
+            double y = Math.round((Math.random() * (GameMap.YBOUND - 50)) + 20);
             ds.add(new Dimension(x, y));
         }
         return ds;
@@ -62,5 +62,12 @@ public class Dimension {
         double yDif = otherDimension.getY() - this.Y;
         double xDif = otherDimension.getX() - this.X;
         return (yDif < 1 && yDif > -1) && (xDif < 1 && xDif > -1);
+    }
+
+    public static void correctDim(Dimension dimension){
+        double x = Math.round(dimension.getX() * 10);
+        double y = Math.round(dimension.getY() * 10);
+        dimension.setX(x / 10);
+        dimension.setY(y / 10);
     }
 }

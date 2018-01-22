@@ -1,7 +1,18 @@
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
 import java.util.List;
 import java.util.Scanner;
 
-public class AlienCreeps {
+public class AlienCreeps extends Application {
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
     private static int CURRENT_DAY = 0;
@@ -12,14 +23,14 @@ public class AlienCreeps {
     private Scanner scanner = new Scanner(System.in);
     private Hero hero = new Hero(new Dimension(400, 300));
     private GameMap gameMap = new GameMap(hero);
-
+    static AlienCreeps game = new AlienCreeps();
     public static void main(String[] args) {
-        AlienCreeps game = new AlienCreeps();
-        game.initialize();
-        game.launch();
+    //    game.initWeapons();
+      //  game.launchGame();
+        launch(args);
     }
 
-    private void initialize() {
+    private void initWeapons() {
 
         System.out.println("Choose one of the weapons to put in " +
                 gameMap.getSpecifiedLocations().keySet().size() +
@@ -49,7 +60,7 @@ public class AlienCreeps {
         System.out.println("Hero in : " + hero.getDimension());
     }
 
-    private void launch() {
+    private void launchGame() {
 
         Runnable r1 = new Runnable() {
             private final Object lock = new Object();
@@ -62,7 +73,7 @@ public class AlienCreeps {
 
                 while (true){
                     try {
-                        Thread.sleep(6000);
+                        Thread.sleep(6000); //TODO: change this to one second
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -74,7 +85,7 @@ public class AlienCreeps {
                         //     gameMap.plague();
                     } else if (CURRENT_HOUR < 23) { //23
                         //      gameMap.superNaturalHelp();
-                        //     gameMap.naturalDisaster();
+                       //      gameMap.naturalDisaster();
                         CURRENT_HOUR++;
                         CURRENT_SECOND = 0;
                     } else {
@@ -190,6 +201,33 @@ public class AlienCreeps {
         };
         gameInput = new Thread(r2);
         gameInput.start();
+
+/*
+        Runnable r3 = new Runnable() {
+            @Override
+            public void run() {
+                gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent event) {
+                        gameMap.moveHero(event);
+                    }
+                });
+                gameScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        System.out.println("should move for " + (event.getX() - hero.getShootingPoint().getX()) +
+                                " " +
+                                (event.getY() - hero.getShootingPoint().getY()));
+                        gameMap.moveHero(new Dimension(Math.round(event.getX()) - hero.getShootingPoint().getX(),
+                                Math.round(event.getY()) - hero.getShootingPoint().getY()));
+                    }
+                });
+            }
+        };
+        gameInput = new Thread(r3);
+        gameInput.start();*/
+
+
     }
 
     static int getCurrentSecond() {
@@ -202,5 +240,37 @@ public class AlienCreeps {
 
     static int getCurrentDay() {
         return CURRENT_DAY;
+    }
+
+
+    static Scene menuScene = new Scene(new Group(),GameMap.XBOUND, GameMap.YBOUND);
+    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND, GameMap.YBOUND);
+    static Stage stage;
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
+        gameScene.setRoot(createGameContent());
+        stage.setTitle("Alien Creeps");
+        stage.setScene(gameScene);
+        stage.show();
+    }
+
+    private Parent createMenuContent(){
+        return new Group();
+    }
+
+    private Parent createGameContent(){
+        Group root = new Group();
+        Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
+        root.getChildren().add(canvas);
+        MapView mapView = new MapView(canvas);
+
+        //TODO bring these in the application window
+      //  initWeapons();
+       //root.getChildren().add(hero.getHeroView());
+
+        launchGame();
+        return root;
     }
 }

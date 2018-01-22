@@ -3,6 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import com.sun.corba.se.impl.orbutil.DenseIntMapImpl;
+import com.sun.webkit.dom.ElementImpl;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +26,7 @@ import java.util.Map;
  * @author Tara
  */
 public class Hero extends Warrior {
+  //  private HeroView heroView;
     private Soldier[] soldiers = new Soldier[3];
     private Dimension soldierDims[] = new Dimension[3];
     private int resurrectionTime;
@@ -23,7 +38,10 @@ public class Hero extends Warrior {
     private boolean shouldMove;
     private Dimension moveTo;
 
+
+
     Hero(Dimension dimension) {
+  //      heroView = new HeroView();
         achievement = new Achievement();
 
         setDimension(dimension);
@@ -43,6 +61,10 @@ public class Hero extends Warrior {
         shouldMove = false;
         super.shouldShoot = false;
     }
+
+   // public HeroView getHeroView() {
+   //     return heroView;
+    //}
 
     void setSoldiers(Soldier[] soldiers) {
         this.soldiers = soldiers;
@@ -196,12 +218,33 @@ public class Hero extends Warrior {
 
     @Override
     public void move(Dimension changeDimension) {
+        /*double deltaX = changeDimension.getX();
+        double deltaY = changeDimension.getY();
+        if (Double.compare(deltaX, 0.0) == 0) {
+            if (deltaY > 0) {
+                heroView.moveDown(deltaY);
+            }else{
+                heroView.moveUp(-1 * deltaY);
+            }
+        }
+
+        if (Double.compare(deltaY, 0.0) == 0){
+            if (deltaX > 0){
+                heroView.moveRight(deltaX);
+            }else{
+                heroView.moveLeft(-1 * deltaX);
+            }
+        }*/
+
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
 
+        Dimension.correctDim(newDim);
+
         setDimension(newDim);
+
         correctDim();
-        System.out.println("hero moved to " + newDim);
+       // System.out.println("hero moved to " + newDim);
         for (int i = 0; i < 3; i++) {
             if (soldiers[i] != null) {
                 soldiers[i].move(changeDimension);
@@ -216,7 +259,7 @@ public class Hero extends Warrior {
     public void run() {
         while (true){
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -253,14 +296,18 @@ public class Hero extends Warrior {
                     deltaY = 0;
                     deltaX = 10.0 * signX;
                 }else{
-                    deltaX = 10.0 * signX;
+                    double dummy = 1.0 + slope * slope;
+                    dummy = 100.0 / dummy;
+                    dummy = Math.sqrt(dummy);
+                    dummy = Math.round(dummy * 10);
+                    deltaX = (dummy / 10.0) * signX;
                     deltaY = deltaX * slope;
                 }
 
                 Dimension changeDim = new Dimension(deltaX, deltaY);
                 while (!super.dimension.equals(moveTo)){
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -274,6 +321,7 @@ public class Hero extends Warrior {
                         if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
                             changeDim.setY(yRemain);
                         }
+                        Dimension.correctDim(changeDim);
                         move(changeDim);
                     }
                 }
@@ -291,19 +339,39 @@ public class Hero extends Warrior {
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDim.getX(),
                 getShootingPoint().getY() + changeDim.getY());
 
-        if (newDim.isWithinBounds(GameMap.XBOUND - 20,
+        if (newDim.isWithinBounds(GameMap.XBOUND - 50,
                 20,
-                GameMap.YBOUND - 20,
+                GameMap.YBOUND - 75,
                 20)
                 ) {
             this.shouldMove = true;
+            Dimension.correctDim(newDim);
             this.moveTo = newDim;
-        //    System.out.println( "hero should move to " + moveTo);
         } else {
-            System.out.println("Can't move outside of 20 < x < 780 & 20 < y < 580.");
+            System.out.println("out of range.");
             this.shouldMove = false;
         }
         return this.shouldMove;
+    }
+
+    public boolean setShouldMove(KeyEvent event){
+        KeyCode direction = event.getCode();
+        Dimension changeDim = null;
+        switch (direction){
+            case DOWN:
+                changeDim = new Dimension(0, 10);
+                break;
+            case UP:
+                changeDim = new Dimension(0, -10);
+                break;
+            case LEFT:
+                changeDim = new Dimension(-10, 0);
+                break;
+            case RIGHT:
+                changeDim = new Dimension(10, 0);
+                break;
+        }
+        return setShouldMove(changeDim);
     }
 
     public void setShouldMove(boolean shouldMove){
@@ -314,6 +382,165 @@ public class Hero extends Warrior {
         return shouldMove;
     }
 }
+
+/*class HeroView extends StackPane{
+
+    private ImageView[] move_down;
+    private ImageView[] move_up;
+    private ImageView[] move_left;
+    private ImageView[] move_right;
+    private int move_down_index;
+    private int move_up_index;
+    private int move_left_index;
+    private int move_right_index;
+
+    public HeroView() {
+        this.move_down = new ImageView[2];
+        this.move_up = new ImageView[2];
+        this.move_right = new ImageView[2];
+        this.move_left = new ImageView[2];
+
+        move_down_index = 0;
+        move_up_index = 0;
+        move_right_index = 0;
+        move_left_index = 0;
+
+        String address = "res/hero/movement/";
+        move_down[0] = new ImageView(new Image(getClass()
+                .getResource(address + "down1.png").toExternalForm()));
+        move_down[0].setFitWidth(30);
+        move_down[0].setFitHeight(60);
+        move_down[0].setVisible(true );
+
+        move_down[1] = new ImageView(new Image(getClass()
+                .getResource(address + "down2.png").toExternalForm()));
+        move_down[1].setFitWidth(30);
+        move_down[1].setFitHeight(60);
+        move_down[1].setVisible(false);
+
+        move_up[0] = new ImageView(new Image(getClass()
+                .getResource(address + "up1.png").toExternalForm()));
+        move_up[0].setFitWidth(30);
+        move_up[0].setFitHeight(60);
+        move_up[0].setVisible(false);
+
+        move_up[1] = new ImageView(new Image(getClass()
+                .getResource(address + "up2.png").toExternalForm()));
+        move_up[1].setFitWidth(30);
+        move_up[1].setFitHeight(60);
+        move_up[1].setVisible(false);
+
+        move_left[0] = new ImageView(new Image(getClass()
+                .getResource(address + "left1.png").toExternalForm()));
+        move_left[0].setFitWidth(30);
+        move_left[0].setFitHeight(60);
+        move_left[0].setVisible(false);
+
+        move_left[1] = new ImageView(new Image(getClass()
+                .getResource(address + "left2.png").toExternalForm()));
+        move_left[1].setFitWidth(30);
+        move_left[1].setFitHeight(60);
+        move_left[1].setVisible(false);
+
+        move_right[0] = new ImageView(new Image(getClass()
+                .getResource(address + "right1.png").toExternalForm()));
+        move_right[0].setFitWidth(30);
+        move_right[0].setFitHeight(60);
+        move_right[0].setVisible(false);
+
+        move_right[1] = new ImageView(new Image(getClass()
+                .getResource(address + "right2.png").toExternalForm()));
+        move_right[1].setFitWidth(30);
+        move_right[1].setFitHeight(60);
+        move_right[1].setVisible(false);
+
+        getChildren().addAll(move_down[0],
+                move_down[1],
+                move_up[0],
+                move_up[1],
+                move_left[0],
+                move_left[1],
+                move_right[0],
+                move_right[1]);
+        setTranslateX(400);
+        setTranslateY(300);
+    }
+
+    public void move(KeyEvent event, double delta){
+        KeyCode direction = event.getCode();
+        switch (direction){
+            case LEFT:
+                moveLeft(delta);
+                break;
+            case RIGHT:
+                moveRight(delta);
+                break;
+            case UP:
+                moveUp(delta);
+                break;
+            case DOWN:
+                moveDown(delta);
+                break;
+        }
+    }
+
+    private void clear(){
+        move_right[0].setVisible(false);
+        move_right[1].setVisible(false);
+        move_left[0].setVisible(false);
+        move_left[1].setVisible(false);
+        move_up[0].setVisible(false);
+        move_up[1].setVisible(false);
+        move_down[0].setVisible(false);
+        move_down[1].setVisible(false);
+    }
+
+    public void moveRight(double delta){
+        clear();
+        if (move_right_index == 0){
+            move_right_index = 1;
+        }else {
+            move_right_index = 0;
+        }
+        setTranslateX(getTranslateX() + delta);
+        move_right[move_right_index].setVisible(true);
+    }
+
+    public void moveLeft(double delta){
+        clear();
+        if (move_left_index == 0){
+            move_left_index = 1;
+        }else{
+            move_left_index = 0;
+        }
+
+        setTranslateX(getTranslateX() - delta);
+        move_left[move_left_index].setVisible(true);
+    }
+
+    public void moveUp(double delta){
+        clear();
+        if (move_up_index == 0){
+            move_up_index = 1;
+        }else {
+            move_up_index = 0;
+        }
+        setTranslateY(getTranslateY() - delta);
+        move_up[move_up_index].setVisible(true);
+    }
+
+    public void moveDown(double delta){
+        clear();
+
+        if (move_down_index == 0){
+            move_down_index = 1;
+        }else{
+            move_down_index = 0;
+        }
+        setTranslateY(getTranslateY() + delta);
+        move_down[move_down_index].setVisible(true);
+    }
+}*/
 
 
 class Achievement {
