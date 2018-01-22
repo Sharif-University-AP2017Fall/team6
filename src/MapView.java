@@ -1,6 +1,7 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import sun.net.www.content.image.png;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class MapView {
         flag1.draw(gc, 27 * 32, 10 * 32);
         Tile flag2 = new Tile(new Image("res/bg/flag/flag_2.png"));
         flag2.draw(gc, 27 * 32, 11 * 32);
+
+        drawWeapons();
     }
 
 
@@ -98,7 +101,6 @@ public class MapView {
                 if (whichTile != 0 && whichTile < 100){
                     Tile tile = new Tile(new Image("res/bg/Route2/Route2_" + whichTile + ".png"));
                     tile.draw(gc, j * 32, i * 32);
-                 //   Tile tile = new Tile(new Image("res/bg/Route2/Route2_1.png"));
                 }
             }
         }
@@ -156,6 +158,25 @@ public class MapView {
                 k++;
                 if (whichTile != 0){
                     Tile tile = new Tile(new Image("/res/bg/Route1/Route1_" + whichTile + ".png"));
+                    tile.draw(gc, j * 32, i * 32);
+                }
+            }
+        }
+    }
+
+    public void drawWeapons(){
+        try {
+            tilesInput = readStringFromFile("src/res/bg/Weapons/Weapons.txt").split(",");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        int k = 0;
+        for (int i = 0; i < 22; i++){
+            for (int j = 0; j < 28; j++){
+                int whichTile = Integer.parseInt(tilesInput[k]);
+                k++;
+                if (whichTile != 0){
+                    Tile tile = new Tile(new Image("res/bg/Weapons/" + whichTile + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
