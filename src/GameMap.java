@@ -1,4 +1,5 @@
 
+import javafx.animation.TimelineBuilder;
 import javafx.scene.input.KeyEvent;
 
 import java.util.*;
@@ -630,8 +631,8 @@ public class GameMap {
 
                 Wormhole in = wormholes.get(i);
                 Wormhole out = wormholes.get(in.getLeadsTo());
-                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getShootingPoint().getX(),
-                        out.getDimension().getY() - hero.getShootingPoint().getY());
+                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getShootingPoint().getX() + 5,
+                        out.getDimension().getY() - hero.getShootingPoint().getY() + 5);
                 System.out.println("hero went into wormhole " +
                         (i + 1) +
                         " and came out from wormhole " +
@@ -1271,7 +1272,7 @@ class Wormhole {
     }
 
     boolean isWithinRadius(Dimension otherDim) {
-        return otherDim.distanceFrom(dimension) < 10;// radius * GameMap.UNIT;
+        return otherDim.distanceFrom(dimension) < 5;// radius * GameMap.UNIT;
     }
 
     public Dimension getDimension() {

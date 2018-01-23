@@ -1,14 +1,25 @@
+import javafx.animation.*;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
+import java.awt.*;
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -210,7 +221,7 @@ public class AlienCreeps extends Application {
                     public void handle(KeyEvent event) {
                         gameMap.moveHero(event);
                     }
-                });
+                });/*
                 gameScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent event) {
@@ -220,7 +231,7 @@ public class AlienCreeps extends Application {
                         gameMap.moveHero(new Dimension(Math.round(event.getX()) - hero.getShootingPoint().getX(),
                                 Math.round(event.getY()) - hero.getShootingPoint().getY()));
                     }
-                });
+                });*/
             }
         };
         gameInput = new Thread(r3);
@@ -242,21 +253,73 @@ public class AlienCreeps extends Application {
     }
 
 
-    static Scene menuScene = new Scene(new Group(),GameMap.XBOUND, GameMap.YBOUND);
+    static Scene menuScene = new Scene(new Group(),540, 1000);
     static Scene gameScene = new Scene(new Group(), GameMap.XBOUND, GameMap.YBOUND);
     static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
-        gameScene.setRoot(createGameContent());
-        stage.setTitle("Alien Creeps");
-        stage.setScene(gameScene);
+        menuScene.setRoot(createMenuContent());
+        stage.setScene(menuScene);
         stage.show();
+
+        /*gameScene.setRoot(createGameContent());
+        stage.setTitle("Alien Creeps");
+        stage.show();*/
     }
 
     private Parent createMenuContent(){
-        return new Group();
+        Group root = new Group();
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/bg/background.jpg").toExternalForm()));
+
+        GaussianBlur blur = new GaussianBlur(2);
+        background.setEffect(blur);
+
+        background.setFitWidth(540);
+        background.setFitHeight(810);
+
+        MenuItem new_item = new MenuItem("NewGame");
+        new_item.setOnAction(() -> {
+            gameScene.setRoot(createGameContent());
+            stage.setScene(gameScene);
+            stage.show();
+        });
+        new_item.setDim(390, 300);
+
+        MenuItem load_item = new MenuItem("LoadGame");
+        load_item.setDim(300, 450);
+
+        MenuItem exit_item = new MenuItem("Exit");
+        exit_item.setOnAction(() -> System.exit(0));
+        exit_item.setDim(390, 600);
+
+        root.getChildren().addAll(background, new_item, load_item, exit_item);
+
+        /*Canvas canvas = new Canvas(540, 1000);
+        root.getChildren().add(canvas);
+
+        final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100),
+                new EventHandler<ActionEvent>() {
+                    int imgNumber = 1;
+                    String address = "res/menu/spaceship/spaceship_";
+                    @Override
+                    public void handle(ActionEvent event) {
+                        graphicsContext.drawImage(new Image(address + imgNumber + ".png"), 350, 15);
+                        imgNumber++;
+                        if (imgNumber == 37){
+                            imgNumber = 1;
+                        }
+                    }
+                }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();*/
+
+        return root;
     }
 
     private Parent createGameContent(){

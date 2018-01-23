@@ -64,7 +64,6 @@ public class MapView {
                 int whichTile = Integer.parseInt(tilesInput[k]);
                 k++;
                 if (whichTile != 0){
-                    System.out.println(whichTile);
                     Tile tile = new Tile(new Image("/res/bg/details/detail_" + whichTile + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
