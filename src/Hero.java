@@ -3,30 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.sun.corba.se.impl.orbutil.DenseIntMapImpl;
-import com.sun.webkit.dom.ElementImpl;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.util.Duration;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 /**
  *
  * @author Tara
  */
 public class Hero extends Warrior {
-    private HeroView heroView;
+    private WarriorView warriorView;
     private Soldier[] soldiers = new Soldier[3];
     private Dimension soldierDims[] = new Dimension[3];
     private int resurrectionTime;
@@ -40,8 +30,10 @@ public class Hero extends Warrior {
 
 
 
+
+
     Hero(Dimension dimension) {
-        heroView = new HeroView();
+        warriorView = new WarriorView("hero", "5/", new Dimension(400, 300));
         achievement = new Achievement();
 
         setDimension(dimension);
@@ -51,9 +43,9 @@ public class Hero extends Warrior {
         setShootingSpeed(7);
         setPowerOfBullet(20);
 
-        soldierDims[0] = new Dimension(15, 0);
-        soldierDims[1] = new Dimension(-15, 0);
-        soldierDims[2] = new Dimension(0, -15);
+        soldierDims[0] = new Dimension(30, 0);
+        soldierDims[1] = new Dimension(-30, 0);
+        soldierDims[2] = new Dimension(0, -30);
         soldiers[0] = null;
         soldiers[1] = null;
         soldiers[2] = null;
@@ -62,8 +54,8 @@ public class Hero extends Warrior {
         super.shouldShoot = false;
     }
 
-   public HeroView getHeroView() {
-        return heroView;
+   public WarriorView getWarriorView() {
+        return warriorView;
     }
 
     void setSoldiers(Soldier[] soldiers) {
@@ -223,17 +215,17 @@ public class Hero extends Warrior {
         double deltaY = changeDimension.getY();
         //  if (Double.compare(deltaX, 0.0) == 0) {
         if (deltaY > 0) {
-            heroView.moveDown(deltaY);
+            warriorView.moveDown(deltaY);
         }else if (deltaY < 0){
-            heroView.moveUp(-1 * deltaY);
+            warriorView.moveUp(-1 * deltaY);
         }
         //   }
 
         //    if (Double.compare(deltaY, 0.0) == 0){
         if (deltaX > 0){
-            heroView.moveRight(deltaX);
+            warriorView.moveRight(deltaX);
         }else if (deltaX < 0){
-            heroView.moveLeft(-1 * deltaX);
+            warriorView.moveLeft(-1 * deltaX);
         }
         //  }
 
@@ -387,7 +379,7 @@ public class Hero extends Warrior {
     }
 }
 
-class HeroView extends StackPane{
+class WarriorView extends StackPane{
 
     private ImageView[] move_down;
     private ImageView[] move_up;
@@ -398,7 +390,8 @@ class HeroView extends StackPane{
     private int move_left_index;
     private int move_right_index;
 
-    public HeroView() {
+    public WarriorView(String name, String number, Dimension dim) {
+        System.out.println("setting view for " + name);
         this.move_down = new ImageView[3];
         this.move_up = new ImageView[3];
         this.move_right = new ImageView[3];
@@ -409,7 +402,7 @@ class HeroView extends StackPane{
         move_right_index = 0;
         move_left_index = 0;
 
-        String address = "res/hero/movement/5/";
+        String address = "res/" + name + "/movement/" + number;
         move_down[0] = new ImageView(new Image(getClass()
                 .getResource(address + "down1.png").toExternalForm()));
         move_down[0].setFitWidth(30);
@@ -494,8 +487,8 @@ class HeroView extends StackPane{
                 move_right[0],
                 move_right[1],
                 move_right[2]);
-        setTranslateX(400);
-        setTranslateY(300);
+        setTranslateX(dim.getX());
+        setTranslateY(dim.getY());
     }
 
     public void move(KeyEvent event, double delta){

@@ -1,5 +1,8 @@
 
 import javafx.animation.TimelineBuilder;
+import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.input.KeyEvent;
 
 import java.util.*;
@@ -8,6 +11,8 @@ public class GameMap {
     static double XBOUND = 895;
     static double YBOUND = 700;
     static int UNIT = 15;
+
+    private Parent root;
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
@@ -276,7 +281,18 @@ public class GameMap {
                     if (hero.getSoldiers()[i] == null) {
                         Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
                         soldier.setDimension(soldierDimension);
+                        soldier.setWarriorView(i + 1, hero.getDimension().add(hero.getSoldierDims()[i]));
                         hero.getSoldiers()[i] = soldier;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.addElementToGameRoot(soldier.getWarriorView());
+                            }
+                        });
+
+                        //((Group) AlienCreeps.gameScene.getRoot()).getChildren().add(soldier.getWarriorView());
+                        // System.out.println(soldier.getWarriorView() == null);
+                       // ((Group) root).getChildren().add(soldier.getWarriorView());
                         System.out.println("BARRACK MADE NEW SOLDIER");
                         System.out.println("welcome soldier " + i);
                         break;

@@ -1,25 +1,16 @@
-import javafx.animation.*;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
-import java.awt.*;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -330,9 +321,13 @@ public class AlienCreeps extends Application {
 
         //TODO bring these in the application window
       //  initWeapons();
-       root.getChildren().add(hero.getHeroView());
+       root.getChildren().add(hero.getWarriorView());
 
         launchGame();
         return root;
+    }
+
+    public static void addElementToGameRoot(Node node){
+        ((Group) gameScene.getRoot()).getChildren().add(node);
     }
 }

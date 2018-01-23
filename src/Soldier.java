@@ -5,6 +5,8 @@
  */
 public class Soldier extends Warrior {
 
+    private WarriorView warriorView;
+
     void increaseRadius() {
         setRadius(getRadius() * 1.1);
     }
@@ -18,6 +20,7 @@ public class Soldier extends Warrior {
     }
 
     Soldier() {
+       // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
         setRadius(0.5);
         setEnergy(150);
         setShootingSpeed(5);
@@ -27,6 +30,14 @@ public class Soldier extends Warrior {
     void showStatus() {
         System.out.println("\tplace: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy());
+    }
+
+    public void setWarriorView(int number, Dimension dim) {
+        this.warriorView = new WarriorView("soldiers", String.valueOf(number) + "/", dim);
+    }
+
+    public WarriorView getWarriorView() {
+        return warriorView;
     }
 
     @Override
@@ -41,7 +52,27 @@ public class Soldier extends Warrior {
         Dimension newDimension = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
 
+        Dimension.correctDim(newDimension);
+
         setDimension(newDimension);
+
+        double deltaX = changeDimension.getX();
+        double deltaY = changeDimension.getY();
+        //  if (Double.compare(deltaX, 0.0) == 0) {
+        if (deltaY > 0) {
+            warriorView.moveDown(deltaY);
+        }else if (deltaY < 0){
+            warriorView.moveUp(-1 * deltaY);
+        }
+        //   }
+
+        //    if (Double.compare(deltaY, 0.0) == 0){
+        if (deltaX > 0){
+            warriorView.moveRight(deltaX);
+        }else if (deltaX < 0){
+            warriorView.moveLeft(-1 * deltaX);
+        }
+        //  }
     //    System.out.println("soldier moved to " + newDimension);
     }
 
