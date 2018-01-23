@@ -122,6 +122,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                             min.setToShoot(null);
                             deadAliens.add(min);
                             aliens.remove(min);
+                            //TODO: REMOVE ALIEN FROM SCREEN
+
                             numKilled++;
                             if (aliens.isEmpty()) {
                  //               System.out.println("hero killed all and finished shooting");

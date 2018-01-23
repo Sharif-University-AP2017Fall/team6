@@ -52,6 +52,7 @@ public class WeaponAll extends Weapon {
                     if (ai.isDead()) {
                         System.out.println(getName() + " killed " + ai.getName());
                         deadAliens.add(ai);
+                        //TODO DELETE FROM SCRREN
                     }
                     numBullet++;
                 }

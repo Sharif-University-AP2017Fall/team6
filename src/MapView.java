@@ -1,10 +1,8 @@
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import sun.net.www.content.image.png;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class MapView {
     private Canvas canvas;
@@ -16,6 +14,8 @@ public class MapView {
         this.gc = canvas.getGraphicsContext2D();
 
         drawGrass();
+        drawGrassDetails();
+
         drawRoute1();
         drawRoute2();
 
@@ -25,6 +25,10 @@ public class MapView {
         flag2.draw(gc, 27 * 32, 11 * 32);
 
         drawWeapons();
+
+        drawTrees(false);
+        drawTrees(true);
+        drawBushes();
     }
 
 
@@ -43,6 +47,28 @@ public class MapView {
                     Tile tile = new Tile(new Image("/res/bg/base_grass/grass_" + whichTile + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
+            }
+        }
+    }
+
+    public void drawGrassDetails(){
+        try {
+            tilesInput = readStringFromFile("src/res/bg/details/details.txt").split(",");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        int k = 0;
+        for (int i = 0; i < 22; i++){
+            for (int j = 0; j < 28; j++){
+                int whichTile = Integer.parseInt(tilesInput[k]);
+                k++;
+                if (whichTile != 0){
+                    System.out.println(whichTile);
+                    Tile tile = new Tile(new Image("/res/bg/details/detail_" + whichTile + ".png"));
+                    tile.draw(gc, j * 32, i * 32);
+                }
+
             }
         }
     }
@@ -177,6 +203,50 @@ public class MapView {
                 k++;
                 if (whichTile != 0){
                     Tile tile = new Tile(new Image("res/bg/Weapons/" + whichTile + ".png"));
+                    tile.draw(gc, j * 32, i * 32);
+                }
+            }
+        }
+    }
+
+    public void drawTrees(boolean isTop){
+        try {
+            if (isTop){
+                tilesInput = readStringFromFile("src/res/bg/trees/big/top.txt").split(",");
+            }else{
+                tilesInput = readStringFromFile("src/res/bg/trees/big/bottom.txt").split(",");
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        int k = 0;
+        for (int i = 0; i < 22; i++){
+            for (int j = 0; j < 28; j++){
+                int whichTile = Integer.parseInt(tilesInput[k]);
+                k++;
+                if (whichTile != 0){
+                    Tile tile = new Tile(new Image("res/bg/trees/big/tree_" + whichTile + ".png"));
+                    tile.draw(gc, j * 32, i * 32);
+                }
+            }
+        }
+    }
+
+    public void drawBushes(){
+        try {
+            tilesInput = readStringFromFile("src/res/bg/trees/small/bush.txt").split(",");
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        int k = 0;
+        for (int i = 0; i < 22; i++){
+            for (int j = 0; j < 28; j++){
+                int whichTile = Integer.parseInt(tilesInput[k]);
+                k++;
+                if (whichTile != 0){
+                    Tile tile = new Tile(new Image("res/bg/trees/small/bush_" + whichTile + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }

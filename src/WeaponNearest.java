@@ -52,6 +52,7 @@ public class WeaponNearest extends Weapon {
                         min.reduceEnergy(this.getPowerOfBullet());
                     }
                     if (min.isDead()) {
+                        //TODO: DELETE FROM SCREEN
                         System.out.println(getName() + " killed " + min.getName());
                         //  System.out.println(min.getName() + " died.");
                         deadAliens.add(min);

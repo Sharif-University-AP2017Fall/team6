@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Tara
  */
 public class Hero extends Warrior {
-  //  private HeroView heroView;
+    private HeroView heroView;
     private Soldier[] soldiers = new Soldier[3];
     private Dimension soldierDims[] = new Dimension[3];
     private int resurrectionTime;
@@ -41,7 +41,7 @@ public class Hero extends Warrior {
 
 
     Hero(Dimension dimension) {
-  //      heroView = new HeroView();
+        heroView = new HeroView();
         achievement = new Achievement();
 
         setDimension(dimension);
@@ -62,9 +62,9 @@ public class Hero extends Warrior {
         super.shouldShoot = false;
     }
 
-   // public HeroView getHeroView() {
-   //     return heroView;
-    //}
+   public HeroView getHeroView() {
+        return heroView;
+    }
 
     void setSoldiers(Soldier[] soldiers) {
         this.soldiers = soldiers;
@@ -216,26 +216,9 @@ public class Hero extends Warrior {
 
     /**** Hero changes its dimension and his alive soldiers also change dimensions. ****/
 
+    private Object lock2 = new Object();
     @Override
-    public void move(Dimension changeDimension) {
-        /*double deltaX = changeDimension.getX();
-        double deltaY = changeDimension.getY();
-        if (Double.compare(deltaX, 0.0) == 0) {
-            if (deltaY > 0) {
-                heroView.moveDown(deltaY);
-            }else{
-                heroView.moveUp(-1 * deltaY);
-            }
-        }
-
-        if (Double.compare(deltaY, 0.0) == 0){
-            if (deltaX > 0){
-                heroView.moveRight(deltaX);
-            }else{
-                heroView.moveLeft(-1 * deltaX);
-            }
-        }*/
-
+    public void move(Dimension changeDimension){
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());
 
@@ -244,13 +227,39 @@ public class Hero extends Warrior {
         setDimension(newDim);
 
         correctDim();
-       // System.out.println("hero moved to " + newDim);
+        // System.out.println("hero moved to " + newDim);
         for (int i = 0; i < 3; i++) {
             if (soldiers[i] != null) {
                 soldiers[i].move(changeDimension);
                 soldiers[i].correctDim();
             }
         }
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (lock2){
+            double deltaX = changeDimension.getX();
+            double deltaY = changeDimension.getY();
+            //  if (Double.compare(deltaX, 0.0) == 0) {
+            if (deltaY > 0) {
+                heroView.moveDown(deltaY);
+            }else if (deltaY < 0){
+                heroView.moveUp(-1 * deltaY);
+            }
+            //   }
+
+            //    if (Double.compare(deltaY, 0.0) == 0){
+            if (deltaX > 0){
+                heroView.moveRight(deltaX);
+            }else if (deltaX < 0){
+                heroView.moveLeft(-1 * deltaX);
+            }
+            //  }
+        }
+
     }
 
     private Object lock = new Object();
@@ -307,7 +316,7 @@ public class Hero extends Warrior {
                 Dimension changeDim = new Dimension(deltaX, deltaY);
                 while (!super.dimension.equals(moveTo)){
                     try {
-                        Thread.sleep(10);
+                        Thread.sleep(20);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -322,6 +331,7 @@ public class Hero extends Warrior {
                             changeDim.setY(yRemain);
                         }
                         Dimension.correctDim(changeDim);
+
                         move(changeDim);
                     }
                 }
@@ -383,7 +393,7 @@ public class Hero extends Warrior {
     }
 }
 
-/*class HeroView extends StackPane{
+class HeroView extends StackPane{
 
     private ImageView[] move_down;
     private ImageView[] move_up;
@@ -495,8 +505,10 @@ public class Hero extends Warrior {
         move_down[1].setVisible(false);
     }
 
+    private Object lock1 = new Object();
+
     public void moveRight(double delta){
-        clear();
+     //   clear();
         if (move_right_index == 0){
             move_right_index = 1;
         }else {
@@ -504,10 +516,20 @@ public class Hero extends Warrior {
         }
         setTranslateX(getTranslateX() + delta);
         move_right[move_right_index].setVisible(true);
+        move_right[move_right_index].setVisible(true);
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock1){
+        }
     }
 
+    private Object lock2 = new Object();
+
     public void moveLeft(double delta){
-        clear();
+    //    clear();
         if (move_left_index == 0){
             move_left_index = 1;
         }else{
@@ -516,10 +538,19 @@ public class Hero extends Warrior {
 
         setTranslateX(getTranslateX() - delta);
         move_left[move_left_index].setVisible(true);
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock2){
+        }
     }
 
+    private Object lock3 = new Object();
+
     public void moveUp(double delta){
-        clear();
+    //    clear();
         if (move_up_index == 0){
             move_up_index = 1;
         }else {
@@ -527,10 +558,20 @@ public class Hero extends Warrior {
         }
         setTranslateY(getTranslateY() - delta);
         move_up[move_up_index].setVisible(true);
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock3){
+        }
+
     }
 
+    private Object lock4 = new Object();
+
     public void moveDown(double delta){
-        clear();
+    //    clear();
 
         if (move_down_index == 0){
             move_down_index = 1;
@@ -539,8 +580,16 @@ public class Hero extends Warrior {
         }
         setTranslateY(getTranslateY() + delta);
         move_down[move_down_index].setVisible(true);
+        try {
+            Thread.sleep(20);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (lock4){
+        }
+
     }
-}*/
+}
 
 
 class Achievement {

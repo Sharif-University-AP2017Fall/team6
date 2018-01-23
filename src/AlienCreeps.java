@@ -202,7 +202,6 @@ public class AlienCreeps extends Application {
         gameInput = new Thread(r2);
         gameInput.start();
 
-/*
         Runnable r3 = new Runnable() {
             @Override
             public void run() {
@@ -225,7 +224,7 @@ public class AlienCreeps extends Application {
             }
         };
         gameInput = new Thread(r3);
-        gameInput.start();*/
+        gameInput.start();
 
 
     }
@@ -268,7 +267,7 @@ public class AlienCreeps extends Application {
 
         //TODO bring these in the application window
       //  initWeapons();
-       //root.getChildren().add(hero.getHeroView());
+       root.getChildren().add(hero.getHeroView());
 
         launchGame();
         return root;
