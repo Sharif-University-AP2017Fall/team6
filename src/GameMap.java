@@ -3,16 +3,22 @@ import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class GameMap {
     static double XBOUND = 895;
     static double YBOUND = 700;
-    static int UNIT = 15;
 
-    private Parent root;
+    static int UNIT = 15;
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
@@ -196,11 +202,53 @@ public class GameMap {
 
         List<Dimension> wormholeDims = Dimension.randomDimension(6);
         wormholes.add(new Wormhole(1, wormholeDims.get(0)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(0).getWormholeView());
+            }
+        });*/
+
         wormholes.add(new Wormhole(0, wormholeDims.get(1)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(1).getWormholeView());
+            }
+        });*/
+
         wormholes.add(new Wormhole(3, wormholeDims.get(2)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(2).getWormholeView());
+            }
+        });*/
+
         wormholes.add(new Wormhole(2, wormholeDims.get(3)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(3).getWormholeView());
+            }
+        });*/
+
         wormholes.add(new Wormhole(5, wormholeDims.get(4)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(4).getWormholeView());
+            }
+        });*/
+
         wormholes.add(new Wormhole(4, wormholeDims.get(5)));
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(wormholes.get(5).getWormholeView());
+            }
+        });*/
+
     }
 
     boolean nextSecond() {
@@ -223,6 +271,19 @@ public class GameMap {
     }
 
     private void oneTimeActions(){
+        if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 1 && AlienCreeps.getCurrentDay() == 0){
+            System.out.println("WORMHOLE VIEW");
+            for (int i = 0; i < 6; i++){
+                int finalI = i;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size() - 1,
+                                wormholes.get(finalI).getWormholeView());
+                    }
+                });
+            }
+        }
 
         /****   CHECKING THE INTERGALACTIC BANK DEBT ****/
         if (hasBurrowed){
@@ -283,10 +344,12 @@ public class GameMap {
                         soldier.setDimension(soldierDimension);
                         soldier.setWarriorView(i + 1, hero.getDimension().add(hero.getSoldierDims()[i]));
                         hero.getSoldiers()[i] = soldier;
+
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                AlienCreeps.addElementToGameRoot(soldier.getWarriorView());
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        soldier.getWarriorView());
                             }
                         });
 
@@ -352,7 +415,7 @@ public class GameMap {
     }
 
     private void randomizeWormholes() {
-        if ((int) (Math.random() * 5) == 1) {
+        if ((int) (Math.random() * 8) == 1) {
             List<Dimension> wormholeDims = Dimension.randomDimension(6);
 
             /*** check that they're not on the routes ***/
@@ -647,8 +710,8 @@ public class GameMap {
 
                 Wormhole in = wormholes.get(i);
                 Wormhole out = wormholes.get(in.getLeadsTo());
-                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getShootingPoint().getX() + 5,
-                        out.getDimension().getY() - hero.getShootingPoint().getY() + 5);
+                Dimension newChange = new Dimension(out.getDimension().getX() - hero.getShootingPoint().getX() + 15,
+                        out.getDimension().getY() - hero.getShootingPoint().getY() + 15);
                 System.out.println("hero went into wormhole " +
                         (i + 1) +
                         " and came out from wormhole " +
@@ -656,6 +719,7 @@ public class GameMap {
                 System.out.println("she says hi :)");
               //  hero.setShouldMove(newChange);
                 this.hero.move(newChange);
+
                 return true;
             }
         }
@@ -1272,8 +1336,11 @@ class Wormhole {
     private int leadsTo;
     private Dimension dimension;
     private double radius;
+    private WormholeView wormholeView;
 
     Wormhole(int leadsTo, Dimension dimension) {
+        wormholeView = new WormholeView(dimension);
+
         this.leadsTo = leadsTo;
         this.dimension = dimension;
         radius = 1;
@@ -1281,6 +1348,7 @@ class Wormhole {
 
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
+        wormholeView.changeDim(dimension);
     }
 
     int getLeadsTo() {
@@ -1288,10 +1356,42 @@ class Wormhole {
     }
 
     boolean isWithinRadius(Dimension otherDim) {
-        return otherDim.distanceFrom(dimension) < 5;// radius * GameMap.UNIT;
+        //return otherDim.equals(dimension);
+        return otherDim.distanceFrom(dimension) < 15;//radius * GameMap.UNIT;// 5;// radius * GameMap.UNIT;
     }
 
     public Dimension getDimension() {
         return dimension;
     }
+
+    public WormholeView getWormholeView() {
+        return wormholeView;
+    }
+}
+
+class WormholeView extends StackPane{
+    private ImageView view;
+
+    public WormholeView(Dimension dim){
+        view = new ImageView(new Image(getClass()
+                .getResource("res/wormhole/images/wormhole_1.png").toExternalForm()));
+        view.setFitWidth(50);
+        view.setFitHeight(50);
+        view.setVisible(true);
+
+        getChildren().add(view);
+
+        relocate(dim.getX(), dim.getY());
+
+        //setTranslateX(dim.getX());
+        //setTranslateY(dim.getY());
+    }
+
+    public void changeDim(Dimension newDim){
+
+        relocate(newDim.getX(), newDim.getY());
+    //    setTranslateX(newDim.getX());
+      //  setTranslateY(newDim.getY());
+    }
+
 }

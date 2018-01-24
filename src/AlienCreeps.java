@@ -75,13 +75,12 @@ public class AlienCreeps extends Application {
 
             @Override
             public void run() {
-
                 Thread heroLifeCycle = new Thread(hero);
                 heroLifeCycle.start();
 
                 while (true){
                     try {
-                        Thread.sleep(6000); //TODO: change this to one second
+                        Thread.sleep(2500); //TODO: change this to one second
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -297,7 +296,7 @@ public class AlienCreeps extends Application {
 
         //TODO DON'T FORGET THIS PART BEFORE YOU PULL
 
-        Canvas canvas = new Canvas(540, 200);
+        Canvas canvas = new Canvas(560, 200);
         root.getChildren().add(canvas);
 
         final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
@@ -351,7 +350,9 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    public static void addElementToGameRoot(Node node){
-        ((Group) gameScene.getRoot()).getChildren().add(node);
+    public static void addElementToGameRoot(int index, Node ... node){
+        for (int i = 0; i < node.length; i++){
+            ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
+        }
     }
 }
