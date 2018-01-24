@@ -148,12 +148,12 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void move(Dimension dimension) {
-
+        alienView.move(Dimension.deltaX(currentDim, dimension),
+                Dimension.deltaY(currentDim, dimension));
 
         setCurrentDim(dimension);
-        alienView.move(Dimension.deltaX(currentDim, dimension),
-                Dimension.deltaY(currentDim, dimension)
-        );
+
+        
 
         System.out.println(name + " moved to " + currentDim);
     }
@@ -524,10 +524,12 @@ public class Alien implements Movable, Comparable, Runnable {
              } else {
                  moveLeft(deltaX);
              }
-         } else if (deltaY > 0) {
-             moveUp(deltaX, deltaY);
-         } else {
+         } 
+         else if (deltaY > 0) {
              moveDown(deltaX, deltaY);
+         } 
+         else {
+             moveUp(deltaX, deltaY);
          }
 
      }

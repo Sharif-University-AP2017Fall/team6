@@ -167,7 +167,8 @@ public class Dimension {
     
     
     public static double deltaX(Dimension current, Dimension future){
-        
+        if (current==null || future==null)
+            return 0;
         return future.getX()-current.getX();
 
         }
@@ -175,7 +176,8 @@ public class Dimension {
     
    
     public static double deltaY(Dimension current, Dimension future){
-        
+        if (current==null || future==null)
+            return 0;
         return future.getY()-current.getY();
 
         }
