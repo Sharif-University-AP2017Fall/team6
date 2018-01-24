@@ -355,4 +355,8 @@ public class AlienCreeps extends Application {
             ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
         }
     }
+
+    public static void removeElementFromGameRoot(Node ... node){
+        ((Group) gameScene.getRoot()).getChildren().removeAll(node);
+    }
 }

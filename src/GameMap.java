@@ -576,7 +576,7 @@ public class GameMap {
     }
 
     private int chooseRandomRoute() {
-        return (int) (Math.random() * routes.size());
+        return (int) (Math.random() * 2);
     }
 
     void showReachedFlag() {
@@ -630,6 +630,12 @@ public class GameMap {
 
                 if (alien.getMoveTo().equals(flag)) {
                     Alien.reduceNum(1);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.removeElementFromGameRoot(alien.getAlienView());
+                        }
+                    });
                     return reachFlag(alien);
                 }
 
