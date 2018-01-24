@@ -42,7 +42,7 @@ public class GameMap {
     private Bank bank = new Bank();
 
     GameMap(Hero hero) {
-        flag = new Dimension(800, 300);
+        flag = new Dimension(750, 300);
         this.hero = hero;
 
         Line lines[] = new Line[5];
@@ -60,7 +60,7 @@ public class GameMap {
         lines[1] = new Line(0.0, 150.0, breakPoints.get(1), breakPoints.get(2));
         lines[2] = new Line(1.0, -150.0, breakPoints.get(2), breakPoints.get(3));
         lines[3] = new Line(-1.0, 750, breakPoints.get(3), breakPoints.get(4));
-        lines[4] = new Line(0.75, -300, breakPoints.get(4), flag);
+        lines[4] = new Line(1.0, -450, breakPoints.get(4), flag);
         routes.add(new Route(lines, intersections));
 
 
@@ -72,8 +72,8 @@ public class GameMap {
         lines[0] = new Line(-1.0, 600, breakPoints.get(0), breakPoints.get(1));
         lines[1] = new Line(0, 450, breakPoints.get(1), breakPoints.get(2));
         lines[2] = new Line(-1.0, 750, breakPoints.get(2), breakPoints.get(3));
-        lines[3] = new Line(1.0, 150, breakPoints.get(3), breakPoints.get(4));
-        lines[4] = new Line(-0.75, 900, breakPoints.get(4), flag);
+        lines[3] = new Line(1.0, -150, breakPoints.get(3), breakPoints.get(4));
+        lines[4] = new Line(-1.0, 1050, breakPoints.get(4), flag);
         routes.add(new Route(lines, intersections));
 
         Dimension dimension;
@@ -569,8 +569,11 @@ public class GameMap {
                 int routeNumber = chooseRandomRoute();
                 Route whichRoute = routes.get(routeNumber);
 
+                newAlien.move(whichRoute.getLines()[0].getStartPoint());
+                whichRoute.getAlienMap().get(whichRoute.getLines()[0]).add(newAlien);
+
                // routes.get(1).addAlienToRoute(newAlien, 0);
-                whichRoute.addAlienToRoute(newAlien, 0);
+                //whichRoute.addAlienToRoute(newAlien, 0);
             }
         }
     }
@@ -616,6 +619,8 @@ public class GameMap {
         return numReached >= 5;
     }
 
+    private Object lock = new Object();
+
     private boolean moveAliens() {
   //      System.out.println("•••••••••••••");
    //     System.out.println("MOVING ALIENS");
@@ -627,21 +632,24 @@ public class GameMap {
 
             for (int j = 0; j < reachBreak.size(); j++) {
                 Alien alien = reachBreak.get(j);
+                //synchronized (lock){
+                    if (alien.getMoveTo().equals(flag)) {
+                         while (!alien.getCurrentDim().equals(flag)){
 
-                if (alien.getMoveTo().equals(flag)) {
-                    Alien.reduceNum(1);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlienCreeps.removeElementFromGameRoot(alien.getAlienView());
                         }
-                    });
-                    return reachFlag(alien);
-                }
-
+                        Alien.reduceNum(1);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.removeElementFromGameRoot(alien.getAlienView());
+                            }
+                        });
+                        return reachFlag(alien);
+                    }
+                //}
 
                 int randomNumber = chooseRandomRoute();
-        //        System.out.println(alien.getName() + " WAS RELOCATED TO ROUTE " + randomNumber);
+                System.out.println(alien.getName() + " WAS RELOCATED TO ROUTE " + randomNumber);
 
                 Route randomRoute = routes.get(randomNumber);
                 randomRoute.addAlienToRoute(alien, 3);
@@ -1176,10 +1184,12 @@ class Route {
         this.intersections.addAll(intersections);
     }
 
+    private Object lock = new Object();
+
     List<Alien> moveAliensOnRoute() {
         List<Alien> reachedIntersection = new ArrayList<>();
 
-        for (int i = 4; i >= 0; i--) {
+        for (int i = 0; i <5; i++) {
             List<Alien> toMove = alienMap.get(lines[i]);
 
             for (int j = 0; j < toMove.size(); j++) {
@@ -1187,31 +1197,44 @@ class Route {
                 Alien current = toMove.get(j);
                 Dimension destination = lines[i].moveAlienOnLine(current);
 
-                if (destination == null) {
-                    destination = lines[i].getEndPoint();
-                    current.setMoveTo(destination);
-                    alienMap.get(lines[i]).remove(current);
-
-                    if (intersections.contains(destination)) {
-                    //    System.out.println(current.getName() + " REACHED INTERSECTION");
-                        reachedIntersection.add(current);
-                    } else {
-                        alienMap.get(lines[i + 1]).add(current);
-                    }
-                } else {
-                    current.setMoveTo(destination);
-                    if (intersections.contains(destination)) {
+               // synchronized (lock){
+                    if (destination == null) {
+                        destination = lines[i].getEndPoint();
+                        current.setMoveTo(destination);
                         alienMap.get(lines[i]).remove(current);
-                        reachedIntersection.add(current);
+
+               //         synchronized (lock){
+                            if (intersections.contains(destination)) {
+                                System.out.println(current.getName() + " REACHED INTERSECTION");
+                                reachedIntersection.add(current);
+                            } else {
+                                while (!current.getCurrentDim().equals(destination)){
+                                   System.out.print("");
+                                }
+                                alienMap.get(lines[i + 1]).add(current);
+                            }
+                   //     }
+
+                    } else {
+                        current.setMoveTo(destination);
+                        if (intersections.contains(destination)) {
+                            alienMap.get(lines[i]).remove(current);
+                            reachedIntersection.add(current);
+                        }
                     }
-                }
+              //  }
+
             }
         }
         return reachedIntersection;
     }
 
     void addAlienToRoute(Alien alien, int lineNumber) {
-        alien.move(lines[lineNumber].getStartPoint());
+        alien.setMoveTo(lines[lineNumber].getStartPoint());
+       // alien.move(lines[lineNumber].getStartPoint());
+        while (!alien.getCurrentDim().equals(lines[lineNumber].getStartPoint())){
+            System.out.print("");
+        }
         alienMap.get(lines[lineNumber]).add(alien);
     }
 
@@ -1288,16 +1311,25 @@ class Line {
         this.endPoint = endPoint;
     }
 
-    Dimension moveAlienOnLine(Alien alien) {
+    synchronized Dimension moveAlienOnLine(Alien alien) {
         double currentX = alien.getCurrentDim().getX();
 
         double newX = currentX + GameMap.UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
 
-        if (newX < endPoint.getX()) {
-            return new Dimension(newX, newY);
+        System.out.println("new dim" + newX + " " + newY);
+        System.out.println("endoflinedim = " + endPoint);
+        System.out.println(Double.compare(newX, endPoint.getX()));
+
+        if (Double.compare(newX, endPoint.getX()) >= 0){
+            System.out.println("END OF LINE.");
+            return null;
         }
-        return null;
+
+        //  if (newX < endPoint.getX()) {
+        return new Dimension(newX, newY);
+        //    }
+        //return null;
     }
 
     boolean isOnLine(Dimension dimension) {

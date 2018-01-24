@@ -1,4 +1,5 @@
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -15,7 +16,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 25;
+    private static int MAXNUM = 10;
     private static boolean START = false;
 
     /**** PROPERTIES ****/
@@ -154,17 +155,15 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void move(Dimension dimension) {
-        System.out.println("SHOULD MOVE TO " + dimension);
+        System.out.println(name);
+
         Dimension.correctDim(dimension);
-      //  if (alienView != null){
             alienView.move(Dimension.deltaX(currentDim, dimension),
                     Dimension.deltaY(currentDim, dimension));
-       // }else{
-          //  setAlienView(dimension);
-        //}
         setCurrentDim(dimension);
 
-        //System.out.println(name + " moved to " + currentDim);
+        System.out.println(name + " moved to " + currentDim);
+        System.out.println("********************••••••••••*****************");
     }
 
     @Override
@@ -268,6 +267,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     public void setMoveTo(Dimension moveTo) {
         if (speed > 0) {
+            System.out.println(name + " should move to " + moveTo);
             this.shouldMove = true;
             this.moveTo = moveTo;
         }
@@ -315,21 +315,44 @@ public class Alien implements Movable, Comparable, Runnable {
                 Dimension moveFrom = currentDim;
                 double deltaX = (moveTo.getX() - moveFrom.getX()) / 10;
                 double deltaY = (moveTo.getY() - moveFrom.getY()) / 10;
+
+                int signX = Double.compare(deltaX, 0.0);
+                int signY = Double.compare(deltaY, 0.0);
+
+                deltaX = (this.speed * GameMap.UNIT) / 10.0 * signX;
+                deltaY = (this.speed * GameMap.UNIT) / 10.0 * signY;
                 for (int i = 0; i < 10; i++) {
                     try {
-                        Thread.sleep(250);
+                        Thread.sleep(150); //250
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     synchronized (lock1) {
+                        double xRemain = moveTo.getX() - currentDim.getX();
+                        if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
+                            deltaX = xRemain;
+                        }
+
+                        double yRemain = (moveTo.getY() - currentDim.getY());
+                        if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
+                            deltaY = yRemain;
+                        }
+
                         Dimension newDim = new Dimension(currentDim.getX() + deltaX,
                                 currentDim.getY() + deltaY);
                         Dimension.correctDim(newDim);
+
                         if (speed > 0) {
                             move(newDim);
                         }
                     }
                     if (!shouldMove) {
+                        System.out.println("reached destination1");
+                        break;
+                    }
+
+                    if (currentDim.equals(moveTo)){
+                        System.out.println("reached destination2");
                         break;
                     }
                 }
@@ -480,6 +503,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveRight(double delta) {
+         System.out.println("ALIEN IS MOVING RIGHT");
          clear();
          move_right_index++;
          move_right_index %= 3;
@@ -491,6 +515,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveLeft(double delta) {
+         System.out.println("ALIEN IS MOVING LEFT");
          clear();
          move_left_index++;
          move_left_index %= 3;
@@ -501,6 +526,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveUp(double deltax, double deltay) {
+         System.out.println("ALIEN IS MOVING UP");
          clear();
          move_up_index++;
          move_up_index %= 3;
@@ -528,15 +554,18 @@ public class Alien implements Movable, Comparable, Runnable {
 
          double dummyY = Math.round(deltaY * 10);
          deltaY = dummyY / 10;
+         System.out.println("DELTAX = " + deltaX + "DELTAY = " + deltaY);
 
-         if (deltaY == 0) {
-             if (deltaX > 0) {
-                 moveRight(deltaX);
-                 return;
-             } else {
-                 moveLeft(deltaX);
+         if (Double.compare(deltaY, 0) == 0) {
+             if (Double.compare(deltaX, 0) != 0){
+                 if (deltaX > 0) {
+                     moveRight(deltaX);
+                     return;
+                 } else {
+                     moveLeft(deltaX);
+                 }
              }
-         } 
+         }
          else if (deltaY > 0) {
              moveDown(deltaX, deltaY);
          } 

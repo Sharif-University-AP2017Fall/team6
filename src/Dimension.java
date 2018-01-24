@@ -151,9 +151,11 @@ public class Dimension {
     @Override
     public boolean equals(Object obj) {
         Dimension otherDimension = ((Dimension) obj);
-        double yDif = otherDimension.getY() - this.Y;
-        double xDif = otherDimension.getX() - this.X;
-        return (yDif < 1 && yDif > -1) && (xDif < 1 && xDif > -1);
+       // double yDif = otherDimension.getY() - this.Y;
+      //  double xDif = otherDimension.getX() - this.X;
+        return (Double.compare(otherDimension.getX(), this.X) == 0) &&
+                (Double.compare(otherDimension.getY(), this.getY()) == 0);
+      //  return (yDif < 1 && yDif > -1) && (xDif < 1 && xDif > -1);
     }
 
     public static void correctDim(Dimension dimension){

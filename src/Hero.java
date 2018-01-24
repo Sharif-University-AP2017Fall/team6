@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
+import java.security.interfaces.DSAPublicKey;
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -267,19 +268,24 @@ public class Hero extends Warrior {
                 double deltaY = (moveTo.getY() - moveFrom.getY());
                 double slope = deltaY / deltaX;
 
-                int signX = 0;
-                if (deltaX > 0){
+                int signX = Double.compare(deltaX, 0.0);//0;
+                if (signX != 0)
+                    signX = signX / Math.abs(signX);
+                /*if (deltaX > 0){
                     signX = 1;
                 }else if (deltaX < 0){
                     signX = -1;
-                }
+                }*/
 
-                int signY = 0;
-                if (deltaY > 0){
+                int signY = Double.compare(deltaY, 0.0);
+                if (signY != 0)
+                    signY = signY / Math.abs(signY);
+                /*if (deltaY > 0){
+
                     signY = 1;
                 }else if(deltaY < 0){
                     signY = -1;
-                }
+                }*/
 
                 if (signX == 0 && signY == 0){
                     deltaX = 0;
