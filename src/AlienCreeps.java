@@ -1,15 +1,21 @@
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Scanner;
@@ -289,26 +295,44 @@ public class AlienCreeps extends Application {
 
         root.getChildren().addAll(background, new_item, load_item, exit_item);
 
-        /*Canvas canvas = new Canvas(540, 1000);
+        //TODO DON'T FORGET THIS PART BEFORE YOU PULL
+
+        Canvas canvas = new Canvas(540, 200);
         root.getChildren().add(canvas);
 
         final GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(100),
+        graphicsContext.drawImage(new Image("res/menu/Title/AlienCreeps.png"), 5, 50);
+
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(200),
                 new EventHandler<ActionEvent>() {
                     int imgNumber = 1;
-                    String address = "res/menu/spaceship/spaceship_";
+                    double xDim = 50;
+                    double deltaX = 50;
+                    String address = "res/menu/spaceship/images/spaceship_";
                     @Override
                     public void handle(ActionEvent event) {
-                        graphicsContext.drawImage(new Image(address + imgNumber + ".png"), 350, 15);
+                        for (int i = 0; i < 10;i ++){
+                            graphicsContext.clearRect(i * 50, 170, 48, 48);
+                            graphicsContext.clearRect(i * 50, 15, 48, 48);
+                        }
+                        graphicsContext.drawImage(new Image(address + imgNumber + ".png"), xDim, 170);
+                        graphicsContext.drawImage(new Image(address + imgNumber + ".png"), 500 - xDim, 15);
+                        xDim += deltaX;
+                        if (xDim == 450){
+                            deltaX *= -1;
+                        }
+                        if (xDim == 50){
+                            deltaX *= -1;
+                        }
                         imgNumber++;
-                        if (imgNumber == 37){
+                        if (imgNumber == 25){
                             imgNumber = 1;
                         }
                     }
                 }));
         timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.play();*/
+        timeline.play();
 
         return root;
     }

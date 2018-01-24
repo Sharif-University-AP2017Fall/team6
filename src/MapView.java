@@ -8,8 +8,8 @@ public class MapView {
     private Canvas canvas;
     private GraphicsContext gc;
     String[] tilesInput;
-    String Tara="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/";
-    String Tara1="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src";
+    String Tara= ""; //"/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/";
+    String Tara1= "";//"/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src";
                     
             
     public MapView(Canvas canvas) {
