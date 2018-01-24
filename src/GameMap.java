@@ -555,6 +555,13 @@ public class GameMap {
                         break;
                 }
                 newAlien = new Alien(name);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                newAlien.getAlienView());
+                    }
+                });
                 System.out.println(name + " entered!");
                 Thread alienLifeCycle = new Thread(newAlien);
                 alienLifeCycle.start();

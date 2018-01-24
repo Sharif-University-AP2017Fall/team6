@@ -40,6 +40,7 @@ public class Alien implements Movable, Comparable, Runnable {
     private AlienView alienView;
     
     Alien(String name) {
+        alienView = new AlienView("aliens", name);
         NUM++;
         START = true;
         this.name = name;// + NUM; //TODO delete NUM from this
@@ -147,12 +148,13 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void move(Dimension dimension) {
-        
-         alienView.move(Dimension.deltaX(currentDim, dimension), 
-                 Dimension.deltaY(currentDim, dimension)
-                    );
-        
+
+
         setCurrentDim(dimension);
+        alienView.move(Dimension.deltaX(currentDim, dimension),
+                Dimension.deltaY(currentDim, dimension)
+        );
+
         System.out.println(name + " moved to " + currentDim);
     }
 
@@ -328,211 +330,210 @@ public class Alien implements Movable, Comparable, Runnable {
             }
         }
     }
+
+    public AlienView getAlienView() {
+        return alienView;
+    }
 }
 
 
 
 
  class AlienView extends StackPane {
-     
-    private ImageView[] move_down;
-    private ImageView[] move_up;
-    private ImageView[] move_left;
-    private ImageView[] move_right;
-    
-    private int move_down_index;
-    private int move_up_index;
-    private int move_left_index;
-    private int move_right_index;
 
-    public AlienView(String name, String alienName, Dimension dim) {
-        System.out.println("setting view for " + name);
-        this.move_down = new ImageView[3];
-        this.move_up = new ImageView[3];
-        this.move_right = new ImageView[3];
-        this.move_left = new ImageView[3];
+     private ImageView[] move_down;
+     private ImageView[] move_up;
+     private ImageView[] move_left;
+     private ImageView[] move_right;
 
-        move_down_index = 0;
-        move_up_index = 0;
-        move_right_index = 0;
-        move_left_index = 0;
+     private int move_down_index;
+     private int move_up_index;
+     private int move_left_index;
+     private int move_right_index;
 
-        String address = "res/" + name + "/movement/" + alienName;
-        move_down[0] = new ImageView(new Image(getClass()
-                .getResource(address + "down1.png").toExternalForm()));
-        move_down[0].setFitWidth(30);
-        move_down[0].setFitHeight(35);
-        move_down[0].setVisible(true );
+     public AlienView(String name, String alienName){//}, Dimension dim) {
+         System.out.println("setting view for " + name);
+         this.move_down = new ImageView[3];
+         this.move_up = new ImageView[3];
+         this.move_right = new ImageView[3];
+         this.move_left = new ImageView[3];
 
-        move_down[1] = new ImageView(new Image(getClass()
-                .getResource(address + "down2.png").toExternalForm()));
-        move_down[1].setFitWidth(30);
-        move_down[1].setFitHeight(35);
-        move_down[1].setVisible(false);
+         move_down_index = 0;
+         move_up_index = 0;
+         move_right_index = 0;
+         move_left_index = 0;
 
-        move_down[2] = new ImageView(new Image(getClass()
-                .getResource(address + "down3.png").toExternalForm()));
-        move_down[2].setFitWidth(30);
-        move_down[2].setFitHeight(35);
-        move_down[2].setVisible(false);
+         String address = "res/" + name + "/movement/" + alienName + "/";
+         move_down[0] = new ImageView(new Image(getClass()
+                 .getResource(address + "down1.png").toExternalForm()));
+         move_down[0].setFitWidth(30);
+         move_down[0].setFitHeight(35);
+         move_down[0].setVisible(true);
 
-        move_up[0] = new ImageView(new Image(getClass()
-                .getResource(address + "up1.png").toExternalForm()));
-        move_up[0].setFitWidth(30);
-        move_up[0].setFitHeight(35);
-        move_up[0].setVisible(false);
+         move_down[1] = new ImageView(new Image(getClass()
+                 .getResource(address + "down2.png").toExternalForm()));
+         move_down[1].setFitWidth(30);
+         move_down[1].setFitHeight(35);
+         move_down[1].setVisible(false);
 
-        move_up[1] = new ImageView(new Image(getClass()
-                .getResource(address + "up2.png").toExternalForm()));
-        move_up[1].setFitWidth(30);
-        move_up[1].setFitHeight(35);
-        move_up[1].setVisible(false);
+         move_down[2] = new ImageView(new Image(getClass()
+                 .getResource(address + "down3.png").toExternalForm()));
+         move_down[2].setFitWidth(30);
+         move_down[2].setFitHeight(35);
+         move_down[2].setVisible(false);
 
-        move_up[2] = new ImageView(new Image(getClass()
-                .getResource(address + "up3.png").toExternalForm()));
-        move_up[2].setFitWidth(30);
-        move_up[2].setFitHeight(35);
-        move_up[2].setVisible(false);
+         move_up[0] = new ImageView(new Image(getClass()
+                 .getResource(address + "up1.png").toExternalForm()));
+         move_up[0].setFitWidth(30);
+         move_up[0].setFitHeight(35);
+         move_up[0].setVisible(false);
 
-        move_left[0] = new ImageView(new Image(getClass()
-                .getResource(address + "left1.png").toExternalForm()));
-        move_left[0].setFitWidth(30);
-        move_left[0].setFitHeight(35);
-        move_left[0].setVisible(false);
+         move_up[1] = new ImageView(new Image(getClass()
+                 .getResource(address + "up2.png").toExternalForm()));
+         move_up[1].setFitWidth(30);
+         move_up[1].setFitHeight(35);
+         move_up[1].setVisible(false);
 
-        move_left[1] = new ImageView(new Image(getClass()
-                .getResource(address + "left2.png").toExternalForm()));
-        move_left[1].setFitWidth(30);
-        move_left[1].setFitHeight(35);
-        move_left[1].setVisible(false);
+         move_up[2] = new ImageView(new Image(getClass()
+                 .getResource(address + "up3.png").toExternalForm()));
+         move_up[2].setFitWidth(30);
+         move_up[2].setFitHeight(35);
+         move_up[2].setVisible(false);
 
-        move_left[2] = new ImageView(new Image(getClass()
-                .getResource(address + "left3.png").toExternalForm()));
-        move_left[2].setFitWidth(30);
-        move_left[2].setFitHeight(35);
-        move_left[2].setVisible(false);
+         move_left[0] = new ImageView(new Image(getClass()
+                 .getResource(address + "left1.png").toExternalForm()));
+         move_left[0].setFitWidth(30);
+         move_left[0].setFitHeight(35);
+         move_left[0].setVisible(false);
 
-        move_right[0] = new ImageView(new Image(getClass()
-                .getResource(address + "right1.png").toExternalForm()));
-        move_right[0].setFitWidth(30);
-        move_right[0].setFitHeight(35);
-        move_right[0].setVisible(false);
+         move_left[1] = new ImageView(new Image(getClass()
+                 .getResource(address + "left2.png").toExternalForm()));
+         move_left[1].setFitWidth(30);
+         move_left[1].setFitHeight(35);
+         move_left[1].setVisible(false);
 
-        move_right[1] = new ImageView(new Image(getClass()
-                .getResource(address + "right2.png").toExternalForm()));
-        move_right[1].setFitWidth(30);
-        move_right[1].setFitHeight(35);
-        move_right[1].setVisible(false);
+         move_left[2] = new ImageView(new Image(getClass()
+                 .getResource(address + "left3.png").toExternalForm()));
+         move_left[2].setFitWidth(30);
+         move_left[2].setFitHeight(35);
+         move_left[2].setVisible(false);
 
-        move_right[2] = new ImageView(new Image(getClass()
-                .getResource(address + "right3.png").toExternalForm()));
-        move_right[2].setFitWidth(30);
-        move_right[2].setFitHeight(35);
-        move_right[2].setVisible(false);
+         move_right[0] = new ImageView(new Image(getClass()
+                 .getResource(address + "right1.png").toExternalForm()));
+         move_right[0].setFitWidth(30);
+         move_right[0].setFitHeight(35);
+         move_right[0].setVisible(false);
 
-        getChildren().addAll(move_down[0],
-                move_down[1],
-                move_down[2],
-                move_up[0],
-                move_up[1],
-                move_up[2],
-                move_left[0],
-                move_left[1],
-                move_left[2],
-                move_right[0],
-                move_right[1],
-                move_right[2]);
-        setTranslateX(dim.getX());
-        setTranslateY(dim.getY());
-    }
+         move_right[1] = new ImageView(new Image(getClass()
+                 .getResource(address + "right2.png").toExternalForm()));
+         move_right[1].setFitWidth(30);
+         move_right[1].setFitHeight(35);
+         move_right[1].setVisible(false);
 
-     
-    private void clear(){
-        move_right[0].setVisible(false);
-        move_right[1].setVisible(false);
-        move_right[2].setVisible(false);
-        move_left[0].setVisible(false);
-        move_left[1].setVisible(false);
-        move_left[2].setVisible(false);
-        move_up[0].setVisible(false);
-        move_up[1].setVisible(false);
-        move_up[2].setVisible(false);
-        move_down[0].setVisible(false);
-        move_down[1].setVisible(false);
-        move_down[2].setVisible(false);
-    }
-    
-    
-    public void moveRight(double delta){
-        clear();
-        move_right_index++;
-        move_right_index %= 3;
+         move_right[2] = new ImageView(new Image(getClass()
+                 .getResource(address + "right3.png").toExternalForm()));
+         move_right[2].setFitWidth(30);
+         move_right[2].setFitHeight(35);
+         move_right[2].setVisible(false);
 
-        setTranslateX(getTranslateX() + delta);
-        move_right[move_right_index].setVisible(true);
-        move_right[move_right_index].setVisible(true);
-
-    }
+         getChildren().addAll(move_down[0],
+                 move_down[1],
+                 move_down[2],
+                 move_up[0],
+                 move_up[1],
+                 move_up[2],
+                 move_left[0],
+                 move_left[1],
+                 move_left[2],
+                 move_right[0],
+                 move_right[1],
+                 move_right[2]);
+     //    setTranslateX(dim.getX());
+       //  setTranslateY(dim.getY());
+     }
 
 
-
-    public void moveLeft(double delta){
-        clear();
-        move_left_index++;
-        move_left_index %= 3;
-
-        setTranslateX(getTranslateX() - delta);
-        move_left[move_left_index].setVisible(true);
-
-    }
-
- 
-    
-    public void moveUp(double deltax,double deltay){
-        clear();
-        move_up_index++;
-        move_up_index %= 3;
-        setTranslateX(getTranslateX() + deltax);
-        setTranslateY(getTranslateY() + deltay);
-        move_up[move_up_index].setVisible(true);
-
-    }
+     private void clear() {
+         move_right[0].setVisible(false);
+         move_right[1].setVisible(false);
+         move_right[2].setVisible(false);
+         move_left[0].setVisible(false);
+         move_left[1].setVisible(false);
+         move_left[2].setVisible(false);
+         move_up[0].setVisible(false);
+         move_up[1].setVisible(false);
+         move_up[2].setVisible(false);
+         move_down[0].setVisible(false);
+         move_down[1].setVisible(false);
+         move_down[2].setVisible(false);
+     }
 
 
+     public void moveRight(double delta) {
+         clear();
+         move_right_index++;
+         move_right_index %= 3;
 
-    public void moveDown(double deltax,double deltay){
-        clear();
-        move_down_index++;
-        move_down_index %= 3;
-        setTranslateX(getTranslateX() + deltax);
-        setTranslateY(getTranslateY() + deltay);
-        move_down[move_down_index].setVisible(true);
+         setTranslateX(getTranslateX() + delta);
+         move_right[move_right_index].setVisible(true);
+         move_right[move_right_index].setVisible(true);
+
+     }
 
 
-    }
+     public void moveLeft(double delta) {
+         clear();
+         move_left_index++;
+         move_left_index %= 3;
 
-    
-    public void move(double deltaX,double deltaY){
-        
-        if (deltaY==0)
-            {if (deltaX>0)
-                {moveRight(deltaX);
-                return;}
-            else {
-                moveLeft(deltaX);
-            }    
-                }
-        else if (deltaY>0){
-            moveUp(deltaX,deltaY);
-            }
-        else{
-            moveDown(deltaX,deltaY);
-        }
-    
-    }
-    
-    
-}
+         setTranslateX(getTranslateX() - delta);
+         move_left[move_left_index].setVisible(true);
+
+     }
+
+
+     public void moveUp(double deltax, double deltay) {
+         clear();
+         move_up_index++;
+         move_up_index %= 3;
+         setTranslateX(getTranslateX() + deltax);
+         setTranslateY(getTranslateY() + deltay);
+         move_up[move_up_index].setVisible(true);
+
+     }
+
+
+     public void moveDown(double deltax, double deltay) {
+         clear();
+         move_down_index++;
+         move_down_index %= 3;
+         setTranslateX(getTranslateX() + deltax);
+         setTranslateY(getTranslateY() + deltay);
+         move_down[move_down_index].setVisible(true);
+
+
+     }
+
+
+     public void move(double deltaX, double deltaY) {
+
+         if (deltaY == 0) {
+             if (deltaX > 0) {
+                 moveRight(deltaX);
+                 return;
+             } else {
+                 moveLeft(deltaX);
+             }
+         } else if (deltaY > 0) {
+             moveUp(deltaX, deltaY);
+         } else {
+             moveDown(deltaX, deltaY);
+         }
+
+     }
+
+
+ }
 
 
 
