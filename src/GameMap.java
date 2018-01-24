@@ -569,6 +569,7 @@ public class GameMap {
                 int routeNumber = chooseRandomRoute();
                 Route whichRoute = routes.get(routeNumber);
 
+               // routes.get(1).addAlienToRoute(newAlien, 0);
                 whichRoute.addAlienToRoute(newAlien, 0);
             }
         }
