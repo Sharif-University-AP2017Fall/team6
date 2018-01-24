@@ -162,4 +162,23 @@ public class Dimension {
         dimension.setX(x / 10);
         dimension.setY(y / 10);
     }
+    
+    
+    
+    
+    public static double deltaX(Dimension current, Dimension future){
+        
+        return future.getX()-current.getX();
+
+        }
+    
+    
+   
+    public static double deltaY(Dimension current, Dimension future){
+        
+        return future.getY()-current.getY();
+
+        }
+    
+    
 }
