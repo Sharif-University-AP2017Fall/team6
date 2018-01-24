@@ -8,7 +8,10 @@ public class MapView {
     private Canvas canvas;
     private GraphicsContext gc;
     String[] tilesInput;
-
+    String Tara="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/";
+    String Tara1="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src";
+                    
+            
     public MapView(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
@@ -34,7 +37,7 @@ public class MapView {
 
     public void drawGrass(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/base_grass/grass_map.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/base_grass/grass_map.txt").split(",");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -44,7 +47,7 @@ public class MapView {
             for (int j = 0; j < 28; j++){
                 int whichTile = Integer.parseInt(tilesInput[k]) - 934;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("/res/bg/base_grass/grass_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("/res/bg/base_grass/grass_" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
@@ -53,7 +56,7 @@ public class MapView {
 
     public void drawGrassDetails(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/details/details.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/details/details.txt").split(",");
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -64,7 +67,7 @@ public class MapView {
                 int whichTile = Integer.parseInt(tilesInput[k]);
                 k++;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("/res/bg/details/detail_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("/res/bg/details/detail_" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
 
@@ -74,7 +77,7 @@ public class MapView {
 
     public void drawRoute2(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/Route2/Route2.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/Route2/Route2.txt").split(",");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -124,7 +127,7 @@ public class MapView {
 
                 k++;
                 if (whichTile != 0 && whichTile < 100){
-                    Tile tile = new Tile(new Image("res/bg/Route2/Route2_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("res/bg/Route2/Route2_" +String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
@@ -133,7 +136,7 @@ public class MapView {
 
     public void drawRoute1(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/Route1/Route1.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/Route1/Route1.txt").split(",");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -182,7 +185,7 @@ public class MapView {
                 }
                 k++;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("/res/bg/Route1/Route1_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("/res/bg/Route1/Route1_" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
@@ -191,7 +194,7 @@ public class MapView {
 
     public void drawWeapons(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/Weapons/Weapons.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/Weapons/Weapons.txt").split(",");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -201,7 +204,7 @@ public class MapView {
                 int whichTile = Integer.parseInt(tilesInput[k]);
                 k++;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("res/bg/Weapons/" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("res/bg/Weapons/" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
@@ -211,9 +214,9 @@ public class MapView {
     public void drawTrees(boolean isTop){
         try {
             if (isTop){
-                tilesInput = readStringFromFile("src/res/bg/trees/big/top.txt").split(",");
+                tilesInput = readStringFromFile(Tara+"src/res/bg/trees/big/top.txt").split(",");
             }else{
-                tilesInput = readStringFromFile("src/res/bg/trees/big/bottom.txt").split(",");
+                tilesInput = readStringFromFile(Tara+"src/res/bg/trees/big/bottom.txt").split(",");
             }
         }catch (IOException e){
             e.printStackTrace();
@@ -225,7 +228,7 @@ public class MapView {
                 int whichTile = Integer.parseInt(tilesInput[k]);
                 k++;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("res/bg/trees/big/tree_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("res/bg/trees/big/tree_" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
@@ -234,7 +237,7 @@ public class MapView {
 
     public void drawBushes(){
         try {
-            tilesInput = readStringFromFile("src/res/bg/trees/small/bush.txt").split(",");
+            tilesInput = readStringFromFile(Tara+"src/res/bg/trees/small/bush.txt").split(",");
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -245,7 +248,7 @@ public class MapView {
                 int whichTile = Integer.parseInt(tilesInput[k]);
                 k++;
                 if (whichTile != 0){
-                    Tile tile = new Tile(new Image("res/bg/trees/small/bush_" + whichTile + ".png"));
+                    Tile tile = new Tile(new Image("res/bg/trees/small/bush_" + String.valueOf(whichTile) + ".png"));
                     tile.draw(gc, j * 32, i * 32);
                 }
             }
