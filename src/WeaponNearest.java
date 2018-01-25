@@ -27,11 +27,16 @@ public class WeaponNearest extends Weapon {
     WeaponNearest(Dimension dimension, String type, int locationNum) {
         
         super(dimension, type, locationNum);
-        
         weaponView=new WeaponNearestView(type,dimension);
+        super.setWeaponView(weaponView);
         
     }
 
+    
+   
+    
+    
+    
     private Object lock = new Object();
 
     @Override
@@ -154,13 +159,14 @@ public class WeaponNearest extends Weapon {
 
 
 
-class WeaponNearestView extends StackPane {
+class WeaponNearestView extends WeaponView {
 
-     private ImageView[] pic;
+     public ImageView[] pic;
 
-     private Dimension dim;
+     public Dimension dim;
      
-     private int index;
+     public int index;
+
 
      public WeaponNearestView(String name, Dimension dim_){
          
@@ -169,7 +175,7 @@ class WeaponNearestView extends StackPane {
          index = 5;
          dim=dim_;
 
-         String address = "res/" + name +"/";
+         String address = "res/weapons/" + name +"/";
          pic[4] = new ImageView(new Image(getClass()
                  .getResource(address + "5.png").toExternalForm()));
          pic[4].setFitWidth(128);
@@ -204,8 +210,8 @@ class WeaponNearestView extends StackPane {
          
      }
 
-
-     private void clear() {
+     @Override
+     public void clear() {
          
          pic[0].setVisible(false);
          pic[1].setVisible(false);
@@ -218,9 +224,7 @@ class WeaponNearestView extends StackPane {
          
      }
 
-
-
-
+    @Override
      public void setPic(int i){
          
          clear();
@@ -228,6 +232,7 @@ class WeaponNearestView extends StackPane {
      
      }
 
+     @Override
      public void shoot(Alien min) {
 
          Dimension prey=min.getCurrentDim();
