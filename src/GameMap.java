@@ -1363,12 +1363,12 @@ class Line {
         double newX = currentX + GameMap.UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
 
-        System.out.println("new dim" + newX + " " + newY);
-        System.out.println("endoflinedim = " + endPoint);
-        System.out.println(Double.compare(newX, endPoint.getX()));
+    //    System.out.println("new dim" + newX + " " + newY);
+      //  System.out.println("endoflinedim = " + endPoint);
+    //    System.out.println(Double.compare(newX, endPoint.getX()));
 
         if (Double.compare(newX, endPoint.getX()) >= 0){
-            System.out.println("END OF LINE.");
+     //       System.out.println("END OF LINE.");
             return null;
         }
 

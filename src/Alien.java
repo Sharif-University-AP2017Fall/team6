@@ -169,9 +169,9 @@ public class Alien implements Movable, Comparable, Runnable {
 
         setCurrentDim(dimension);
 
-        System.out.println("moved to" + dimension);
+//        System.out.println("moved to" + dimension);
 
-        System.out.println("*********************");
+//        System.out.println("*********************");
     }
 
     @Override
@@ -275,7 +275,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     public void setMoveTo(Dimension moveTo) {
         if (speed > 0) {
-            System.out.println(name + " should move to " + moveTo);
+      //      System.out.println(name + " should move to " + moveTo);
             this.shouldMove = true;
             this.moveTo = moveTo;
         }
@@ -539,7 +539,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveRight(double delta) {
-         System.out.println("RIGHT");
+    //     System.out.println("RIGHT");
          clear();
          move_right_index++;
          move_right_index %= 3;
@@ -550,7 +550,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveLeft(double delta) {
-         System.out.println("LEFT");
+    //     System.out.println("LEFT");
          clear();
          move_left_index++;
          move_left_index %= 3;
@@ -561,7 +561,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveUp(double deltax, double deltay) {
-         System.out.println("UP");
+    //     System.out.println("UP");
          clear();
          move_up_index++;
          move_up_index %= 3;
@@ -572,7 +572,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveDown(double deltax, double deltay) {
-         System.out.println("DOWN");
+   //      System.out.println("DOWN");
          clear();
          move_down_index++;
          move_down_index %= 3;
@@ -590,7 +590,7 @@ public class Alien implements Movable, Comparable, Runnable {
          double dummyY = Math.round(deltaY * 10);
          deltaY = dummyY / 10;
 
-         System.out.println("DELTAX = " + deltaX + " DELTAY = " + deltaY);
+ //        System.out.println("DELTAX = " + deltaX + " DELTAY = " + deltaY);
 
          double finalDeltaY = deltaY;
          double finalDeltaX = deltaX;
