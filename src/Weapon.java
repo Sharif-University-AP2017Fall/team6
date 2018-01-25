@@ -43,6 +43,14 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     static int SECONDS_LEFT_TO_USE_TESLA = 10;
     static boolean TESLA_IN_USE = false;
 
+    
+    public Dimension getDimension(){
+        
+        return dimension;
+    
+    }
+    
+    
     Weapon(Dimension dimension, String type, int locationNum) {
         this.shouldShoot = false;
         mapTo(dimension);
