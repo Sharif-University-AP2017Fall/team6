@@ -32,8 +32,9 @@ public class AlienCreeps extends Application {
     private Hero hero = new Hero(new Dimension(400, 300));
     private GameMap gameMap = new GameMap(hero);
     static AlienCreeps game = new AlienCreeps();
+    
     public static void main(String[] args) {
-    //    game.initWeapons();
+       game.initWeapons();
       //  game.launchGame();
         launch(args);
     }

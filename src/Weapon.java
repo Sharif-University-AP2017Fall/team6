@@ -43,6 +43,23 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     static int SECONDS_LEFT_TO_USE_TESLA = 10;
     static boolean TESLA_IN_USE = false;
 
+    private WeaponView weaponView;
+    
+    
+    public WeaponView getWeaponView(){
+        
+        return weaponView;
+        
+    }
+    
+    public void setWeaponView(WeaponView a){
+        
+        weaponView=a;
+        
+    }
+    
+    
+    
     
     public Dimension getDimension(){
         
@@ -280,7 +297,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     }
 
     static Weapon WeaponFactory(Dimension dimension, String type, int locationNum) {
-        switch (type.toLowerCase()) {
+        type=type.toLowerCase();
+        switch (type) {
             case "tesla":
                 NUM_USED_TESLA++;
                 SECONDS_LEFT_TO_USE_TESLA = 10;
@@ -432,6 +450,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
                 "Freezer\n" +
                 "Barrack\n");
     }
+    
+    
 
     @Override
     public String toString() {

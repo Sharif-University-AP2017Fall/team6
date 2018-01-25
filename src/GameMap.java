@@ -484,11 +484,23 @@ public class GameMap {
                 Weapon bought = this.hero.buyWeapon(weaponName, dimension, whichPlace);
                 Thread weaponLifeCycle = new Thread(bought);
                 weaponLifeCycle.start();
+                
+                Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        bought.getWeaponView());
+                            }
+                        });
+                
                 specifiedLocations.put(dimension, bought);
             }
         } else {
             System.out.println("There is already a weapon in this location.");
         }
+        
+        
+        
     }
 
     void upgradeWeaponInPlace(String weaponName, int whichPlace) {

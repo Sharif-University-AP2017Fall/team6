@@ -15,15 +15,20 @@ import javafx.scene.layout.StackPane;
  */
 public class WeaponAll extends Weapon {
 
-    private WeaponAllView weaponView;
+    
+    WeaponAllView weaponView;
     
     WeaponAll(Dimension dimension, String type, int locationNum) {
         
         super(dimension, type, locationNum);
         weaponView=new WeaponAllView(type, dimension);
+        super.setWeaponView(weaponView);
         
     }
 
+    
+
+    
     private Object lock = new Object();
 
     @Override
@@ -120,17 +125,21 @@ public class WeaponAll extends Weapon {
 
 
 
-class WeaponAllView extends StackPane {
+class WeaponAllView extends WeaponView {
 
-     private ImageView pic;
+     public ImageView pic;
 
+     public Dimension dim;
+     
+     public int index;
 
      public WeaponAllView(String name, Dimension dim) {
          
          System.out.println("setting view for " + name);
-         this.pic = new ImageView();
+         
 
-
+         
+         
          String address = "res/weapons/" + name + "/";
          pic = new ImageView(new Image(getClass()
                  .getResource(address + "1.png").toExternalForm()));
@@ -145,16 +154,20 @@ class WeaponAllView extends StackPane {
          setTranslateY(dim.getY());
      }
 
-
-     private void clear() {
+    @Override
+     public void clear() {
          
          pic.setVisible(false);
 
      }
 
+     @Override
+     public  void shoot(Alien min){}
+     
+     @Override
+     public void setPic(int i){}
 
-
-
+     
  }
 
 
