@@ -540,13 +540,10 @@ public class GameMap {
     }
 
     private void generateAliens(int probabilityInv) {
-   //     System.out.println("***********");
-     //   System.out.println("GENERATING ALIENS ");
-       // System.out.println("***********");
         if (Alien.getNUM() < Alien.getMAXNUM()) {
             if ((int) (Math.random() * probabilityInv) == 0) {
 
-                int whichAlien = (int) (Math.random() * 4);
+                int whichAlien = (int) (Math.random() * 1);
                 String name = null;
                 Alien newAlien;
 
