@@ -94,10 +94,6 @@ public class Alien implements Movable, Comparable, Runnable {
         this.shouldShoot = false;
     }
 
-//    void setAlienView(Dimension dim){
-    //    this.alienView = new AlienView("aliens", name, dim);
-//
-  //  }
 
 
     /***** METHODS ****/
@@ -154,7 +150,15 @@ public class Alien implements Movable, Comparable, Runnable {
     }
 
     boolean isDead() {
-        return energy <= 0;
+        if (energy<=0){
+            
+            alienView.dead();
+            return true;
+            
+        }
+        
+        return false;
+        
     }
 
     /*** IMPLEMENTED METHODS ***/
@@ -538,6 +542,12 @@ public class Alien implements Movable, Comparable, Runnable {
      }
 
 
+     public void dead(){
+         
+         clear();
+         
+     }
+     
      public void moveRight(double delta) {
     //     System.out.println("RIGHT");
          clear();

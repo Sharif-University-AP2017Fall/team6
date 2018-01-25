@@ -213,9 +213,9 @@ class WeaponNearestView extends WeaponView {
 
             bul = new ImageView(new Image(getClass()
                     .getResource(address+"10.png").toExternalForm()));
-            bul.setFitWidth(8);
-            bul.setFitHeight(8);
-            bul.setVisible(false);
+            bul.setFitWidth(10);
+            bul.setFitHeight(10);
+            bul.setVisible(true);
 
          
          
@@ -274,7 +274,10 @@ class WeaponNearestView extends WeaponView {
                     .getResource("res/weapons/" + nameW +"/10.png").toExternalForm()));;
          
                     
-                    
+         bullet.setVisible(true);
+         bullet.setFitWidth(10);
+         bullet.setFitHeight(10);
+         
          Path path = new Path();
          path.getElements().add (new MoveTo (dim.getX(), dim.getY()));
          
