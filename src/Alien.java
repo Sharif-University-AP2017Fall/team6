@@ -1,6 +1,8 @@
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -9,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import java.util.HashMap;
@@ -17,7 +20,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 1;//5;
+    private static int MAXNUM = 7;//5;
     private static boolean START = false;
 
     /**** PROPERTIES ****/
@@ -484,6 +487,38 @@ public class Alien implements Movable, Comparable, Runnable {
                  move_right[0],
                  move_right[1],
                  move_right[2]);
+         setOnMouseEntered(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onSelect();
+             }
+         });
+
+         setOnMouseExited(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onDeselect();
+             }
+         });
+     }
+
+
+     private void onSelect(){
+         for (int i = 0; i < 3; i ++){
+             move_down[i].setEffect(new Glow(10));
+             move_up[i].setEffect(new Glow(10));
+             move_right[i].setEffect(new Glow(10));
+             move_left[i].setEffect(new Glow(10));
+         }
+     }
+
+     private void onDeselect(){
+         for (int i = 0; i < 3; i ++){
+             move_down[i].setEffect(new Glow(0));
+             move_up[i].setEffect(new Glow(0));
+             move_right[i].setEffect(new Glow(0));
+             move_left[i].setEffect(new Glow(0));
+         }
      }
 
 

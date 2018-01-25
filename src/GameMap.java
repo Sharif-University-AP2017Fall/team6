@@ -569,7 +569,7 @@ public class GameMap {
         if (Alien.getNUM() < Alien.getMAXNUM()) {
             if ((int) (Math.random() * probabilityInv) == 0) {
 
-                int whichAlien = (int) (Math.random() * 1);
+                int whichAlien = (int) (Math.random() * 4);
                 String name = null;
                 Alien newAlien;
 
