@@ -35,7 +35,7 @@ public class AlienCreeps extends Application {
     static AlienCreeps game = new AlienCreeps();
     
     public static void main(String[] args) {
-    //   game.initWeapons();
+       //game.initWeapons();
       //  game.launchGame();
         launch(args);
     }
@@ -208,8 +208,8 @@ public class AlienCreeps extends Application {
                 }
             }
         };
-      //  gameInput = new Thread(r2);
-     //   gameInput.start();
+        gameInput = new Thread(r2);
+        gameInput.start();
 
         Runnable r3 = new Runnable() {
             @Override
@@ -222,7 +222,33 @@ public class AlienCreeps extends Application {
                 });
             }
         };
-        new Thread(r3).start();
+        gameInput = new Thread(r3);
+        gameInput.start();
+
+        /*AnimationTimer timer = new AnimationTimer() {
+
+            long before = 0;
+            @Override
+            public void handle(long now) {
+                *//*gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent event) {
+                        gameMap.moveHero(event);
+                    }
+                });*//*
+                if (before == 0){
+                    before = now;
+                }
+                long dif = (now - before);// - 25000000;
+                if (dif / 2500000000L > 0){
+                    before = now;
+                    gameMap.nextSecond();
+                    //System.out.println(dif);
+                }
+                //System.out.println(dif);
+            }
+        };
+        timer.start();*/
     }
 
     static int getCurrentSecond() {

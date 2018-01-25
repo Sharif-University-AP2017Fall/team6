@@ -133,25 +133,25 @@ class WeaponAllView extends WeaponView {
      
      public int index;
 
-     public WeaponAllView(String name, Dimension dim) {
+     public WeaponAllView(String name, Dimension dim_) {
          
          System.out.println("setting view for " + name);
          
-
+         dim=dim_;
          
          
          String address = "res/weapons/" + name + "/";
          pic = new ImageView(new Image(getClass()
                  .getResource(address + "1.png").toExternalForm()));
-         pic.setFitWidth(128);
-         pic.setFitHeight(128);
+         pic.setFitWidth(64);
+         pic.setFitHeight(64);
          pic.setVisible(true);
 
          
 
          getChildren().addAll(pic);
-         setTranslateX(dim.getX());
-         setTranslateY(dim.getY());
+         setTranslateX(dim_.getX());
+         setTranslateY(dim_.getX());
      }
 
     @Override
