@@ -35,7 +35,7 @@ public class AlienCreeps extends Application {
     static AlienCreeps game = new AlienCreeps();
     
     public static void main(String[] args) {
-       game.initWeapons();
+       //game.initWeapons();
       //  game.launchGame();
         launch(args);
     }

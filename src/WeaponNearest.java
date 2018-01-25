@@ -178,8 +178,8 @@ class WeaponNearestView extends WeaponView {
          String address = "res/weapons/" + name +"/";
          pic[4] = new ImageView(new Image(getClass()
                  .getResource(address + "5.png").toExternalForm()));
-         pic[4].setFitWidth(128);
-         pic[4].setFitHeight(128);
+         pic[4].setFitWidth(64);
+         pic[4].setFitHeight(64);
          pic[4].setVisible(true);
 
          for (int i=0;i<8;i++){
@@ -189,12 +189,12 @@ class WeaponNearestView extends WeaponView {
              
             pic[i] = new ImageView(new Image(getClass()
                     .getResource(address +String.valueOf(i+1)+".png").toExternalForm()));
-            pic[i].setFitWidth(128);
-            pic[i].setFitHeight(128);
+            pic[i].setFitWidth(64);
+            pic[i].setFitHeight(64);
             pic[i].setVisible(false);
 
          }
-
+         pic[4].setVisible(true);
          getChildren().addAll(pic[0],
                  pic[1],
                  pic[2],
