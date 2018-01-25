@@ -78,60 +78,86 @@ public class GameMap {
         Dimension dimension;
 
 
-        dimension = new Dimension(52, 50);
+        //dimension = new Dimension(52, 50);
+        dimension = new Dimension(25.0 / 100.0 * XBOUND, 15.0 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(1, dimension);
 
-        dimension = new Dimension(73, 75);
+        //dimension = new Dimension(73, 75);
+        dimension = new Dimension(3.0 / 100.0 * XBOUND, 25.0 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(2, dimension);
 
-        dimension = new Dimension(102, 100);
+        //dimension = new Dimension(102, 100);
+        dimension = new Dimension(52 / 100.0 * XBOUND, 30 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(3, dimension);
 
-        dimension = new Dimension(200, 155);
+        //dimension = new Dimension(200, 155);
+        dimension = new Dimension(70 / 100.0 * XBOUND, 15 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(4, dimension);
 
-        dimension = new Dimension(240, 145);
+        //dimension = new Dimension(240, 145);
+        dimension = new Dimension(87 / 100.0 * XBOUND, 27 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(5, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(270, 155);
+        //dimension = new Dimension(270, 155);
+        dimension = new Dimension(37 / 100.0 * XBOUND, 47 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(6, dimension);
 
-        dimension = new Dimension(350, 202);
+        //dimension = new Dimension(350, 202);
+        dimension = new Dimension(3 / 100.0 * XBOUND, 70 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(7, dimension);
 
-        dimension = new Dimension(385, 240);
+        //dimension = new Dimension(385, 240);
+        dimension = new Dimension(27 / 100.0 * XBOUND, 80 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(8, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(420, 268);
+        //dimension = new Dimension(420, 268);
+        dimension = new Dimension(52 / 100.0 * XBOUND, 65 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(9, dimension);
 
 
-        dimension = new Dimension(450, 295);
+        //dimension = new Dimension(450, 295);
+        dimension = new Dimension(62 / 100.0 * XBOUND, 47 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(10, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(450, 305);
+        //dimension = new Dimension(450, 305);
+        dimension = new Dimension(77 / 100.0 * XBOUND, 47 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(11, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(445, 300);
+        //dimension = new Dimension(445, 300);
+        dimension = new Dimension(70 / 100.0 * XBOUND, 80 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(12, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(455, 300);
+        //dimension = new Dimension(455, 300);
+        dimension = new Dimension(87 / 100.0 * XBOUND, 65 / 100.0 * YBOUND);
+        Dimension.correctDim(dimension);
         specifiedNumbers.put(13, dimension);
         specifiedLocations.put(dimension, null);
 
-        dimension = new Dimension(175, 445);
+       /* dimension = new Dimension(175, 445);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(14, dimension);
 
@@ -198,7 +224,7 @@ public class GameMap {
         dimension = new Dimension(720, 325);
         specifiedLocations.put(dimension, null);
         specifiedNumbers.put(30, dimension);
-
+*/
         List<Dimension> wormholeDims = Dimension.randomDimension(6);
         wormholes.add(new Wormhole(1, wormholeDims.get(0)));
         /*Platform.runLater(new Runnable() {
