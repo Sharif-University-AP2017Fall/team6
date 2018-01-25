@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -214,21 +215,22 @@ public class Hero extends Warrior {
 
         double deltaX = changeDimension.getX();
         double deltaY = changeDimension.getY();
-        //  if (Double.compare(deltaX, 0.0) == 0) {
-        if (deltaY > 0) {
-            warriorView.moveDown(deltaY);
-        }else if (deltaY < 0){
-            warriorView.moveUp(-1 * deltaY);
-        }
-        //   }
 
-        //    if (Double.compare(deltaY, 0.0) == 0){
-        if (deltaX > 0){
-            warriorView.moveRight(deltaX);
-        }else if (deltaX < 0){
-            warriorView.moveLeft(-1 * deltaX);
-        }
-        //  }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (deltaY > 0) {
+                    warriorView.moveDown(deltaY);
+                }else if (deltaY < 0){
+                    warriorView.moveUp(-1 * deltaY);
+                }
+                if (deltaX > 0){
+                    warriorView.moveRight(deltaX);
+                }else if (deltaX < 0){
+                    warriorView.moveLeft(-1 * deltaX);
+                }
+            }
+        });
 
         Dimension newDim = new Dimension(getShootingPoint().getX() + changeDimension.getX(),
                 getShootingPoint().getY() + changeDimension.getY());

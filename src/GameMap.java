@@ -1,18 +1,11 @@
 
-import javafx.animation.TimelineBuilder;
 import javafx.application.Platform;
-import javafx.scene.Group;
-import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class GameMap {
     static double XBOUND = 895;
@@ -555,6 +548,7 @@ public class GameMap {
                         break;
                 }
                 newAlien = new Alien(name);
+
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1394,7 +1388,12 @@ class Wormhole {
 
     public void setDimension(Dimension dimension) {
         this.dimension = dimension;
-        wormholeView.changeDim(dimension);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                wormholeView.changeDim(dimension);
+            }
+        });
     }
 
     int getLeadsTo() {
