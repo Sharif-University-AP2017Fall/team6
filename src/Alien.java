@@ -1,5 +1,6 @@
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -16,7 +17,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 10;
+    private static int MAXNUM = 5;
     private static boolean START = false;
 
     /**** PROPERTIES ****/
@@ -29,6 +30,8 @@ public class Alien implements Movable, Comparable, Runnable {
     private int strength;
     private int type;
     private boolean canFly;
+
+    private long threadID;
 
     /**** STATE ****/
     private boolean shouldShoot;
@@ -158,12 +161,10 @@ public class Alien implements Movable, Comparable, Runnable {
         System.out.println(name);
 
         Dimension.correctDim(dimension);
-            alienView.move(Dimension.deltaX(currentDim, dimension),
-                    Dimension.deltaY(currentDim, dimension));
-        setCurrentDim(dimension);
+        alienView.move(Dimension.deltaX(currentDim, dimension),
+                        Dimension.deltaY(currentDim, dimension));
 
-        System.out.println(name + " moved to " + currentDim);
-        System.out.println("********************••••••••••*****************");
+        setCurrentDim(dimension);
     }
 
     @Override
@@ -299,17 +300,14 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void run() {
-        //     System.out.println("Created " + name);
-
         while (true) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             if (shouldShoot) {
                 shoot(toShoot);
-
             }
             if (shouldMove) {
                 Dimension moveFrom = currentDim;
@@ -323,7 +321,7 @@ public class Alien implements Movable, Comparable, Runnable {
                 deltaY = (this.speed * GameMap.UNIT) / 10.0 * signY;
                 for (int i = 0; i < 10; i++) {
                     try {
-                        Thread.sleep(150); //250
+                        Thread.sleep(225); //250
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -346,18 +344,11 @@ public class Alien implements Movable, Comparable, Runnable {
                             move(newDim);
                         }
                     }
-                    if (!shouldMove) {
-                        System.out.println("reached destination1");
-                        break;
-                    }
-
-                    if (currentDim.equals(moveTo)){
-                        System.out.println("reached destination2");
+                    if (!shouldMove || currentDim.equals(moveTo)) {
                         break;
                     }
                 }
                 if (currentDim.equals(moveTo)) {
-                    //      System.out.println(name + " reached destination.");
                     shouldMove = false;
                 }
             }
@@ -366,6 +357,14 @@ public class Alien implements Movable, Comparable, Runnable {
 
     public AlienView getAlienView() {
         return alienView;
+    }
+
+    public long getThreadID() {
+        return threadID;
+    }
+
+    public void setThreadID(long threadID) {
+        this.threadID = threadID;
     }
 }
 
@@ -481,8 +480,6 @@ public class Alien implements Movable, Comparable, Runnable {
                  move_right[0],
                  move_right[1],
                  move_right[2]);
-     //    setTranslateX(dim.getX());
-       //  setTranslateY(dim.getY());
      }
 
 
@@ -503,19 +500,16 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveRight(double delta) {
-         System.out.println("ALIEN IS MOVING RIGHT");
          clear();
          move_right_index++;
          move_right_index %= 3;
 
          setTranslateX(getTranslateX() + delta);
          move_right[move_right_index].setVisible(true);
-        // move_right[move_right_index].setVisible(true);
      }
 
 
      public void moveLeft(double delta) {
-         System.out.println("ALIEN IS MOVING LEFT");
          clear();
          move_left_index++;
          move_left_index %= 3;
@@ -526,7 +520,6 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveUp(double deltax, double deltay) {
-         System.out.println("ALIEN IS MOVING UP");
          clear();
          move_up_index++;
          move_up_index %= 3;
@@ -537,7 +530,6 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void moveDown(double deltax, double deltay) {
-         System.out.println("ALIEN IS MOVING DOWN");
          clear();
          move_down_index++;
          move_down_index %= 3;
@@ -554,24 +546,27 @@ public class Alien implements Movable, Comparable, Runnable {
 
          double dummyY = Math.round(deltaY * 10);
          deltaY = dummyY / 10;
-         System.out.println("DELTAX = " + deltaX + "DELTAY = " + deltaY);
 
-         if (Double.compare(deltaY, 0) == 0) {
-             if (Double.compare(deltaX, 0) != 0){
-                 if (deltaX > 0) {
-                     moveRight(deltaX);
-                     return;
-                 } else {
-                     moveLeft(deltaX);
+         double finalDeltaY = deltaY;
+         double finalDeltaX = deltaX;
+         Platform.runLater(() -> {
+             if (Double.compare(finalDeltaY, 0) == 0) {
+                 if (Double.compare(finalDeltaX, 0) != 0){
+                     if (finalDeltaX > 0) {
+                         moveRight(finalDeltaX);
+                         return;
+                     } else {
+                         moveLeft(finalDeltaX);
+                     }
                  }
              }
-         }
-         else if (deltaY > 0) {
-             moveDown(deltaX, deltaY);
-         } 
-         else {
-             moveUp(deltaX, deltaY);
-         }
+             else if (finalDeltaY > 0) {
+                 moveDown(finalDeltaX, finalDeltaY);
+             }
+             else {
+                 moveUp(finalDeltaX, finalDeltaY);
+             }
+         });
      }
  }
 

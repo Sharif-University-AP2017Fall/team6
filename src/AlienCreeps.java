@@ -1,4 +1,5 @@
 import javafx.animation.Animation;
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -217,23 +218,36 @@ public class AlienCreeps extends Application {
                     public void handle(KeyEvent event) {
                         gameMap.moveHero(event);
                     }
-                });/*
-                gameScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        System.out.println("should move for " + (event.getX() - hero.getShootingPoint().getX()) +
-                                " " +
-                                (event.getY() - hero.getShootingPoint().getY()));
-                        gameMap.moveHero(new Dimension(Math.round(event.getX()) - hero.getShootingPoint().getX(),
-                                Math.round(event.getY()) - hero.getShootingPoint().getY()));
-                    }
-                });*/
+                });
             }
         };
         gameInput = new Thread(r3);
         gameInput.start();
 
+        /*AnimationTimer timer = new AnimationTimer() {
 
+            long before = 0;
+            @Override
+            public void handle(long now) {
+                *//*gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+                    @Override
+                    public void handle(KeyEvent event) {
+                        gameMap.moveHero(event);
+                    }
+                });*//*
+                if (before == 0){
+                    before = now;
+                }
+                long dif = (now - before);// - 25000000;
+                if (dif / 2500000000L > 0){
+                    before = now;
+                    gameMap.nextSecond();
+                    //System.out.println(dif);
+                }
+                //System.out.println(dif);
+            }
+        };
+        timer.start();*/
     }
 
     static int getCurrentSecond() {
@@ -344,7 +358,7 @@ public class AlienCreeps extends Application {
 
         //TODO bring these in the application window
       //  initWeapons();
-       root.getChildren().add(hero.getWarriorView());
+        root.getChildren().add(hero.getWarriorView());
 
         launchGame();
         return root;

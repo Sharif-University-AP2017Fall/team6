@@ -1,10 +1,14 @@
 
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import sun.awt.windows.ThemeReader;
+import sun.java2d.pipe.ShapeSpanIterator;
 
+import java.sql.Time;
 import java.util.*;
 
 public class GameMap {
@@ -21,6 +25,7 @@ public class GameMap {
 
     private Dimension flag;
     private Alien[] reachedFlag = new Alien[5];
+    private ArrayList<Thread> alienLifeCycles;
 
     private Hero hero;
 
@@ -37,6 +42,7 @@ public class GameMap {
     GameMap(Hero hero) {
         flag = new Dimension(750, 300);
         this.hero = hero;
+        this.alienLifeCycles = new ArrayList<>();
 
         Line lines[] = new Line[5];
         ArrayList<Dimension> breakPoints = new ArrayList<>();
@@ -245,7 +251,6 @@ public class GameMap {
     }
 
     boolean nextSecond() {
-
         oneTimeActions();
 
         if (moveAliens()) {
@@ -558,7 +563,9 @@ public class GameMap {
                 });
                 System.out.println(name + " entered!");
                 Thread alienLifeCycle = new Thread(newAlien);
+                alienLifeCycles.add(alienLifeCycle);
                 alienLifeCycle.start();
+                newAlien.setThreadID(alienLifeCycle.getId());
 
                 int routeNumber = chooseRandomRoute();
                 Route whichRoute = routes.get(routeNumber);
@@ -595,6 +602,8 @@ public class GameMap {
                 reachedFlag[i] = alien;
                 if (i == 4) {
                     System.out.println("GAME OVER");
+                    //TODO SHOW POP UP MESSAGE
+                   // Platform.exit();
                     return true;
                 }
                 break;
@@ -616,22 +625,23 @@ public class GameMap {
     private Object lock = new Object();
 
     private boolean moveAliens() {
-  //      System.out.println("•••••••••••••");
-   //     System.out.println("MOVING ALIENS");
-    //    System.out.println(Alien.getNUM() + " aliens to move");
-     //   System.out.println("•••••••••••••");
 
         for (int i = 0; i < routes.size(); i++) {
             List<Alien> reachBreak = routes.get(i).moveAliensOnRoute();
 
             for (int j = 0; j < reachBreak.size(); j++) {
                 Alien alien = reachBreak.get(j);
-                //synchronized (lock){
                     if (alien.getMoveTo().equals(flag)) {
-                         while (!alien.getCurrentDim().equals(flag)){
-
-                        }
                         Alien.reduceNum(1);
+
+                        for (int k = 0; k < alienLifeCycles.size(); k++){
+                            if (alienLifeCycles.get(k).getId() == alien.getThreadID()){
+                                alienLifeCycles.get(k).stop();
+                                alienLifeCycles.remove(k);
+                                break;
+                            }
+                        }
+
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
@@ -640,11 +650,8 @@ public class GameMap {
                         });
                         return reachFlag(alien);
                     }
-                //}
 
                 int randomNumber = chooseRandomRoute();
-                System.out.println(alien.getName() + " WAS RELOCATED TO ROUTE " + randomNumber);
-
                 Route randomRoute = routes.get(randomNumber);
                 randomRoute.addAlienToRoute(alien, 3);
             }
@@ -1178,46 +1185,56 @@ class Route {
         this.intersections.addAll(intersections);
     }
 
-    private Object lock = new Object();
+    private final Object lock = new Object();
 
     List<Alien> moveAliensOnRoute() {
         List<Alien> reachedIntersection = new ArrayList<>();
 
-        for (int i = 0; i <5; i++) {
+        for (int i = 0; i < 5; i++) {
             List<Alien> toMove = alienMap.get(lines[i]);
 
             for (int j = 0; j < toMove.size(); j++) {
 
                 Alien current = toMove.get(j);
+
                 Dimension destination = lines[i].moveAlienOnLine(current);
 
-               // synchronized (lock){
-                    if (destination == null) {
-                        destination = lines[i].getEndPoint();
-                        current.setMoveTo(destination);
+                if (destination == null) {
+                    destination = lines[i].getEndPoint();
+                    long before = System.currentTimeMillis();
+                    current.setMoveTo(destination);
+
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    synchronized (lock) {
                         alienMap.get(lines[i]).remove(current);
 
-               //         synchronized (lock){
-                            if (intersections.contains(destination)) {
-                                System.out.println(current.getName() + " REACHED INTERSECTION");
-                                reachedIntersection.add(current);
-                            } else {
-                                while (!current.getCurrentDim().equals(destination)){
-                                   System.out.print("");
-                                }
-                                alienMap.get(lines[i + 1]).add(current);
-                            }
-                   //     }
+                        if (intersections.contains(destination)) {
+                            reachedIntersection.add(current);
+                        } else {
+                            alienMap.get(lines[i + 1]).add(current);
+                        }
+                    }
 
-                    } else {
-                        current.setMoveTo(destination);
+                } else {
+                    long before = System.currentTimeMillis();
+                    current.setMoveTo(destination);
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (lock) {
                         if (intersections.contains(destination)) {
                             alienMap.get(lines[i]).remove(current);
                             reachedIntersection.add(current);
                         }
                     }
-              //  }
-
+                }
             }
         }
         return reachedIntersection;
