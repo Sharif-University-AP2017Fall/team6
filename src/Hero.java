@@ -37,12 +37,6 @@ public class Hero extends Warrior {
     Hero(Dimension dimension) {
         warriorView = new WarriorView("hero", "5/", new Dimension(400, 300));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(1, warriorView);
-            }
-        });
         achievement = new Achievement();
 
         setDimension(dimension);

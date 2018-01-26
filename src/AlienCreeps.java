@@ -238,20 +238,6 @@ public class AlienCreeps extends Application {
                         }
                     }
                 });
-
-
-                /*** testing ***/
-
-                gameScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent event) {
-                        TextField label1 = new TextField();
-                        label1.relocate(200, 300);
-                        ((Group) gameScene.getRoot()).getChildren().add(label1);
-                        label1.clear();
-                        label1.setText(event.getX() + " " + event.getY());
-                    }
-                });
             }
         };
         gameInput = new Thread(r3);
@@ -278,8 +264,6 @@ public class AlienCreeps extends Application {
 
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
-
-    Label label = new Label();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -421,13 +405,11 @@ public class AlienCreeps extends Application {
         Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
         root.getChildren().add(canvas);
         MapView mapView = new MapView(canvas);
-        label.relocate(400, 500);
 
-        root.getChildren().add(label);
-        root.getChildren().add(hero.getWarriorView());
         root.getChildren().addAll(hero.getAchievementView());
-        
         root.getChildren().add(timeText);
+        root.getChildren().add(hero.getWarriorView());
+
         launchGame();
 
         return root;

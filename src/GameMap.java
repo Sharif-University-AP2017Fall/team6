@@ -311,7 +311,7 @@ public class GameMap {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size() - 1,
+                        AlienCreeps.addElementToGameRoot(1,
                                 wormholes.get(finalI).getWormholeView());
                     }
                 });
