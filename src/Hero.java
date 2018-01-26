@@ -646,7 +646,11 @@ class Achievement {
     }
 
     void killedWeapon(Alien alien) {
+        
+        alien.getAlienView().dead();
+        
         switch (alien.getName()) {
+            
             case "Albertonion":
                 numOfKilledByWeapon[0]++;
                 if (numOfKilledByWeapon[0] > 9)
@@ -686,7 +690,10 @@ class Achievement {
                 break;
         }
     }  */
+    
     void killedHero(Alien alien) {
+        
+        alien.getAlienView().dead();
         switch (alien.getName()) {
             case "Albertonion":
                 numOfKilledByHero[0]++;
@@ -712,6 +719,8 @@ class Achievement {
     }
 
     int getNumOfKilledByHero() {
+        
+        
         int num = 0;
         for (int i = 0; i < numOfKilledByHero.length; i++) {
             num += numOfKilledByHero[i];
