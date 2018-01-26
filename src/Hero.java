@@ -13,11 +13,14 @@ import javafx.scene.layout.StackPane;
 import java.security.interfaces.DSAPublicKey;
 import java.util.HashMap;
 import java.util.Map;
+
+import javafx.scene.effect.Glow;
 /**
  *
  * @author Tara
  */
 public class Hero extends Warrior {
+    
     private WarriorView warriorView;
     private Soldier[] soldiers = new Soldier[3];
     private Dimension soldierDims[] = new Dimension[3];
@@ -639,14 +642,19 @@ class WarriorView extends StackPane{
 
 
 class Achievement {
+    
     private int numTypeAlien = 4;
+    
     private int[] numOfKilledByWeapon = new int[numTypeAlien];
     private int[] numOfKilledBySoldier = new int[numTypeAlien];
     private int[] numOfKilledByHero = new int[numTypeAlien];
+    
     private Map<String, Boolean> achieved = new HashMap<>();
+    
     private AchievementView achievementView;
     
     Achievement() {
+        
         achieved.put("Great Hunter", false);
         achieved.put("Good Gene", false);
         achieved.put("Greek Goddess", false);
@@ -655,10 +663,12 @@ class Achievement {
         achieved.put("Brave Warrior", false);
         achieved.put("Butcher", false);//
         achieved.put("Blood Sucker", false);
+        
         achievementView=new AchievementView();
+        
     }
 
-     public AchievementView getAchievementView(){
+    public AchievementView getAchievementView(){
          return achievementView;
      }
     
@@ -689,24 +699,11 @@ class Achievement {
                     achieved.replace("Blood Sucker", true);
                 break;
         }
+        
+        updateAchivementView();
+                
+        
     }
-
-    /*public void killedSoldier(Alien alien){
-        switch (alien.getName()){
-            case "Albertonion":
-                numOfKilledBySoldier[0]++;
-                break;
-            case "Algwasonion":
-                numOfKilledBySoldier[1]++;
-                break;
-            case "Activionion":
-                numOfKilledBySoldier[2]++;
-                break;
-            case "Aironion":
-                numOfKilledBySoldier[3]++;
-                break;
-        }
-    }  */
     
     void killedHero(Alien alien) {
         
@@ -733,6 +730,9 @@ class Achievement {
                 numOfKilledByHero[3]++;
                 break;
         }
+        
+        updateAchivementView();
+        
     }
 
     int getNumOfKilledByHero() {
@@ -755,24 +755,62 @@ class Achievement {
         return str.toString();
     }
     
+    public void updateAchivementView(){
+        
+        if (achieved.get("Great Hunter")){
+            
+            achievementView.setAchivement("Great Hunter");
+        }
+        if(achieved.get("Good Gene")){
+            
+            achievementView.setAchivement("Good Gene");
+        }
+        if(achieved.get("Greek Goddess")){
+            
+            achievementView.setAchivement("Greek Goddess");
+        }
+        if(achieved.get("Eagle Eye")){
+            
+            achievementView.setAchivement("Eagle Eye");
+        }
+        if(achieved.get("Restless Shooter")){
+            
+            achievementView.setAchivement("Restless Shooter");
+        }
+        if(achieved.get("Brave Warrior")){
+            
+            achievementView.setAchivement("Brave Warrior");
+        }
+        if(achieved.get("Butcher")){
+            
+            achievementView.setAchivement("Butcher");
+        }
+        if(achieved.get("Blood Sucker")){
+            
+            achievementView.setAchivement("Blood Sucker");
+        }
     
+    
+    }
    
     
 }
+
+
+
+
+
+
 
 
 class AchievementView {
      
     private Map<String, MedalView> achieved = new HashMap<>();
     
-    
-    //move_right[2].setFitWidth(30);
-      //  move_right[2].setFitHeight(35);
-        //move_right[2].setVisible(false);
+
     AchievementView(){
         
-        String address = "res/hero/achievement/";
-        
+       
         
         achieved.put("Great Hunter",new MedalView("Great Hunter",1));
         
@@ -799,7 +837,15 @@ class AchievementView {
         
         
     }
+    
+    
+    public void setAchivement(String name){
+        
+        achieved.get(name).setVisible();
+        
+    }
 
+    
     public StackPane[] getAchievementView(){
     
         StackPane[] a={achieved.get("Great Hunter"),
@@ -838,17 +884,25 @@ class MedalView extends StackPane {
         String address = "res/hero/achievement/";
         item= new ImageView(new Image(getClass()
                 .getResource(address + name +".png").toExternalForm()));
-        item.setVisible(true);
+        item.setVisible(false );
         item.setFitHeight(30);
         item.setFitWidth(30);
+        
+        Glow glow = new Glow(); 
+        //setting level of the glow effect 
+        glow.setLevel(0.8);
+      
+        item.setEffect(glow);
+        
         getChildren().add(item);
+        
         setTranslateX(504+30*i+b);
         setTranslateY(9-a);
         
     }
     
     public void setVisible(){
-        
+
         item.setVisible(true);
     
     }
@@ -862,3 +916,58 @@ class MedalView extends StackPane {
    
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*public void killedSoldier(Alien alien){
+        switch (alien.getName()){
+            case "Albertonion":
+                numOfKilledBySoldier[0]++;
+                break;
+            case "Algwasonion":
+                numOfKilledBySoldier[1]++;
+                break;
+            case "Activionion":
+                numOfKilledBySoldier[2]++;
+                break;
+            case "Aironion":
+                numOfKilledBySoldier[3]++;
+                break;
+        }
+    }  */
+
+
+
+
+
+
+
+
+
+
+
+
+
