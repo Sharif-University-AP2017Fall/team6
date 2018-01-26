@@ -233,8 +233,8 @@ class WeaponNearestView extends WeaponView {
                  bul
                 );
          
-         setTranslateX(dim_.getX());
-         setTranslateY(dim_.getY());
+         setTranslateX(dim_.getX()-32);
+         setTranslateY(dim_.getY()-32);
          
      }
 
