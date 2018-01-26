@@ -26,12 +26,9 @@ public class Hero extends Warrior {
     private int experienceLevel;
     private int money;
     private Achievement achievement;
-
+    
     private boolean shouldMove;
     private Dimension moveTo;
-
-
-
 
 
     Hero(Dimension dimension) {
@@ -56,7 +53,13 @@ public class Hero extends Warrior {
         super.shouldShoot = false;
     }
 
-   public WarriorView getWarriorView() {
+    public StackPane[] getAchievementView(){
+        
+        return achievement.getAchievementView().getAchievementView();
+        
+    }
+    
+    public WarriorView getWarriorView() {
         return warriorView;
     }
 
@@ -397,7 +400,8 @@ class WarriorView extends StackPane{
     private int move_up_index;
     private int move_left_index;
     private int move_right_index;
-
+    
+    
     public WarriorView(String name, String number, Dimension dim) {
         System.out.println("setting view for " + name);
         this.move_down = new ImageView[3];
@@ -497,6 +501,8 @@ class WarriorView extends StackPane{
                 move_right[2]);
         setTranslateX(dim.getX());
         setTranslateY(dim.getY());
+        
+        
     }
 
     public void move(KeyEvent event, double delta){
@@ -624,7 +630,12 @@ class WarriorView extends StackPane{
         }*/
 
     }
-}
+    
+  
+    }
+    
+    
+
 
 
 class Achievement {
@@ -633,18 +644,24 @@ class Achievement {
     private int[] numOfKilledBySoldier = new int[numTypeAlien];
     private int[] numOfKilledByHero = new int[numTypeAlien];
     private Map<String, Boolean> achieved = new HashMap<>();
-
+    private AchievementView achievementView;
+    
     Achievement() {
         achieved.put("Great Hunter", false);
         achieved.put("Good Gene", false);
         achieved.put("Greek Goddess", false);
         achieved.put("Eagle Eye", false);
-        achieved.put("Restless Shooter", false);
+        achieved.put("Restless Shooter", false);//
         achieved.put("Brave Warrior", false);
-        achieved.put("Butcher", false);
+        achieved.put("Butcher", false);//
         achieved.put("Blood Sucker", false);
+        achievementView=new AchievementView();
     }
 
+     public AchievementView getAchievementView(){
+         return achievementView;
+     }
+    
     void killedWeapon(Alien alien) {
         
         alien.getAlienView().dead();
@@ -737,4 +754,111 @@ class Achievement {
         }
         return str.toString();
     }
+    
+    
+   
+    
+}
+
+
+class AchievementView {
+     
+    private Map<String, MedalView> achieved = new HashMap<>();
+    
+    
+    //move_right[2].setFitWidth(30);
+      //  move_right[2].setFitHeight(35);
+        //move_right[2].setVisible(false);
+    AchievementView(){
+        
+        String address = "res/hero/achievement/";
+        
+        
+        achieved.put("Great Hunter",new MedalView("Great Hunter",1));
+        
+        
+        achieved.put("Good Gene", new MedalView("Good Gene",2));
+        
+        
+        achieved.put("Greek Goddess", new MedalView("Greek Goddess",6));
+        
+        
+        achieved.put("Eagle Eye",new MedalView("Eagle Eye",5));
+        
+        
+        achieved.put("Restless Shooter", new MedalView("Restless Shooter",4));
+        
+        
+        achieved.put("Brave Warrior",new MedalView("Brave Warrior",3));
+       
+        
+        achieved.put("Butcher", new MedalView("Butcher",7));
+        
+        
+        achieved.put("Blood Sucker",new MedalView("Blood Sucker",8));
+        
+        
+    }
+
+    public StackPane[] getAchievementView(){
+    
+        StackPane[] a={achieved.get("Great Hunter"),
+            achieved.get("Good Gene"),
+            achieved.get("Greek Goddess"),
+            achieved.get("Eagle Eye"),
+            achieved.get("Restless Shooter"),
+            achieved.get("Brave Warrior"),
+            achieved.get("Butcher"),
+            achieved.get("Blood Sucker")};
+        
+        return a;
+    
+    }
+
+}
+
+
+
+
+class MedalView extends StackPane {
+    
+    private ImageView item;
+    
+    MedalView(String name,int i){
+        
+        int a=0,b=0;
+        
+        if(i<=4){
+            a=6;
+        }
+        else{
+             b=7;   
+        }
+        
+        String address = "res/hero/achievement/";
+        item= new ImageView(new Image(getClass()
+                .getResource(address + name +".png").toExternalForm()));
+        item.setVisible(true);
+        item.setFitHeight(30);
+        item.setFitWidth(30);
+        getChildren().add(item);
+        setTranslateX(504+30*i+b);
+        setTranslateY(9-a);
+        
+    }
+    
+    public void setVisible(){
+        
+        item.setVisible(true);
+    
+    }
+    
+    public void inVisible(){
+        
+        item.setVisible(false);
+    
+    }
+    
+   
+
 }

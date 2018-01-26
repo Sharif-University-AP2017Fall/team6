@@ -41,7 +41,7 @@ public class AlienCreeps extends Application {
     private Hero hero = new Hero(new Dimension(400, 300));
     private GameMap gameMap = new GameMap(hero);
     static AlienCreeps game = new AlienCreeps();
-    
+    private Text timeText=new Text(240,27," : : "); 
     public static void main(String[] args) {
         launch(args);
     }
@@ -110,10 +110,15 @@ public class AlienCreeps extends Application {
                         CURRENT_HOUR = 0;
                         CURRENT_SECOND = 0;
                     }
+                    updateTime(CURRENT_DAY,CURRENT_HOUR,CURRENT_SECOND);
                     System.out.println("------------------------");
                     System.out.println("Current second = " + CURRENT_SECOND);
                     System.out.println("Current hour = "  + CURRENT_HOUR);
                     System.out.println("Current day = " + CURRENT_DAY);
+                    
+                    
+                    
+                    
                     synchronized (lock){
                         if (gameMap.nextSecond()) {
                             gameOver = true;
@@ -420,6 +425,9 @@ public class AlienCreeps extends Application {
 
         root.getChildren().add(label);
         root.getChildren().add(hero.getWarriorView());
+        root.getChildren().addAll(hero.getAchievementView());
+        
+        root.getChildren().add(timeText);
         launchGame();
 
         return root;
@@ -518,7 +526,21 @@ public class AlienCreeps extends Application {
     public static void removeElementFromGameRoot(Node ... node){
         ((Group) gameScene.getRoot()).getChildren().removeAll(node);
     }
-
+    
+    public void updateTime(int day,int hour,int sec){
+        
+           Font font = new Font(20);
+           //Font.loadFont(MenuItem.
+           //     class.
+           //     getResource("res/Font/Pieces_of_Eight.ttf").
+            //    toExternalForm(), 150)
+           timeText.setText(""+day+":"+hour+":"+sec);
+           timeText.setFont(font);
+           timeText.setFill(Color.rgb(171, 214, 29));
+           
+    }
+    
+    
 }
 
 class TextEventHandler implements EventHandler<KeyEvent>{

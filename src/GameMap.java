@@ -12,6 +12,9 @@ import sun.java2d.pipe.ShapeSpanIterator;
 import java.sql.Time;
 import java.util.*;
 
+
+import javafx.scene.text.Text;
+
 public class GameMap {
     static double XBOUND = 895;
     static double YBOUND = 700;
@@ -40,6 +43,11 @@ public class GameMap {
     private boolean hasBurrowed = false;
     private Bank bank = new Bank();
 
+    /*** TEXT TIME  ***/
+    
+    
+    
+    
     GameMap(Hero hero) {
         flag = new Dimension(750, 300);
         this.hero = hero;

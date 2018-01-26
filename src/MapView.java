@@ -4,12 +4,14 @@ import javafx.scene.image.Image;
 
 import java.io.*;
 
+import javafx.scene.image.*;
+
 public class MapView {
     private Canvas canvas;
     private GraphicsContext gc;
     String[] tilesInput;
-    String Tara= "";//"/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/";
-    String Tara1= "";//"/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src";
+    String Tara= "/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/";
+    String Tara1= "/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src";
                     
             
     public MapView(Canvas canvas) {
@@ -32,6 +34,8 @@ public class MapView {
         drawTrees(false);
         drawTrees(true);
         drawBushes();
+        drawBoard();
+        
     }
 
 
@@ -268,5 +272,48 @@ public class MapView {
         return stringBuffer.toString();
 
     }
+    
+    
+    
+    void drawBoard(){
+    
+        
+        String address = "/res/menu/item/board1.png";
+        
+       
+        gc.drawImage(new Image(getClass()
+                 .getResource(address).toExternalForm())
+                ,190 ,-20, 4*32,3*32 );
+        
+        gc.drawImage(new Image(getClass()
+                 .getResource(address).toExternalForm())
+                ,290 ,-20, 4*32,3*32 );
+        
+        gc.drawImage(new Image(getClass()
+                 .getResource(address).toExternalForm())
+                ,390 ,-20, 4*32,3*32 );
+        
+        gc.drawImage(new Image(getClass()
+                 .getResource(address).toExternalForm())
+                ,500 ,-20, 5*32,3*32 );
+        
+        gc.drawImage(new Image(getClass()
+                 .getResource(address).toExternalForm())
+                ,625 ,-20, 5*32,3*32+2 );
+        
+    
+    
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
