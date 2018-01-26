@@ -44,30 +44,22 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     static boolean TESLA_IN_USE = false;
 
     private WeaponView weaponView;
-    
-    
-    public WeaponView getWeaponView(){
-        
+
+
+    public WeaponView getWeaponView() {
         return weaponView;
-        
     }
-    
-    public void setWeaponView(WeaponView a){
-        
-        weaponView=a;
-        
+
+    public void setWeaponView(WeaponView a) {
+        weaponView = a;
     }
-    
-    
-    
-    
-    public Dimension getDimension(){
-        
+
+
+    public Dimension getDimension() {
         return dimension;
-    
     }
-    
-    
+
+
     Weapon(Dimension dimension, String type, int locationNum) {
         this.shouldShoot = false;
         mapTo(dimension);
@@ -262,13 +254,13 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
 
     @Override
     public void run() {
-        while (true){
+        while (true) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (shouldShoot){
+            if (shouldShoot) {
                 killed.addAll(shoot(toShoot));
             }
         }
@@ -278,17 +270,17 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
         return killed;
     }
 
-    public void resetKilled(){
+    public void resetKilled() {
         killed = new ArrayList<>();
     }
 
-    public void setShouldShoot(List<Alien> toShoot){
+    public void setShouldShoot(List<Alien> toShoot) {
         this.shouldShoot = true;
         this.toShoot = toShoot;
         resetKilled();
     }
 
-    public void stopShooting(){
+    public void stopShooting() {
         this.shouldShoot = false;
     }
 
@@ -297,7 +289,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     }
 
     static Weapon WeaponFactory(Dimension dimension, String type, int locationNum) {
-        type=type.toLowerCase();
+        type = type.toLowerCase();
         switch (type) {
             case "tesla":
                 NUM_USED_TESLA++;
@@ -450,12 +442,10 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
                 "Freezer\n" +
                 "Barrack\n");
     }
-    
-    
 
     @Override
     public String toString() {
-        if (this.locationNum > 0){
+        if (this.locationNum > 0) {
             return "name: " + this.name + "" +
                     "\tplace: " + this.dimension + "" +
                     "\tlocation number: " + this.locationNum + "" +

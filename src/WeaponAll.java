@@ -21,13 +21,9 @@ public class WeaponAll extends Weapon {
     WeaponAll(Dimension dimension, String type, int locationNum) {
         
         super(dimension, type, locationNum);
-        weaponView=new WeaponAllView(type, dimension);
+        weaponView = new WeaponAllView(type, dimension);
         super.setWeaponView(weaponView);
-        
     }
-
-    
-
     
     private Object lock = new Object();
 
@@ -39,9 +35,7 @@ public class WeaponAll extends Weapon {
         for (int i = 0; i < aliens.size(); i++) {
             
             if (!this.isOnAirOnly() || (this.isOnAirOnly() && aliens.get(i).isCanFly())) {
-                
                 canShoot.add(aliens.get(i));
-                
             }
         }
 
@@ -130,7 +124,9 @@ class WeaponAllView extends WeaponView {
      public ImageView pic;
 
      public Dimension dim;
-     
+
+
+
      public int index;
 
      public WeaponAllView(String name, Dimension dim_) {
@@ -147,8 +143,6 @@ class WeaponAllView extends WeaponView {
          pic.setFitHeight(64);
          pic.setVisible(true);
 
-         
-
          getChildren().addAll(pic);
          setTranslateX(dim_.getX());
          setTranslateY(dim_.getX());
@@ -156,10 +150,9 @@ class WeaponAllView extends WeaponView {
 
     @Override
      public void clear() {
-         
          pic.setVisible(false);
-
      }
+
 
      @Override
      public  void shoot(Alien min){}

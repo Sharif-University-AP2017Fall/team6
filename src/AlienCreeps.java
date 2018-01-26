@@ -1,6 +1,6 @@
 import javafx.animation.Animation;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -11,10 +11,18 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -35,8 +43,6 @@ public class AlienCreeps extends Application {
     static AlienCreeps game = new AlienCreeps();
     
     public static void main(String[] args) {
-       //game.initWeapons();
-      //  game.launchGame();
         launch(args);
     }
 
@@ -217,38 +223,34 @@ public class AlienCreeps extends Application {
                 gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
                     @Override
                     public void handle(KeyEvent event) {
-                        gameMap.moveHero(event);
+                        if (event.getCode() == KeyCode.M){
+                            popupHeroDimStage.showAndWait();
+                        } else if (event.getCode() == KeyCode.B){
+                            askWeaponScene.setRoot(createAskWeaponContent());
+                            stage.setScene(askWeaponScene);
+                        }else{
+                            gameMap.moveHero(event);
+                        }
+                    }
+                });
+
+
+                /*** testing ***/
+
+                gameScene.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        TextField label1 = new TextField();
+                        label1.relocate(200, 300);
+                        ((Group) gameScene.getRoot()).getChildren().add(label1);
+                        label1.clear();
+                        label1.setText(event.getX() + " " + event.getY());
                     }
                 });
             }
         };
         gameInput = new Thread(r3);
         gameInput.start();
-
-        /*AnimationTimer timer = new AnimationTimer() {
-
-            long before = 0;
-            @Override
-            public void handle(long now) {
-                *//*gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent event) {
-                        gameMap.moveHero(event);
-                    }
-                });*//*
-                if (before == 0){
-                    before = now;
-                }
-                long dif = (now - before);// - 25000000;
-                if (dif / 2500000000L > 0){
-                    before = now;
-                    gameMap.nextSecond();
-                    //System.out.println(dif);
-                }
-                //System.out.println(dif);
-            }
-        };
-        timer.start();*/
     }
 
     static int getCurrentSecond() {
@@ -266,18 +268,26 @@ public class AlienCreeps extends Application {
 
     static Scene menuScene = new Scene(new Group(),540, 1000);
     static Scene gameScene = new Scene(new Group(), GameMap.XBOUND, GameMap.YBOUND);
+    static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
+    static Scene askWeaponScene = new Scene(new Group(), 500, 500);
+
     static Stage stage;
+    static Stage popupHeroDimStage = new Stage();
+
+    Label label = new Label();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         stage = primaryStage;
         menuScene.setRoot(createMenuContent());
         stage.setScene(menuScene);
-        stage.show();
 
-        /*gameScene.setRoot(createGameContent());
-        stage.setTitle("Alien Creeps");
-        stage.show();*/
+        popupHeroDimScene.setRoot(createPopupHeroDimContent());
+        popupHeroDimStage.setScene(popupHeroDimScene);
+        popupHeroDimStage.initModality(Modality.APPLICATION_MODAL);
+
+
+        stage.show();
     }
 
     private Parent createMenuContent(){
@@ -308,8 +318,6 @@ public class AlienCreeps extends Application {
         exit_item.setDim(390, 600);
 
         root.getChildren().addAll(background, new_item, load_item, exit_item);
-
-        //TODO DON'T FORGET THIS PART BEFORE YOU PULL
 
         Canvas canvas = new Canvas(560, 200);
         root.getChildren().add(canvas);
@@ -351,17 +359,153 @@ public class AlienCreeps extends Application {
         return root;
     }
 
+    private Parent createPopupHeroDimContent(){
+        Group root = new Group();
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/ask_dim/askdim.png").toExternalForm()));
+        background.setFitWidth(450);
+        background.setFitHeight(275);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+
+
+        TextField x = new TextField();
+        Label lblx = new Label("");
+        lblx.setFont(font);
+        x.relocate(200, 115);
+        lblx.relocate(255, 110);
+        x.setOpacity(0.0);
+        x.setOnKeyPressed(new TextEventHandler(lblx));
+
+        TextField y = new TextField();
+        Label lbly = new Label("");
+        lbly.setFont(font);
+        y.relocate(200, 195);
+        lbly.relocate(255, 187);
+        y.opacityProperty().set(0.0);
+        y.setOnKeyPressed(new TextEventHandler(lbly));
+
+        popupHeroDimScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER){
+                if (lblx.getText() != null && lbly.getText() != null){
+                    Dimension change = new Dimension(Integer.parseInt(lblx.getText())- hero.getDimension().getX(),
+                            Integer.parseInt(lbly.getText()) - hero.getDimension().getY());
+                    hero.setShouldMove(change);
+                    x.clear();
+                    y.clear();
+                    lblx.setText("");
+                    lbly.setText("");
+                    x.requestFocus();
+                    popupHeroDimStage.close();
+                }
+            }
+        });
+
+        root.getChildren().addAll(background, x, y, lblx, lbly);
+
+        return root;
+    }
+
+
     private Parent createGameContent(){
         Group root = new Group();
         Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
         root.getChildren().add(canvas);
         MapView mapView = new MapView(canvas);
+        label.relocate(400, 500);
 
-        //TODO bring these in the application window
-      //  initWeapons();
+        root.getChildren().add(label);
         root.getChildren().add(hero.getWarriorView());
-
         launchGame();
+
+        return root;
+    }
+
+    private Parent createAskWeaponContent(){
+        Group root = new Group();
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/ask_weapon/screen.png").toExternalForm()));
+
+        background.setFitWidth(500);
+        background.setFitHeight(500);
+
+        GaussianBlur blur = new GaussianBlur(2);
+        background.setEffect(blur);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 70);
+
+        Text title = new Text("Choose a weapon");
+        title.setFont(font);
+        title.relocate(40, 20);
+        title.setFill(Color.rgb(133, 171, 37));
+
+        String address = "res/menu/ask_weapon/";
+
+        Image rocket_btn = new Image(getClass()
+                .getResource(address + "Rocket.png").toExternalForm());
+        MenuItem rocket = new MenuItem(rocket_btn);
+        rocket.setDim(100, 220);
+        ImageView rocket_view = new ImageView(new Image(getClass()
+                .getResource(address + "Rocket_view.png").toExternalForm()));
+        rocket_view.relocate(110, 110);
+
+
+        Image freezer_btn = new Image(getClass()
+                .getResource(address + "Freezer.png").toExternalForm());
+        MenuItem freezer = new MenuItem(freezer_btn);
+        freezer.setDim(280, 220);
+        ImageView freezer_view = new ImageView(new Image(getClass()
+                .getResource(address + "Freezer_view.png").toExternalForm()));
+        freezer_view.relocate(280, 100);
+
+        Image antiaircraft_btn = new Image(getClass()
+                .getResource(address + "Antiaircraft.png").toExternalForm());
+        MenuItem antiaircraft = new MenuItem(antiaircraft_btn);
+        antiaircraft.setDim(50, 420);
+        ImageView antiaircraft_view = new ImageView(new Image(getClass()
+                .getResource(address + "Antiaircraft_view.png").toExternalForm()));
+        antiaircraft_view.relocate(67, 265);
+
+        Image machine_gun_btn = new Image(getClass()
+                .getResource(address + "Machine Gun.png").toExternalForm());
+        MenuItem machine_gun = new MenuItem(machine_gun_btn);
+        machine_gun.setDim(190, 420);
+        ImageView machine_gun_view = new ImageView(new Image(getClass()
+                .getResource(address + "Machine Gun_view.png").toExternalForm()));
+        machine_gun_view.relocate(207, 260);
+
+
+        Image laser_btn = new Image(getClass()
+                .getResource(address + "Laser.png").toExternalForm());
+        MenuItem laser = new MenuItem(laser_btn);
+        laser.setDim(340, 420);
+        ImageView laser_view = new ImageView(new Image(getClass()
+                .getResource(address + "Laser_view.png").toExternalForm()));
+        laser_view.relocate(360, 270);
+
+        root.getChildren().addAll(background, title, rocket, rocket_view,
+                freezer, freezer_view,
+                antiaircraft, antiaircraft_view,
+                machine_gun, machine_gun_view,
+                laser, laser_view);
+
+        askWeaponScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER){
+                    stage.setScene(gameScene);
+                }
+            }
+        });
+
         return root;
     }
 
@@ -373,5 +517,55 @@ public class AlienCreeps extends Application {
 
     public static void removeElementFromGameRoot(Node ... node){
         ((Group) gameScene.getRoot()).getChildren().removeAll(node);
+    }
+
+}
+
+class TextEventHandler implements EventHandler<KeyEvent>{
+
+    private Label lbl;
+
+    public TextEventHandler(Label label) {
+        this.lbl = label;
+    }
+
+    @Override
+    public void handle(KeyEvent event) {
+        switch (event.getCode()){
+            case DIGIT0:
+                lbl.setText(lbl.getText() + 0);
+                break;
+            case DIGIT1:
+                lbl.setText(lbl.getText() + 1);
+                break;
+            case DIGIT2:
+                lbl.setText(lbl.getText() + 2);
+                break;
+            case DIGIT3:
+                lbl.setText(lbl.getText() + 3);
+                break;
+            case DIGIT4:
+                lbl.setText(lbl.getText() + 4);
+                break;
+            case DIGIT5:
+                lbl.setText(lbl.getText() + 5);
+                break;
+            case DIGIT6:
+                lbl.setText(lbl.getText() + 6);
+                break;
+            case DIGIT7:
+                lbl.setText(lbl.getText() + 7);
+                break;
+            case DIGIT8:
+                lbl.setText(lbl.getText() + 8);
+                break;
+            case DIGIT9:
+                lbl.setText(lbl.getText() + 9);
+                break;
+            case BACK_SPACE:
+                if (lbl.getText().length() > 0){
+                    lbl.setText(lbl.getText().substring(0, lbl.getText().length() - 1));
+                }
+        }
     }
 }

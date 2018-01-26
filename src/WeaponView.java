@@ -13,17 +13,14 @@ import javafx.scene.layout.StackPane;
  * @author Tara
  */
 public abstract class WeaponView extends StackPane {
-    
 
-    
-     public abstract void clear() ;
+     public abstract void clear();
 
      public abstract void setPic(int i);
 
      public abstract void shoot(Alien min);
-         
-         
-     }
+
+}
      
     
     
