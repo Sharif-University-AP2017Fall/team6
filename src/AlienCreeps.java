@@ -391,17 +391,17 @@ public class AlienCreeps extends Application {
 
         popupHeroDimScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER){
-                if (lblx.getText() != null && lbly.getText() != null){
+                if (lblx.getText() != "" && lbly.getText() != ""){
                     Dimension change = new Dimension(Integer.parseInt(lblx.getText())- hero.getDimension().getX(),
                             Integer.parseInt(lbly.getText()) - hero.getDimension().getY());
                     hero.setShouldMove(change);
-                    x.clear();
-                    y.clear();
-                    lblx.setText("");
-                    lbly.setText("");
-                    x.requestFocus();
-                    popupHeroDimStage.close();
                 }
+                x.clear();
+                y.clear();
+                lblx.setText("");
+                lbly.setText("");
+                x.requestFocus();
+                popupHeroDimStage.close();
             }
         });
 
