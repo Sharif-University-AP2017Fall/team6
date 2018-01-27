@@ -10,8 +10,10 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -156,7 +158,11 @@ class WeaponAllView extends WeaponView {
 
      public int index;
 
+     private boolean isFocus;
+
      public WeaponAllView(String name, Dimension dim_) {
+
+         isFocus = false;
          
          System.out.println("setting view for " + name);
          
@@ -173,7 +179,46 @@ class WeaponAllView extends WeaponView {
          getChildren().addAll(pic);
          setTranslateX(dim_.getX()-32);
          setTranslateY(dim_.getY()-32);
+         /*setOnMouseEntered(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onSelect();
+             }
+         });
+
+         setOnMouseExited(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onDeselect();
+             }
+         });*/
      }
+
+     private void onSelect(){
+         pic.setEffect(new Glow(10));
+     }
+
+     private void onDeselect(){
+         pic.setEffect(new Glow(0));
+     }
+
+    @Override
+    public boolean isFocus() {
+
+        return isFocus;
+    }
+
+    @Override
+    public void setFocus() {
+        isFocus = true;
+        onSelect();
+    }
+
+    @Override
+    public void setUnfocus() {
+        isFocus = false;
+        onDeselect();
+    }
 
     @Override
      public void clear() {
@@ -187,7 +232,7 @@ class WeaponAllView extends WeaponView {
      @Override
      public void setPic(int i){}
 
-     
+
  }
 
 

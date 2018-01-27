@@ -20,6 +20,12 @@ public abstract class WeaponView extends StackPane {
 
      public abstract void shoot(Alien min);
 
+     public abstract boolean isFocus();
+
+     public abstract void setFocus();
+
+     public abstract void setUnfocus();
+
 }
      
     

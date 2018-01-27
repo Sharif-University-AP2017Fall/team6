@@ -427,8 +427,13 @@ public class Alien implements Movable, Comparable, Runnable {
      private int move_left_index;
      private int move_right_index;
 
+     private boolean isFocus;
+
      public AlienView(String name, String alienName){//}, Dimension dim) {
      //    System.out.println("setting view for " + name);
+
+         isFocus = false;
+
          this.move_down = new ImageView[3];
          this.move_up = new ImageView[3];
          this.move_right = new ImageView[3];
@@ -524,7 +529,7 @@ public class Alien implements Movable, Comparable, Runnable {
                  move_right[0],
                  move_right[1],
                  move_right[2]);
-         setOnMouseEntered(new EventHandler<MouseEvent>() {
+         /*setOnMouseEntered(new EventHandler<MouseEvent>() {
              @Override
              public void handle(MouseEvent event) {
                  onSelect();
@@ -536,7 +541,7 @@ public class Alien implements Movable, Comparable, Runnable {
              public void handle(MouseEvent event) {
                  onDeselect();
              }
-         });
+         });*/
      }
 
 
@@ -558,6 +563,20 @@ public class Alien implements Movable, Comparable, Runnable {
          }
      }
 
+     public boolean isFocus() {
+
+         return isFocus;
+     }
+
+     public void setFocus() {
+         isFocus = true;
+         onSelect();
+     }
+
+     public void setUnfocus() {
+         isFocus = false;
+         onDeselect();
+     }
 
      private void clear() {
          move_right[0].setVisible(false);
