@@ -1,7 +1,5 @@
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
+import com.sun.org.apache.xpath.internal.operations.Mod;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -35,7 +33,7 @@ public class AlienCreeps extends Application {
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
     private static int CURRENT_DAY = 0;
-    private boolean gameOver = false;
+    private static boolean gameEnded = false;
     Thread gameTime;
     Thread gameInput;
 
@@ -62,7 +60,7 @@ public class AlienCreeps extends Application {
 
                 while (true){
                     try {
-                        Thread.sleep(1000); //TODO: change this to one second
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -85,22 +83,31 @@ public class AlienCreeps extends Application {
                         CURRENT_SECOND = 0;
                     }
                     updateTime(CURRENT_DAY,CURRENT_HOUR,CURRENT_SECOND);
-                    System.out.println("------------------------");
+
+                    /*System.out.println("------------------------");
                     System.out.println("Current second = " + CURRENT_SECOND);
                     System.out.println("Current hour = "  + CURRENT_HOUR);
-                    System.out.println("Current day = " + CURRENT_DAY);
+                    System.out.println("Current day = " + CURRENT_DAY);*/
+                    gameMap.nextSecond();
+                    if (gameEnded){
+                        System.out.println("GAME ENDED");
+                        /*try {
+                            stop();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }*/
+                    }
 
-                    
-                    synchronized (lock){
+                    /*synchronized (lock){
                         if (gameMap.nextSecond()) {
                             endGame(true);
                             System.out.println("GAME OVER");
-                            gameOver = true;
+                            gameEnded = true;
                             gameTime.stop();
                             System.exit(0);
                             return;
                         }
-                    }
+                    }*/
                 }
             }
         };
@@ -185,7 +192,7 @@ public class AlienCreeps extends Application {
                 } else {
                     System.out.println("invalid command");
                 }
-                if (gameOver){
+                if (gameEnded){
                     gameInput.stop();
                     return;
                 }
@@ -201,6 +208,8 @@ public class AlienCreeps extends Application {
                     @Override
                     public void handle(KeyEvent event) {
                         if (event.getCode() == KeyCode.M){
+                            popupHeroDimStage.setX(200);
+                            popupHeroDimStage.setY(200);
                             popupHeroDimStage.showAndWait();
                         } else if (event.getCode() == KeyCode.B){
                             askWeaponScene.setRoot(createAskWeaponContent());
@@ -256,142 +265,155 @@ public class AlienCreeps extends Application {
         popupLocationNUmStage.setScene(popupLocationNumScene);
         popupLocationNUmStage.initModality(Modality.APPLICATION_MODAL);
 
+        popupEndGameStage.setScene(popupEndGameScene);
+        popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
+        popupEndGameStage.setAlwaysOnTop(true);
         stage.show();
     }
 
     static void endGame(boolean gameOver) {
         System.out.println("setting endgame scene");
-        popupEndGameScene.setRoot(game.createEndGameContent(gameOver));
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                popupEndGameStage.setScene(popupEndGameScene);
-                popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
-                popupEndGameStage.showAndWait();
-            }
+         gameEnded = true;
+
+        boolean finalGameOver = gameOver;
+        Platform.runLater(() -> {
+            popupEndGameScene.setRoot(game.createEndGameContent(finalGameOver));
+            popupEndGameStage.showAndWait();
         });
+
+        Timeline end = new Timeline(new KeyFrame(Duration.millis(1500), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
+        }));
+        end.setCycleCount(1);
+        end.play();
 
     }
 
-    private Parent createLocationNumContent(){
+
+
+    private Parent createGameContent(){
         Group root = new Group();
+        Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
+        root.getChildren().add(canvas);
+        MapView mapView = new MapView(canvas);
+
+        root.getChildren().addAll(hero.getAchievementView());
+        root.getChildren().add(timeText);
+        root.getChildren().add(hero.getWarriorView());
+
+        launchGame();
+
+        return root;
+    }
+
+    private Parent createAskWeaponContent(){
+        Group root = new Group();
+
         ImageView background = new ImageView(new Image(getClass()
-                .getResource("res/menu/ask_location/bg.png").toExternalForm()));
+                .getResource("res/menu/ask_weapon/screen.png").toExternalForm()));
 
-        background.setFitHeight(600);
-        background.setFitWidth(300);
+        background.setFitWidth(500);
+        background.setFitHeight(500);
 
-
-        ArrayList<MenuItem> items = new ArrayList<>();
-        for (int i = 0; i < 13; i++){
-            items.add(new MenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
-            int finalI = i;
-            items.get(i).setOnAction(new Runnable() {
-                @Override
-                public void run() {
-                    gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
-                    popupLocationNUmStage.close();
-                }
-            });
-        }
-        items.get(0).setDim(62, 172);
-        items.get(1).setDim(126, 124);
-        items.get(2).setDim(190, 172);
-        items.get(3).setDim(62, 272);
-        items.get(4).setDim(126, 224);
-        items.get(5).setDim(190, 272);
-        items.get(6).setDim(62, 372);
-        items.get(7).setDim(126, 324);
-        items.get(8).setDim(190, 372);
-        items.get(9).setDim(62, 472);
-        items.get(10).setDim(126, 424);
-        items.get(11).setDim(190, 472);
-        items.get(12).setDim(126, 524);
+        GaussianBlur blur = new GaussianBlur(2);
+        background.setEffect(blur);
 
         Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 40);
+                toExternalForm(), 70);
 
-        Text command = new Text("Choose a location\n for your weapon.");
-        command.setFont(font);
-        command.setFill(Color.rgb(208, 153, 69));
-        command.relocate(24, 25);
+        Text title = new Text("Choose a weapon");
+        title.setFont(font);
+        title.relocate(40, 20);
+        title.setFill(Color.rgb(133, 171, 37));
 
-        popupLocationNumScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        String address = "res/menu/ask_weapon/";
+
+        Image rocket_btn = new Image(getClass()
+                .getResource(address + "Rocket.png").toExternalForm());
+        MenuItem rocket = new MenuItem(rocket_btn);
+        rocket.setDim(100, 220);
+        ImageView rocket_view = new ImageView(new Image(getClass()
+                .getResource(address + "Rocket_view.png").toExternalForm()));
+        rocket_view.relocate(110, 110);
+        rocket.setOnAction(() -> {
+            requestWeapon = "rocket";
+            popupLocationNUmStage.showAndWait();
+        });
+
+
+        Image freezer_btn = new Image(getClass()
+                .getResource(address + "Freezer.png").toExternalForm());
+        MenuItem freezer = new MenuItem(freezer_btn);
+        freezer.setDim(280, 220);
+        ImageView freezer_view = new ImageView(new Image(getClass()
+                .getResource(address + "Freezer_view.png").toExternalForm()));
+        freezer_view.relocate(280, 100);
+        freezer.setOnAction(() -> {
+            requestWeapon = "freezer";
+            popupLocationNUmStage.showAndWait();
+        });
+
+        Image antiaircraft_btn = new Image(getClass()
+                .getResource(address + "Antiaircraft.png").toExternalForm());
+        MenuItem antiaircraft = new MenuItem(antiaircraft_btn);
+        antiaircraft.setDim(50, 420);
+        ImageView antiaircraft_view = new ImageView(new Image(getClass()
+                .getResource(address + "Antiaircraft_view.png").toExternalForm()));
+        antiaircraft_view.relocate(67, 265);
+        antiaircraft.setOnAction(() -> {
+            requestWeapon = "antiaircraft";
+            popupLocationNUmStage.showAndWait();
+        });
+
+        Image machine_gun_btn = new Image(getClass()
+                .getResource(address + "Machine Gun.png").toExternalForm());
+        MenuItem machine_gun = new MenuItem(machine_gun_btn);
+        machine_gun.setDim(190, 420);
+        ImageView machine_gun_view = new ImageView(new Image(getClass()
+                .getResource(address + "Machine Gun_view.png").toExternalForm()));
+        machine_gun_view.relocate(207, 260);
+        machine_gun.setOnAction(new Runnable() {
             @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER){
-                    popupLocationNUmStage.close();
-                }
+            public void run() {
+                requestWeapon = "machine gun";
+                popupLocationNUmStage.showAndWait();
             }
         });
-        root.getChildren().addAll(background, command);
-        root.getChildren().addAll(items);
-        return root;
 
-    }
 
-    Parent createEndGameContent(boolean gameOver){
-        Group root = new Group();
-        Font font1 = Font.loadFont(MenuItem.
-                class.
-                getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 40);
-        Font font2 = Font.loadFont(MenuItem.
-                class.
-                getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 25);
-        Font font3 = Font.loadFont(MenuItem.
-                class.
-                getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 35);
+        Image laser_btn = new Image(getClass()
+                .getResource(address + "Laser.png").toExternalForm());
+        MenuItem laser = new MenuItem(laser_btn);
+        laser.setDim(340, 420);
+        ImageView laser_view = new ImageView(new Image(getClass()
+                .getResource(address + "Laser_view.png").toExternalForm()));
+        laser_view.relocate(360, 270);
+        laser.setOnAction(() -> {
+            requestWeapon = "laser";
+            popupLocationNUmStage.showAndWait();
+        });
 
-        String address = "res/menu";
-        if (gameOver){
-            address += "/Lose";
-        }else {
-            address += "/Win";
-        }
+        root.getChildren().addAll(background, title, rocket, rocket_view,
+                freezer, freezer_view,
+                antiaircraft, antiaircraft_view,
+                machine_gun, machine_gun_view,
+                laser, laser_view);
 
-        ImageView background = new ImageView(new Image(getClass()
-                .getResource(address + "/bg.png").toExternalForm()));
+        askWeaponScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER){
+                stage.setScene(gameScene);
+            }
+        });
 
-        background.setFitWidth(400);
-        background.setFitHeight(250);
-
-        Text msg1 = new Text("");
-        Text msg2 = new Text("");
-        Text msg3 = new Text("");
-        msg1.setFont(font1);
-        msg2.setFont(font2);
-        msg3.setFont(font3);
-        msg1.relocate(75, 50);
-        msg2.relocate(45, 100);
-        msg3.relocate(50, 180);
-
-        if (gameOver){
-            msg1.setText("GAME OVER");
-            msg2.setText("The aliens have taken over the planet.");
-            msg3.setText("You have failed this city");
-            msg1.setFill(Color.rgb(194, 30, 30));
-            msg2.setFill(Color.rgb(194, 30, 30));
-            msg3.setFill(Color.rgb(194, 30, 30));
-
-        } else{
-            msg1.setText("CONGRATULATIONS! YOU WON!");
-            msg2.setText("You have saved the planet!");
-            msg3.setText("yaaaaaaaaaaay");
-            msg1.setFill(Color.rgb(213, 163, 224));
-            msg2.setFill(Color.rgb(213, 163, 224));
-            msg3.setFill(Color.rgb(213, 163, 224));
-        }
-
-        root.getChildren().addAll(background, msg1, msg2, msg3);
         return root;
     }
-
 
     private Parent createMenuContent(){
         Group root = new Group();
@@ -462,6 +484,122 @@ public class AlienCreeps extends Application {
         return root;
     }
 
+
+    private Parent createLocationNumContent(){
+        Group root = new Group();
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/ask_location/bg.png").toExternalForm()));
+
+        background.setFitHeight(600);
+        background.setFitWidth(300);
+
+
+        ArrayList<MenuItem> items = new ArrayList<>();
+        for (int i = 0; i < 13; i++){
+            items.add(new MenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
+            int finalI = i;
+            items.get(i).setOnAction(new Runnable() {
+                @Override
+                public void run() {
+                    gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
+                    popupLocationNUmStage.close();
+                }
+            });
+        }
+        items.get(0).setDim(62, 172);
+        items.get(1).setDim(126, 124);
+        items.get(2).setDim(190, 172);
+        items.get(3).setDim(62, 272);
+        items.get(4).setDim(126, 224);
+        items.get(5).setDim(190, 272);
+        items.get(6).setDim(62, 372);
+        items.get(7).setDim(126, 324);
+        items.get(8).setDim(190, 372);
+        items.get(9).setDim(62, 472);
+        items.get(10).setDim(126, 424);
+        items.get(11).setDim(190, 472);
+        items.get(12).setDim(126, 524);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+
+        Text command = new Text("Choose a location\n for your weapon.");
+        command.setFont(font);
+        command.setFill(Color.rgb(208, 153, 69));
+        command.relocate(24, 25);
+
+        popupLocationNumScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER){
+                popupLocationNUmStage.close();
+            }
+        });
+        root.getChildren().addAll(background, command);
+        root.getChildren().addAll(items);
+        return root;
+
+    }
+
+    Parent createEndGameContent(boolean gameOver){
+        Group root = new Group();
+        Font font1 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+        Font font2 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 25);
+        Font font3 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        String address = "res/menu";
+        if (gameOver){
+            address += "/Lose";
+        }else {
+            address += "/Win";
+        }
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource(address + "/bg.png").toExternalForm()));
+
+        background.setFitWidth(400);
+        background.setFitHeight(250);
+
+        Text msg1 = new Text("");
+        Text msg2 = new Text("");
+        Text msg3 = new Text("");
+        msg1.setFont(font1);
+        msg2.setFont(font2);
+        msg3.setFont(font3);
+        msg1.relocate(75, 50);
+        msg2.relocate(40, 100);
+        msg3.relocate(50, 180);
+
+        if (gameOver){
+            msg1.setText("GAME OVER");
+            msg2.setText("The aliens have taken over the planet.");
+            msg3.setText("You have failed this city");
+            msg1.setFill(Color.rgb(194, 30, 30));
+            msg2.setFill(Color.rgb(194, 30, 30));
+            msg3.setFill(Color.rgb(194, 30, 30));
+
+        } else{
+            msg1.setText("CONGRATULATIONS! YOU WON!");
+            msg2.setText("You have saved the planet!");
+            msg3.setText("yaaaaaaaaaaay");
+            msg1.setFill(Color.rgb(213, 163, 224));
+            msg2.setFill(Color.rgb(213, 163, 224));
+            msg3.setFill(Color.rgb(213, 163, 224));
+        }
+
+        root.getChildren().addAll(background, msg1, msg2, msg3);
+        return root;
+    }
+
     private Parent createPopupHeroDimContent(){
         Group root = new Group();
 
@@ -514,140 +652,6 @@ public class AlienCreeps extends Application {
     }
 
 
-    private Parent createGameContent(){
-        Group root = new Group();
-        Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
-        root.getChildren().add(canvas);
-        MapView mapView = new MapView(canvas);
-
-        root.getChildren().addAll(hero.getAchievementView());
-        root.getChildren().add(timeText);
-        root.getChildren().add(hero.getWarriorView());
-
-        launchGame();
-
-        return root;
-    }
-
-    private Parent createAskWeaponContent(){
-        Group root = new Group();
-
-        ImageView background = new ImageView(new Image(getClass()
-                .getResource("res/menu/ask_weapon/screen.png").toExternalForm()));
-
-        background.setFitWidth(500);
-        background.setFitHeight(500);
-
-        GaussianBlur blur = new GaussianBlur(2);
-        background.setEffect(blur);
-
-        Font font = Font.loadFont(MenuItem.
-                class.
-                getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 70);
-
-        Text title = new Text("Choose a weapon");
-        title.setFont(font);
-        title.relocate(40, 20);
-        title.setFill(Color.rgb(133, 171, 37));
-
-        String address = "res/menu/ask_weapon/";
-
-        Image rocket_btn = new Image(getClass()
-                .getResource(address + "Rocket.png").toExternalForm());
-        MenuItem rocket = new MenuItem(rocket_btn);
-        rocket.setDim(100, 220);
-        ImageView rocket_view = new ImageView(new Image(getClass()
-                .getResource(address + "Rocket_view.png").toExternalForm()));
-        rocket_view.relocate(110, 110);
-        rocket.setOnAction(new Runnable() {
-            @Override
-            public void run() {
-                requestWeapon = "rocket";
-                popupLocationNUmStage.showAndWait();
-            }
-        });
-
-
-        Image freezer_btn = new Image(getClass()
-                .getResource(address + "Freezer.png").toExternalForm());
-        MenuItem freezer = new MenuItem(freezer_btn);
-        freezer.setDim(280, 220);
-        ImageView freezer_view = new ImageView(new Image(getClass()
-                .getResource(address + "Freezer_view.png").toExternalForm()));
-        freezer_view.relocate(280, 100);
-        freezer.setOnAction(new Runnable() {
-            @Override
-            public void run() {
-                requestWeapon = "freezer";
-                popupLocationNUmStage.showAndWait();
-            }
-        });
-
-        Image antiaircraft_btn = new Image(getClass()
-                .getResource(address + "Antiaircraft.png").toExternalForm());
-        MenuItem antiaircraft = new MenuItem(antiaircraft_btn);
-        antiaircraft.setDim(50, 420);
-        ImageView antiaircraft_view = new ImageView(new Image(getClass()
-                .getResource(address + "Antiaircraft_view.png").toExternalForm()));
-        antiaircraft_view.relocate(67, 265);
-        antiaircraft.setOnAction(new Runnable() {
-            @Override
-            public void run() {
-                requestWeapon = "antiaircraft";
-                popupLocationNUmStage.showAndWait();
-            }
-        });
-
-        Image machine_gun_btn = new Image(getClass()
-                .getResource(address + "Machine Gun.png").toExternalForm());
-        MenuItem machine_gun = new MenuItem(machine_gun_btn);
-        machine_gun.setDim(190, 420);
-        ImageView machine_gun_view = new ImageView(new Image(getClass()
-                .getResource(address + "Machine Gun_view.png").toExternalForm()));
-        machine_gun_view.relocate(207, 260);
-        machine_gun.setOnAction(new Runnable() {
-            @Override
-            public void run() {
-                requestWeapon = "machine gun";
-                popupLocationNUmStage.showAndWait();
-            }
-        });
-
-
-        Image laser_btn = new Image(getClass()
-                .getResource(address + "Laser.png").toExternalForm());
-        MenuItem laser = new MenuItem(laser_btn);
-        laser.setDim(340, 420);
-        ImageView laser_view = new ImageView(new Image(getClass()
-                .getResource(address + "Laser_view.png").toExternalForm()));
-        laser_view.relocate(360, 270);
-        laser.setOnAction(new Runnable() {
-            @Override
-            public void run() {
-                requestWeapon = "laser";
-                popupLocationNUmStage.showAndWait();
-            }
-        });
-
-        root.getChildren().addAll(background, title, rocket, rocket_view,
-                freezer, freezer_view,
-                antiaircraft, antiaircraft_view,
-                machine_gun, machine_gun_view,
-                laser, laser_view);
-
-        askWeaponScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER){
-                    stage.setScene(gameScene);
-                }
-            }
-        });
-
-        return root;
-    }
-
     public static void addElementToGameRoot(int index, Node ... node){
         for (int i = 0; i < node.length; i++){
             ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
@@ -657,14 +661,10 @@ public class AlienCreeps extends Application {
     public static void removeElementFromGameRoot(Node ... node){
         ((Group) gameScene.getRoot()).getChildren().removeAll(node);
     }
-    
+
     public void updateTime(int day,int hour,int sec){
         
            Font font = new Font(20);
-           //Font.loadFont(MenuItem.
-           //     class.
-           //     getResource("res/Font/Pieces_of_Eight.ttf").
-            //    toExternalForm(), 150)
            timeText.setText(""+day+":"+hour+":"+sec);
            timeText.setFont(font);
            timeText.setFill(Color.rgb(171, 214, 29));
@@ -675,6 +675,7 @@ public class AlienCreeps extends Application {
 }
 
 class TextEventHandler implements EventHandler<KeyEvent>{
+
 
     private Label lbl;
 

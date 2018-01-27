@@ -43,11 +43,30 @@ public class GameMap {
     private boolean hasBurrowed = false;
     private Bank bank = new Bank();
 
+    void nextSecond() {
+        oneTimeActions();
+
+        if (moveAliens()) {
+            AlienCreeps.endGame(true);
+            return;
+        }
+
+        shootAliens();
+
+        if (Alien.isSTART()) {
+            if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
+                System.out.println("YOU WON");
+                AlienCreeps.endGame(false);
+                return;
+            }
+        }
+    }
+
     /*** TEXT TIME  ***/
-    
-    
-    
-    
+
+
+
+
     GameMap(Hero hero) {
         flag = new Dimension(750, 300);
         this.hero = hero;
@@ -285,37 +304,12 @@ public class GameMap {
 
     }
 
-    boolean nextSecond() {
-        oneTimeActions();
-
-        if (moveAliens()) {
-            return true;
-        }
-
-        shootAliens();
-
-        if (Alien.isSTART()) {
-            if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
-                System.out.println("YOU WON");
-                AlienCreeps.endGame(false);
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void oneTimeActions(){
         if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 1 && AlienCreeps.getCurrentDay() == 0){
-        //    System.out.println("WORMHOLE VIEW");
             for (int i = 0; i < 6; i++){
                 int finalI = i;
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlienCreeps.addElementToGameRoot(1,
-                                wormholes.get(finalI).getWormholeView());
-                    }
-                });
+                Platform.runLater(() -> AlienCreeps.addElementToGameRoot(1,
+                        wormholes.get(finalI).getWormholeView()));
             }
         }
 
@@ -386,10 +380,6 @@ public class GameMap {
                                         soldier.getWarriorView());
                             }
                         });
-
-                        //((Group) AlienCreeps.gameScene.getRoot()).getChildren().add(soldier.getWarriorView());
-                        // System.out.println(soldier.getWarriorView() == null);
-                       // ((Group) root).getChildren().add(soldier.getWarriorView());
                         System.out.println("BARRACK MADE NEW SOLDIER");
                         System.out.println("welcome soldier " + i);
                         break;
@@ -411,7 +401,6 @@ public class GameMap {
         for (int i = 0; i < 3; i++) {
             Soldier s = hero.getSoldiers()[i];
             if (s != null) {
-                //System.out.println("Soldier #" + (i + 1));
                 s.reduceRadius();
             }
         }
@@ -844,7 +833,7 @@ public class GameMap {
 
                 if (!toShoot.isEmpty()){
                     weapon.setShouldShoot(toShoot);
-                    while (weapon.isShouldShoot()){
+                    /*while (weapon.isShouldShoot()){
                         try {
                             Thread.sleep(1);
                         } catch (InterruptedException e) {
@@ -855,18 +844,25 @@ public class GameMap {
                                 break;
                             }
                         }
+                    }*/
+                    try {
+                        Thread.sleep(5);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    List<Alien> deadAliens = weapon.getKilled();
-                    if (deadAliens != null && !deadAliens.isEmpty()) {
-                        toShoot.removeAll(deadAliens);
-                        if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
-                            reduceAllWeaponsPrice();
+                    synchronized (lock1){
+                        List<Alien> deadAliens = weapon.getKilled();
+                        if (deadAliens != null && !deadAliens.isEmpty()) {
+                            toShoot.removeAll(deadAliens);
+                            if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
+                                reduceAllWeaponsPrice();
+                            }
+                            this.hero.addMoney(deadAliens.size() * 10);
+                            updateAchievements(deadAliens, "weapon");
+                            for (int i = 0; i < routes.size(); i++)
+                                this.removeAliensFromRoute(routes.get(i), deadAliens);
+                            Alien.reduceNum(deadAliens.size());
                         }
-                        this.hero.addMoney(deadAliens.size() * 10);
-                        updateAchievements(deadAliens, "weapon");
-                        for (int i = 0; i < routes.size(); i++)
-                            this.removeAliensFromRoute(routes.get(i), deadAliens);
-                        Alien.reduceNum(deadAliens.size());
                     }
                 }
             }
@@ -1293,7 +1289,7 @@ class Route {
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
-                    System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
+                 //   System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                     toShoot.add(a);
                 }
             }

@@ -96,11 +96,19 @@ public class WeaponNearest extends Weapon {
                     }
                     if (min.isDead()) {
                         
-                        //TODO: DELETE FROM SCREEN
+
                         System.out.println(getName() + " killed " + min.getName());
                         //  System.out.println(min.getName() + " died.");
                         deadAliens.add(min);
                         canShoot.remove(min);
+
+                        Alien finalMin = min;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.removeElementFromGameRoot(finalMin.getAlienView());
+                            }
+                        });
                         if (!canShoot.isEmpty()) {
                             min = findClosest(canShoot);
                         } else {

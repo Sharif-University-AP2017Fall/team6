@@ -87,7 +87,12 @@ public class WeaponAll extends Weapon {
                         
                         System.out.println(getName() + " killed " + ai.getName());
                         deadAliens.add(ai);
-                        //TODO DELETE FROM SCRREN
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.removeElementFromGameRoot(ai.getAlienView());
+                            }
+                        });
                     }
                     
                     numBullet++;
@@ -216,7 +221,7 @@ class ShootViewAll extends StackPane {
                bullet[i].setVisible(false);
                
            }         
-                
+
            Platform.runLater(new Runnable() {
                
                             @Override

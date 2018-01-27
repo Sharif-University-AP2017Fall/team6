@@ -674,7 +674,7 @@ class Achievement {
     
     void killedWeapon(Alien alien) {
         
-        alien.getAlienView().dead();
+        //alien.getAlienView().dead();
         
         switch (alien.getName()) {
             
@@ -707,7 +707,7 @@ class Achievement {
     
     void killedHero(Alien alien) {
         
-        alien.getAlienView().dead();
+        //alien.getAlienView().dead();
         switch (alien.getName()) {
             case "Albertonion":
                 numOfKilledByHero[0]++;

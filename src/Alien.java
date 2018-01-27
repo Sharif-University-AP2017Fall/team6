@@ -157,7 +157,13 @@ public class Alien implements Movable, Comparable, Runnable {
     boolean isDead() {
         if (energy<=0){
             
-            alienView.dead();
+            //alienView.dead();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    AlienCreeps.removeElementFromGameRoot(alienView);
+                }
+            });
             return true;
             
         }
@@ -569,9 +575,16 @@ public class Alien implements Movable, Comparable, Runnable {
 
 
      public void dead(){
-         
-         clear();
-         
+
+         Platform.runLater(new Runnable() {
+             @Override
+             public void run() {
+                 clear();
+             }
+         });
+
+
+
      }
      
      public void moveRight(double delta) {
@@ -612,6 +625,7 @@ public class Alien implements Movable, Comparable, Runnable {
          clear();
          move_down_index++;
          move_down_index %= 3;
+
          setTranslateX(getTranslateX() + deltax);
          setTranslateY(getTranslateY() + deltay);
          move_down[move_down_index].setVisible(true);
