@@ -10,14 +10,18 @@ import javafx.animation.PathTransition;
 import javafx.animation.PathTransition.OrientationType;
 import javafx.application.Platform;
 
+import javafx.event.EventHandler;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 
 import javafx.scene.image.ImageView;
 
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import javafx.scene.shape.*;
 import javafx.util.Duration;
+import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
 
 
 /*
@@ -185,6 +189,7 @@ class WeaponNearestView extends WeaponView {
      public Dimension dim;
      
      public int index;
+     private boolean isFocus;
 
      public int indB;
      
@@ -192,44 +197,42 @@ class WeaponNearestView extends WeaponView {
      
      private String nameW; 
      
-     public WeaponNearestView(String name, Dimension dim_){
-         
+     public WeaponNearestView(String name, Dimension dim_) {
+
          System.out.println("setting view for " + name);
          this.pic = new ImageView[8];
          index = 5;
-         dim=dim_;
-         nameW=name;
-         
-         String address = "res/weapons/" + name +"/";
+         dim = dim_;
+         nameW = name;
+
+         String address = "res/weapons/" + name + "/";
          pic[4] = new ImageView(new Image(getClass()
                  .getResource(address + "5.png").toExternalForm()));
          pic[4].setFitWidth(64);
          pic[4].setFitHeight(64);
          pic[4].setVisible(true);
 
-         for (int i=0;i<8;i++){
-             
-             if (i==4)
+         for (int i = 0; i < 8; i++) {
+
+             if (i == 4)
                  continue;
-             
-            pic[i] = new ImageView(new Image(getClass()
-                    .getResource(address +String.valueOf(i+1)+".png").toExternalForm()));
-            pic[i].setFitWidth(64);
-            pic[i].setFitHeight(64);
-            pic[i].setVisible(false);
+
+             pic[i] = new ImageView(new Image(getClass()
+                     .getResource(address + String.valueOf(i + 1) + ".png").toExternalForm()));
+             pic[i].setFitWidth(64);
+             pic[i].setFitHeight(64);
+             pic[i].setVisible(false);
 
          }
-         
 
-            bul = new ImageView(new Image(getClass()
-                    .getResource(address+"10.png").toExternalForm()));
-            bul.setFitWidth(10);
-            bul.setFitHeight(10);
-            bul.setVisible(true);
 
-         
-         
-         
+         bul = new ImageView(new Image(getClass()
+                 .getResource(address + "10.png").toExternalForm()));
+         bul.setFitWidth(10);
+         bul.setFitHeight(10);
+         bul.setVisible(true);
+
+
          pic[4].setVisible(true);
          getChildren().addAll(pic[0],
                  pic[1],
@@ -240,11 +243,25 @@ class WeaponNearestView extends WeaponView {
                  pic[6],
                  pic[7],
                  bul
-                );
-         
-         setTranslateX(dim_.getX()-32);
-         setTranslateY(dim_.getY()-32);
-         
+         );
+
+         setTranslateX(dim_.getX() - 32);
+         setTranslateY(dim_.getY() - 32);
+
+         /*setOnMouseEntered(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onSelect();
+             }
+         });
+
+         setOnMouseExited(new EventHandler<MouseEvent>() {
+             @Override
+             public void handle(MouseEvent event) {
+                 onDeselect();
+             }
+         });*/
+
      }
 
      @Override
@@ -285,6 +302,40 @@ class WeaponNearestView extends WeaponView {
          
          
      }
+
+    private void onSelect(){
+        bul.setEffect(new Glow(10));
+        for (int i = 0; i < 8; i++){
+            if (pic[i].isVisible()){
+                pic[i].setEffect(new Glow(10));
+            }
+        }
+    }
+
+    private void onDeselect(){
+        bul.setEffect(new Glow(0));
+        for (int i = 0; i < 8; i++){
+            pic[i].setEffect(new Glow(0));
+        }
+    }
+
+    @Override
+    public boolean isFocus() {
+
+        return isFocus;
+    }
+
+    @Override
+    public void setFocus() {
+        isFocus = true;
+        onSelect();
+    }
+
+    @Override
+    public void setUnfocus() {
+        isFocus = false;
+        onDeselect();
+    }
      
      
      

@@ -486,6 +486,52 @@ public class GameMap {
         System.out.print("\n\n");
     }
 
+    void focusWeapons() {
+        ArrayList<Weapon> weapons = new ArrayList<>();
+
+        for (Integer integer : specifiedNumbers.keySet()) {
+            Dimension dimension = specifiedNumbers.get(integer);
+            Mappable m = specifiedLocations.get(dimension);
+            if (m instanceof Weapon) {
+                Weapon weapon = ((Weapon) m);
+                weapons.add(weapon);
+            }
+        }
+
+        for (int i = 0; i < weapons.size(); i++){
+            if (weapons.get(i).getWeaponView().isFocus()){
+                weapons.get(i).getWeaponView().setUnfocus();
+                if (i + 1 < weapons.size()){
+                    weapons.get(i + 1).getWeaponView().setFocus();
+                }else{
+                    weapons.get(0).getWeaponView().setFocus();
+                }
+                return;
+            }
+        }
+        weapons.get(0).getWeaponView().setFocus();
+    }
+
+    void focusAliens(){
+        ArrayList<Alien> allAliens = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            allAliens.addAll(routes.get(i).getAliens());
+        }
+
+        for (int i = 0; i < allAliens.size(); i++){
+            if (allAliens.get(i).getAlienView().isFocus()){
+                allAliens.get(i).getAlienView().setUnfocus();
+                if (i + 1 < allAliens.size()){
+                    allAliens.get(i + 1).getAlienView().setFocus();
+                }else{
+                    allAliens.get(0).getAlienView().setFocus();
+                }
+                return;
+            }
+        }
+        allAliens.get(0).getAlienView().setFocus();
+    }
+
     void putWeaponInPlace(String weaponName, int whichPlace) {
 
         if (whichPlace > specifiedLocations.keySet().size()) {

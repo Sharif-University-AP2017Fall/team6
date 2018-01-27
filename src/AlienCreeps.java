@@ -211,7 +211,11 @@ public class AlienCreeps extends Application {
                 askWeaponScene.setRoot(createAskWeaponContent());
                 stage.setScene(askWeaponScene);
                 stage.show();
-            }else{
+            } else if (event.getCode() == KeyCode.TAB){
+                gameMap.focusWeapons();
+            } else if (event.getCode() == KeyCode.SHIFT){
+                gameMap.focusAliens();
+            } else{
                 gameMap.moveHero(event);
             }
         });
