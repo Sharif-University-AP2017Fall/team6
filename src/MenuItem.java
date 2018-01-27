@@ -56,8 +56,8 @@ public class MenuItem extends StackPane{
         msg.setFont(font);
         msg.setFill(Color.rgb(57, 34, 18));
         normal = new ImageView(view);
-        normal.setFitWidth(110);
-        normal.setFitHeight(30);
+        normal.setFitWidth(50);
+        normal.setFitHeight(50);
 
         getChildren().addAll(normal, msg);
 
@@ -82,10 +82,11 @@ public class MenuItem extends StackPane{
 
     public void setOnAction(Runnable action){
         setOnMouseClicked(event -> {
-            Timeline act = new Timeline(new KeyFrame(Duration.millis(100),
+            action.run();
+            /*Timeline act = new Timeline(new KeyFrame(Duration.millis(100),
                     event1 -> action.run()));
             act.setCycleCount(1);
-            act.play();
+            act.play();*/
         });
     }
 }

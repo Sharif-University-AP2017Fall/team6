@@ -48,6 +48,8 @@ public class AlienCreeps extends Application {
         launch(args);
     }
 
+    private String requestWeapon;
+
     private void launchGame() {
 
         Runnable r1 = new Runnable() {
@@ -203,6 +205,7 @@ public class AlienCreeps extends Application {
                         } else if (event.getCode() == KeyCode.B){
                             askWeaponScene.setRoot(createAskWeaponContent());
                             stage.setScene(askWeaponScene);
+                            stage.show();
                         }else{
                             gameMap.moveHero(event);
                         }
@@ -249,6 +252,10 @@ public class AlienCreeps extends Application {
         popupHeroDimStage.setScene(popupHeroDimScene);
         popupHeroDimStage.initModality(Modality.APPLICATION_MODAL);
 
+        popupLocationNumScene.setRoot(createLocationNumContent());
+        popupLocationNUmStage.setScene(popupLocationNumScene);
+        popupLocationNUmStage.initModality(Modality.APPLICATION_MODAL);
+
         stage.show();
     }
 
@@ -279,8 +286,48 @@ public class AlienCreeps extends Application {
         ArrayList<MenuItem> items = new ArrayList<>();
         for (int i = 0; i < 13; i++){
             items.add(new MenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
+            int finalI = i;
+            items.get(i).setOnAction(new Runnable() {
+                @Override
+                public void run() {
+                    gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
+                    popupLocationNUmStage.close();
+                }
+            });
         }
-        root.getChildren().addAll(background);
+        items.get(0).setDim(62, 172);
+        items.get(1).setDim(126, 124);
+        items.get(2).setDim(190, 172);
+        items.get(3).setDim(62, 272);
+        items.get(4).setDim(126, 224);
+        items.get(5).setDim(190, 272);
+        items.get(6).setDim(62, 372);
+        items.get(7).setDim(126, 324);
+        items.get(8).setDim(190, 372);
+        items.get(9).setDim(62, 472);
+        items.get(10).setDim(126, 424);
+        items.get(11).setDim(190, 472);
+        items.get(12).setDim(126, 524);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+
+        Text command = new Text("Choose a location\n for your weapon.");
+        command.setFont(font);
+        command.setFill(Color.rgb(208, 153, 69));
+        command.relocate(24, 25);
+
+        popupLocationNumScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER){
+                    popupLocationNUmStage.close();
+                }
+            }
+        });
+        root.getChildren().addAll(background, command);
         root.getChildren().addAll(items);
         return root;
 
@@ -516,6 +563,7 @@ public class AlienCreeps extends Application {
         rocket.setOnAction(new Runnable() {
             @Override
             public void run() {
+                requestWeapon = "rocket";
                 popupLocationNUmStage.showAndWait();
             }
         });
@@ -531,6 +579,7 @@ public class AlienCreeps extends Application {
         freezer.setOnAction(new Runnable() {
             @Override
             public void run() {
+                requestWeapon = "freezer";
                 popupLocationNUmStage.showAndWait();
             }
         });
@@ -545,6 +594,7 @@ public class AlienCreeps extends Application {
         antiaircraft.setOnAction(new Runnable() {
             @Override
             public void run() {
+                requestWeapon = "antiaircraft";
                 popupLocationNUmStage.showAndWait();
             }
         });
@@ -559,6 +609,7 @@ public class AlienCreeps extends Application {
         machine_gun.setOnAction(new Runnable() {
             @Override
             public void run() {
+                requestWeapon = "machine gun";
                 popupLocationNUmStage.showAndWait();
             }
         });
@@ -574,6 +625,7 @@ public class AlienCreeps extends Application {
         laser.setOnAction(new Runnable() {
             @Override
             public void run() {
+                requestWeapon = "laser";
                 popupLocationNUmStage.showAndWait();
             }
         });
