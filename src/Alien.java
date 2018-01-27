@@ -330,6 +330,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     static void reduceNum(int NUM) {
         Alien.NUM -= NUM;
+        System.out.println("NUM = " + Alien.NUM);
     }
 
     private Object lock1 = new Object();

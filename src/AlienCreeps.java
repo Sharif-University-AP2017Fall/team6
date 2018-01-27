@@ -91,6 +91,7 @@ public class AlienCreeps extends Application {
                     gameMap.nextSecond();
                     if (gameEnded){
                         System.out.println("GAME ENDED");
+                        System.exit(0);
                         /*try {
                             stop();
                         } catch (Exception e) {
@@ -114,7 +115,7 @@ public class AlienCreeps extends Application {
         gameTime = new Thread(r1);
         gameTime.start();
 
-        /*Runnable r2 = () -> {
+        Runnable r2 = () -> {
             while (true) {
                 String input = scanner.nextLine();
                 String info[] = input.split(" ");
@@ -199,29 +200,21 @@ public class AlienCreeps extends Application {
             }
         };
         gameInput = new Thread(r2);
-        gameInput.start();*/
+        gameInput.start();
 
-        Runnable r3 = new Runnable() {
-            @Override
-            public void run() {
-                gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent event) {
-                        if (event.getCode() == KeyCode.M){
-                            popupHeroDimStage.setX(200);
-                            popupHeroDimStage.setY(200);
-                            popupHeroDimStage.showAndWait();
-                        } else if (event.getCode() == KeyCode.B){
-                            askWeaponScene.setRoot(createAskWeaponContent());
-                            stage.setScene(askWeaponScene);
-                            stage.show();
-                        }else{
-                            gameMap.moveHero(event);
-                        }
-                    }
-                });
+        Runnable r3 = () -> gameScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.M){
+                popupHeroDimStage.setX(200);
+                popupHeroDimStage.setY(200);
+                popupHeroDimStage.showAndWait();
+            } else if (event.getCode() == KeyCode.B){
+                askWeaponScene.setRoot(createAskWeaponContent());
+                stage.setScene(askWeaponScene);
+                stage.show();
+            }else{
+                gameMap.moveHero(event);
             }
-        };
+        });
         gameInput = new Thread(r3);
         gameInput.start();
     }
@@ -268,6 +261,7 @@ public class AlienCreeps extends Application {
         popupEndGameStage.setScene(popupEndGameScene);
         popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
         popupEndGameStage.setAlwaysOnTop(true);
+
         stage.show();
     }
 
@@ -279,7 +273,7 @@ public class AlienCreeps extends Application {
         boolean finalGameOver = gameOver;
         Platform.runLater(() -> {
             popupEndGameScene.setRoot(game.createEndGameContent(finalGameOver));
-            popupEndGameStage.showAndWait();
+            popupEndGameStage.show();
         });
 
         Timeline end = new Timeline(new KeyFrame(Duration.millis(1500), new EventHandler<ActionEvent>() {
@@ -344,7 +338,7 @@ public class AlienCreeps extends Application {
         rocket_view.relocate(110, 110);
         rocket.setOnAction(() -> {
             requestWeapon = "rocket";
-            popupLocationNUmStage.showAndWait();
+            popupLocationNUmStage.show();
         });
 
 
@@ -357,7 +351,7 @@ public class AlienCreeps extends Application {
         freezer_view.relocate(280, 100);
         freezer.setOnAction(() -> {
             requestWeapon = "freezer";
-            popupLocationNUmStage.showAndWait();
+            popupLocationNUmStage.show();
         });
 
         Image antiaircraft_btn = new Image(getClass()
@@ -369,7 +363,7 @@ public class AlienCreeps extends Application {
         antiaircraft_view.relocate(67, 265);
         antiaircraft.setOnAction(() -> {
             requestWeapon = "antiaircraft";
-            popupLocationNUmStage.showAndWait();
+            popupLocationNUmStage.show();
         });
 
         Image machine_gun_btn = new Image(getClass()
@@ -383,7 +377,7 @@ public class AlienCreeps extends Application {
             @Override
             public void run() {
                 requestWeapon = "machine gun";
-                popupLocationNUmStage.showAndWait();
+                popupLocationNUmStage.show();
             }
         });
 
@@ -397,7 +391,7 @@ public class AlienCreeps extends Application {
         laser_view.relocate(360, 270);
         laser.setOnAction(() -> {
             requestWeapon = "laser";
-            popupLocationNUmStage.showAndWait();
+            popupLocationNUmStage.show();
         });
 
         root.getChildren().addAll(background, title, rocket, rocket_view,
@@ -501,8 +495,13 @@ public class AlienCreeps extends Application {
             items.get(i).setOnAction(new Runnable() {
                 @Override
                 public void run() {
-                    gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
                     popupLocationNUmStage.close();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
+                        }
+                    });
                 }
             });
         }

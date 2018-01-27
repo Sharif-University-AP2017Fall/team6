@@ -119,8 +119,9 @@ public class WeaponNearest extends Weapon {
                             }
                             synchronized (lock){
                                 stopShooting();
+
                             }
-                            System.out.println("finished shooting");
+                            //System.out.println("finished shooting");
                             return deadAliens;
                         }
                     }

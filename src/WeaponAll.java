@@ -122,7 +122,7 @@ public class WeaponAll extends Weapon {
             }
         }
         
-        System.out.println("finished shooting");
+       // System.out.println("finished shooting");
         
         try {
             

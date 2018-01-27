@@ -56,7 +56,7 @@ public class GameMap {
         if (Alien.isSTART()) {
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
                 System.out.println("YOU WON");
-                AlienCreeps.endGame(false);
+                //AlienCreeps.endGame(false);
                 return;
             }
         }
@@ -845,24 +845,17 @@ public class GameMap {
                             }
                         }
                     }
-                   /* try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
-                    synchronized (lock1){
-                        List<Alien> deadAliens = weapon.getKilled();
-                        if (deadAliens != null && !deadAliens.isEmpty()) {
-                            toShoot.removeAll(deadAliens);
-                            if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
-                                reduceAllWeaponsPrice();
-                            }
-                            this.hero.addMoney(deadAliens.size() * 10);
-                            updateAchievements(deadAliens, "weapon");
-                            for (int i = 0; i < routes.size(); i++)
-                                this.removeAliensFromRoute(routes.get(i), deadAliens);
-                            Alien.reduceNum(deadAliens.size());
+                    List<Alien> deadAliens = weapon.getKilled();
+                    if (deadAliens != null && !deadAliens.isEmpty()) {
+                        toShoot.removeAll(deadAliens);
+                        if (this.hero.addExperienceLevel(deadAliens.size() * 5)) {
+                            reduceAllWeaponsPrice();
                         }
+                        this.hero.addMoney(deadAliens.size() * 10);
+                        updateAchievements(deadAliens, "weapon");
+                        for (int i = 0; i < routes.size(); i++)
+                            this.removeAliensFromRoute(routes.get(i), deadAliens);
+                        Alien.reduceNum(deadAliens.size());
                     }
                 }
             }
@@ -1289,7 +1282,8 @@ class Route {
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
-                 //   System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
+                  //  System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
+                    System.out.print("");
                     toShoot.add(a);
                 }
             }
