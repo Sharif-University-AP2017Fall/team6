@@ -833,7 +833,7 @@ public class GameMap {
 
                 if (!toShoot.isEmpty()){
                     weapon.setShouldShoot(toShoot);
-                    /*while (weapon.isShouldShoot()){
+                    while (weapon.isShouldShoot()){
                         try {
                             Thread.sleep(1);
                         } catch (InterruptedException e) {
@@ -844,12 +844,12 @@ public class GameMap {
                                 break;
                             }
                         }
-                    }*/
-                    try {
+                    }
+                   /* try {
                         Thread.sleep(5);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    }
+                    }*/
                     synchronized (lock1){
                         List<Alien> deadAliens = weapon.getKilled();
                         if (deadAliens != null && !deadAliens.isEmpty()) {
