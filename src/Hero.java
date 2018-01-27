@@ -271,7 +271,6 @@ public class Hero extends Warrior {
 
             if (shouldMove){
 
-                //TODO improve calculations
                 Dimension moveFrom = super.dimension;
                 double deltaX = (moveTo.getX() - moveFrom.getX());
                 double deltaY = (moveTo.getY() - moveFrom.getY());
@@ -407,7 +406,7 @@ class WarriorView extends StackPane{
     
     
     public WarriorView(String name, String number, Dimension dim) {
-        System.out.println("setting view for " + name);
+       // System.out.println("setting view for " + name);
         this.move_down = new ImageView[3];
         this.move_up = new ImageView[3];
         this.move_right = new ImageView[3];
@@ -790,11 +789,7 @@ class Achievement {
             
             achievementView.setAchivement("Blood Sucker");
         }
-    
-    
     }
-   
-    
 }
 
 
@@ -859,63 +854,57 @@ class AchievementView {
             achieved.get("Blood Sucker")};
         
         return a;
-    
     }
-
 }
 
 
 
 
 class MedalView extends StackPane {
-    
+
     private ImageView item;
-    
-    MedalView(String name,int i){
-        
-        int a=0,b=0;
-        
-        if(i<=4){
-            a=6;
+
+    MedalView(String name, int i) {
+
+        int a = 0, b = 0;
+
+        if (i <= 4) {
+            a = 6;
+        } else {
+            b = 7;
         }
-        else{
-             b=7;   
-        }
-        
+
         String address = "res/hero/achievement/";
-        item= new ImageView(new Image(getClass()
-                .getResource(address + name +".png").toExternalForm()));
-        item.setVisible(false );
+        item = new ImageView(new Image(getClass()
+                .getResource(address + name + ".png").toExternalForm()));
+        item.setVisible(false);
         item.setFitHeight(30);
         item.setFitWidth(30);
-        
-        Glow glow = new Glow(); 
+
+        Glow glow = new Glow();
+
         //setting level of the glow effect 
         glow.setLevel(0.8);
-      
+
         item.setEffect(glow);
-        
+
         getChildren().add(item);
-        
-        setTranslateX(504+30*i+b);
-        setTranslateY(9-a);
-        
+
+        setTranslateX(504 + 30 * i + b);
+        setTranslateY(9 - a);
+
     }
-    
-    public void setVisible(){
+
+    public void setVisible() {
 
         item.setVisible(true);
-    
-    }
-    
-    public void inVisible(){
-        
-        item.setVisible(false);
-    
-    }
-    
-   
 
+    }
+
+    public void inVisible() {
+
+        item.setVisible(false);
+    }
 }
 
 
@@ -924,41 +913,6 @@ class MedalView extends StackPane {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*public void killedSoldier(Alien alien){
-        switch (alien.getName()){
-            case "Albertonion":
-                numOfKilledBySoldier[0]++;
-                break;
-            case "Algwasonion":
-                numOfKilledBySoldier[1]++;
-                break;
-            case "Activionion":
-                numOfKilledBySoldier[2]++;
-                break;
-            case "Aironion":
-                numOfKilledBySoldier[3]++;
-                break;
-        }
-    }  */
 
 
 

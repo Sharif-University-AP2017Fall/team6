@@ -21,7 +21,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 7;//5;
+    private static int MAXNUM = 5;
     private static boolean START = false;
 
     /**** PROPERTIES ****/
@@ -43,6 +43,8 @@ public class Alien implements Movable, Comparable, Runnable {
 
     private boolean shouldMove;
     Dimension moveTo;
+    private int cycleNumLeft;
+    private int cycleNum;
 
     /*** VIEW ***/
     private AlienView alienView;
@@ -50,14 +52,16 @@ public class Alien implements Movable, Comparable, Runnable {
     Alien(String name) {
         currentDim = new Dimension(0.0, 0.0);
         alienView = new AlienView("aliens", name);
+        this.cycleNumLeft = 10;
+        this.cycleNum = 10;
         NUM++;
         START = true;
-        this.name = name;// + NUM; //TODO delete NUM from this
+        this.name = name;
         switch (name) {
             case "Albertonion":
                 this.energy = 250;
-                this.speed = 8;
-                this.initialSpeed = 8;
+                this.speed = 4; //8
+                this.initialSpeed = 4; //8
                 this.shootingSpeed = 5;
                 this.strength = 7;
                 this.type = 0;
@@ -65,8 +69,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Algwasonion":
                 this.energy = 150;
-                this.speed = 4;
-                this.initialSpeed = 4;
+                this.speed = 3; //4
+                this.initialSpeed = 3; //4
                 this.shootingSpeed = 10;
                 this.strength = 25;
                 this.type = 1;
@@ -74,8 +78,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Activionion":
                 this.energy = 400;
-                this.speed = 2;
-                this.initialSpeed = 2;
+                this.speed = 1; //2
+                this.initialSpeed = 1; //2
                 this.shootingSpeed = 2;
                 this.strength = 40;
                 this.type = 2;
@@ -83,8 +87,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Aironion":
                 this.energy = 200;
-                this.speed = 5;
-                this.initialSpeed = 5;
+                this.speed = 2; //5
+                this.initialSpeed = 2; //5
                 this.shootingSpeed = 5;
                 this.strength = 20;
                 this.type = 3;
@@ -166,7 +170,8 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void move(Dimension dimension) {
-//        System.out.println(name);
+    //    System.out.println(name);
+//        System.out.println(System.currentTimeMillis());
 
         Dimension.correctDim(dimension);
         alienView.move(Dimension.deltaX(currentDim, dimension),
@@ -174,9 +179,9 @@ public class Alien implements Movable, Comparable, Runnable {
 
         setCurrentDim(dimension);
 
-//        System.out.println("moved to" + dimension);
+  //      System.out.println("moved to" + dimension);
 
-//        System.out.println("*********************");
+   //     System.out.println("*********************");
     }
 
     @Override
@@ -278,12 +283,25 @@ public class Alien implements Movable, Comparable, Runnable {
         this.shouldMove = move;
     }
 
+    private final Object lock7 = new Object();
+
     public void setMoveTo(Dimension moveTo) {
-        if (speed > 0) {
-      //      System.out.println(name + " should move to " + moveTo);
-            this.shouldMove = true;
-            this.moveTo = moveTo;
-        }
+        /*try {
+            Thread.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
+      //  synchronized (lock7){
+            if (speed > 0) {
+               // System.out.println(name + " SHOULD MOVE TO " + moveTo);
+                this.shouldMove = true;
+                this.moveTo = moveTo;
+            }
+       // }
+    }
+
+    public boolean isShouldMove() {
+        return shouldMove;
     }
 
     public Dimension getMoveTo() {
@@ -331,9 +349,9 @@ public class Alien implements Movable, Comparable, Runnable {
 
                 deltaX = (this.speed * GameMap.UNIT) / 10.0 * signX;
                 deltaY = (this.speed * GameMap.UNIT) / 10.0 * signY;
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < cycleNum; i++) {
                     try {
-                        Thread.sleep(225); //250
+                        Thread.sleep(90); //250
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -357,14 +375,21 @@ public class Alien implements Movable, Comparable, Runnable {
                         }
                     }
                     if (!shouldMove || currentDim.equals(moveTo)) {
+                        this.cycleNumLeft--;
                         break;
                     }
                 }
-                if (currentDim.equals(moveTo)) {
-                    shouldMove = false;
-                }
+                cycleNumLeft = 10;
+                shouldMove = false;
+            }
+            if(isDead()){
+                return;
             }
         }
+    }
+
+    public int getCycleNumLeft() {
+        return cycleNumLeft;
     }
 
     public AlienView getAlienView() {
@@ -396,7 +421,7 @@ public class Alien implements Movable, Comparable, Runnable {
      private int move_right_index;
 
      public AlienView(String name, String alienName){//}, Dimension dim) {
-         System.out.println("setting view for " + name);
+     //    System.out.println("setting view for " + name);
          this.move_down = new ImageView[3];
          this.move_up = new ImageView[3];
          this.move_right = new ImageView[3];
@@ -601,7 +626,7 @@ public class Alien implements Movable, Comparable, Runnable {
          double dummyY = Math.round(deltaY * 10);
          deltaY = dummyY / 10;
 
- //        System.out.println("DELTAX = " + deltaX + " DELTAY = " + deltaY);
+    //    System.out.println("DELTAX = " + deltaX + " DELTAY = " + deltaY);
 
          double finalDeltaY = deltaY;
          double finalDeltaX = deltaX;

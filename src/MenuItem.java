@@ -7,10 +7,14 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class MenuItem extends StackPane{
     private ImageView normal;
+    private Text msg;
     private Glow glow;
 
     public MenuItem(String type){
@@ -36,6 +40,26 @@ public class MenuItem extends StackPane{
         normal.setFitHeight(30);
 
         getChildren().add(normal);
+
+        setOnMouseEntered(e -> onSelect());
+
+        setOnMouseExited(e -> onDeselect());
+    }
+
+    public MenuItem(Image view, String text){
+        setAlignment(Pos.CENTER);
+        msg = new Text(text);
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+        msg.setFont(font);
+        msg.setFill(Color.rgb(57, 34, 18));
+        normal = new ImageView(view);
+        normal.setFitWidth(110);
+        normal.setFitHeight(30);
+
+        getChildren().addAll(normal, msg);
 
         setOnMouseEntered(e -> onSelect());
 

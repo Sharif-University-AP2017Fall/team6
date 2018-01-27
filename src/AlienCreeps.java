@@ -3,6 +3,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -26,6 +27,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -46,36 +48,6 @@ public class AlienCreeps extends Application {
         launch(args);
     }
 
-    private void initWeapons() {
-
-        System.out.println("Choose one of the weapons to put in " +
-                gameMap.getSpecifiedLocations().keySet().size() +
-                " specified locations");
-        Weapon.showWeaponList();
-        System.out.println("Type \'start\' to start game");
-        String input = scanner.nextLine();
-        while (!input.equalsIgnoreCase("start")) {
-            if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
-                String info[] = input.split(" ");
-                String weaponName;
-                int locationNum;
-                if (info.length == 5) {
-                    weaponName = info[1];
-                    locationNum = Integer.parseInt(info[4]);
-                } else {
-                    weaponName = info[1] + " " + info[2];
-                    locationNum = Integer.parseInt(info[5]);
-                }
-                gameMap.putWeaponInPlace(weaponName, locationNum);
-            } else {
-                System.out.println("invalid command");
-            }
-            input = scanner.nextLine();
-        }
-        System.out.println(gameMap);
-        System.out.println("Hero in : " + hero.getDimension());
-    }
-
     private void launchGame() {
 
         Runnable r1 = new Runnable() {
@@ -88,7 +60,7 @@ public class AlienCreeps extends Application {
 
                 while (true){
                     try {
-                        Thread.sleep(2500); //TODO: change this to one second
+                        Thread.sleep(1000); //TODO: change this to one second
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -115,12 +87,12 @@ public class AlienCreeps extends Application {
                     System.out.println("Current second = " + CURRENT_SECOND);
                     System.out.println("Current hour = "  + CURRENT_HOUR);
                     System.out.println("Current day = " + CURRENT_DAY);
-                    
-                    
-                    
+
                     
                     synchronized (lock){
                         if (gameMap.nextSecond()) {
+                            endGame(true);
+                            System.out.println("GAME OVER");
                             gameOver = true;
                             gameTime.stop();
                             System.exit(0);
@@ -133,9 +105,8 @@ public class AlienCreeps extends Application {
         gameTime = new Thread(r1);
         gameTime.start();
 
-        Runnable r2 = () -> {
+        /*Runnable r2 = () -> {
             while (true) {
-                //System.out.println("taking input");
                 String input = scanner.nextLine();
                 String info[] = input.split(" ");
                 if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
@@ -212,7 +183,6 @@ public class AlienCreeps extends Application {
                 } else {
                     System.out.println("invalid command");
                 }
-
                 if (gameOver){
                     gameInput.stop();
                     return;
@@ -220,7 +190,7 @@ public class AlienCreeps extends Application {
             }
         };
         gameInput = new Thread(r2);
-        gameInput.start();
+        gameInput.start();*/
 
         Runnable r3 = new Runnable() {
             @Override
@@ -261,9 +231,13 @@ public class AlienCreeps extends Application {
     static Scene gameScene = new Scene(new Group(), GameMap.XBOUND, GameMap.YBOUND);
     static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
+    static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
+    static Scene popupLocationNumScene = new Scene(new Group(), 300, 600);
 
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
+    static Stage popupEndGameStage = new Stage();
+    static Stage popupLocationNUmStage = new Stage();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -275,9 +249,102 @@ public class AlienCreeps extends Application {
         popupHeroDimStage.setScene(popupHeroDimScene);
         popupHeroDimStage.initModality(Modality.APPLICATION_MODAL);
 
-
         stage.show();
     }
+
+    static void endGame(boolean gameOver) {
+        System.out.println("setting endgame scene");
+        popupEndGameScene.setRoot(game.createEndGameContent(gameOver));
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                popupEndGameStage.setScene(popupEndGameScene);
+                popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
+                popupEndGameStage.showAndWait();
+            }
+        });
+
+    }
+
+    private Parent createLocationNumContent(){
+        Group root = new Group();
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/ask_location/bg.png").toExternalForm()));
+
+        background.setFitHeight(600);
+        background.setFitWidth(300);
+
+
+        ArrayList<MenuItem> items = new ArrayList<>();
+        for (int i = 0; i < 13; i++){
+            items.add(new MenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
+        }
+        root.getChildren().addAll(background);
+        root.getChildren().addAll(items);
+        return root;
+
+    }
+
+    Parent createEndGameContent(boolean gameOver){
+        Group root = new Group();
+        Font font1 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+        Font font2 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 25);
+        Font font3 = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        String address = "res/menu";
+        if (gameOver){
+            address += "/Lose";
+        }else {
+            address += "/Win";
+        }
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource(address + "/bg.png").toExternalForm()));
+
+        background.setFitWidth(400);
+        background.setFitHeight(250);
+
+        Text msg1 = new Text("");
+        Text msg2 = new Text("");
+        Text msg3 = new Text("");
+        msg1.setFont(font1);
+        msg2.setFont(font2);
+        msg3.setFont(font3);
+        msg1.relocate(75, 50);
+        msg2.relocate(45, 100);
+        msg3.relocate(50, 180);
+
+        if (gameOver){
+            msg1.setText("GAME OVER");
+            msg2.setText("The aliens have taken over the planet.");
+            msg3.setText("You have failed this city");
+            msg1.setFill(Color.rgb(194, 30, 30));
+            msg2.setFill(Color.rgb(194, 30, 30));
+            msg3.setFill(Color.rgb(194, 30, 30));
+
+        } else{
+            msg1.setText("CONGRATULATIONS! YOU WON!");
+            msg2.setText("You have saved the planet!");
+            msg3.setText("yaaaaaaaaaaay");
+            msg1.setFill(Color.rgb(213, 163, 224));
+            msg2.setFill(Color.rgb(213, 163, 224));
+            msg3.setFill(Color.rgb(213, 163, 224));
+        }
+
+        root.getChildren().addAll(background, msg1, msg2, msg3);
+        return root;
+    }
+
 
     private Parent createMenuContent(){
         Group root = new Group();
@@ -446,6 +513,12 @@ public class AlienCreeps extends Application {
         ImageView rocket_view = new ImageView(new Image(getClass()
                 .getResource(address + "Rocket_view.png").toExternalForm()));
         rocket_view.relocate(110, 110);
+        rocket.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupLocationNUmStage.showAndWait();
+            }
+        });
 
 
         Image freezer_btn = new Image(getClass()
@@ -455,6 +528,12 @@ public class AlienCreeps extends Application {
         ImageView freezer_view = new ImageView(new Image(getClass()
                 .getResource(address + "Freezer_view.png").toExternalForm()));
         freezer_view.relocate(280, 100);
+        freezer.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupLocationNUmStage.showAndWait();
+            }
+        });
 
         Image antiaircraft_btn = new Image(getClass()
                 .getResource(address + "Antiaircraft.png").toExternalForm());
@@ -463,6 +542,12 @@ public class AlienCreeps extends Application {
         ImageView antiaircraft_view = new ImageView(new Image(getClass()
                 .getResource(address + "Antiaircraft_view.png").toExternalForm()));
         antiaircraft_view.relocate(67, 265);
+        antiaircraft.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupLocationNUmStage.showAndWait();
+            }
+        });
 
         Image machine_gun_btn = new Image(getClass()
                 .getResource(address + "Machine Gun.png").toExternalForm());
@@ -471,6 +556,12 @@ public class AlienCreeps extends Application {
         ImageView machine_gun_view = new ImageView(new Image(getClass()
                 .getResource(address + "Machine Gun_view.png").toExternalForm()));
         machine_gun_view.relocate(207, 260);
+        machine_gun.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupLocationNUmStage.showAndWait();
+            }
+        });
 
 
         Image laser_btn = new Image(getClass()
@@ -480,6 +571,12 @@ public class AlienCreeps extends Application {
         ImageView laser_view = new ImageView(new Image(getClass()
                 .getResource(address + "Laser_view.png").toExternalForm()));
         laser_view.relocate(360, 270);
+        laser.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupLocationNUmStage.showAndWait();
+            }
+        });
 
         root.getChildren().addAll(background, title, rocket, rocket_view,
                 freezer, freezer_view,

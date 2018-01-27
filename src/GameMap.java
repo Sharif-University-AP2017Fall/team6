@@ -19,7 +19,7 @@ public class GameMap {
     static double XBOUND = 895;
     static double YBOUND = 700;
 
-    static int UNIT = 15;
+    static int UNIT = 10;
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
@@ -296,7 +296,8 @@ public class GameMap {
 
         if (Alien.isSTART()) {
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
-                System.out.println("CONGRATULATIONS! YOU WON :D");
+                System.out.println("YOU WON");
+                AlienCreeps.endGame(false);
                 return true;
             }
         }
@@ -305,7 +306,7 @@ public class GameMap {
 
     private void oneTimeActions(){
         if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 1 && AlienCreeps.getCurrentDay() == 0){
-            System.out.println("WORMHOLE VIEW");
+        //    System.out.println("WORMHOLE VIEW");
             for (int i = 0; i < 6; i++){
                 int finalI = i;
                 Platform.runLater(new Runnable() {
@@ -600,7 +601,7 @@ public class GameMap {
                                 newAlien.getAlienView());
                     }
                 });
-                System.out.println(name + " entered!");
+            //    System.out.println(name + " entered!");
                 Thread alienLifeCycle = new Thread(newAlien);
                 alienLifeCycles.add(alienLifeCycle);
                 alienLifeCycle.start();
@@ -611,9 +612,6 @@ public class GameMap {
 
                 newAlien.move(whichRoute.getLines()[0].getStartPoint());
                 whichRoute.getAlienMap().get(whichRoute.getLines()[0]).add(newAlien);
-
-               // routes.get(1).addAlienToRoute(newAlien, 0);
-                //whichRoute.addAlienToRoute(newAlien, 0);
             }
         }
     }
@@ -1225,11 +1223,12 @@ class Route {
     }
 
     private final Object lock = new Object();
+    private final Object lock1 = new Object();
 
     List<Alien> moveAliensOnRoute() {
         List<Alien> reachedIntersection = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 4; i >= 0; i--) {
             List<Alien> toMove = alienMap.get(lines[i]);
 
             for (int j = 0; j < toMove.size(); j++) {
@@ -1240,38 +1239,19 @@ class Route {
 
                 if (destination == null) {
                     destination = lines[i].getEndPoint();
-                    long before = System.currentTimeMillis();
                     current.setMoveTo(destination);
+                    alienMap.get(lines[i]).remove(current);
 
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if (intersections.contains(destination)) {
+                        reachedIntersection.add(current);
+                    } else {
+                        alienMap.get(lines[i + 1]).add(current);
                     }
-
-                    synchronized (lock) {
-                        alienMap.get(lines[i]).remove(current);
-
-                        if (intersections.contains(destination)) {
-                            reachedIntersection.add(current);
-                        } else {
-                            alienMap.get(lines[i + 1]).add(current);
-                        }
-                    }
-
                 } else {
-                    long before = System.currentTimeMillis();
                     current.setMoveTo(destination);
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (lock) {
-                        if (intersections.contains(destination)) {
-                            alienMap.get(lines[i]).remove(current);
-                            reachedIntersection.add(current);
-                        }
+                    if (intersections.contains(destination)) {
+                        alienMap.get(lines[i]).remove(current);
+                        reachedIntersection.add(current);
                     }
                 }
             }
@@ -1281,10 +1261,7 @@ class Route {
 
     void addAlienToRoute(Alien alien, int lineNumber) {
         alien.setMoveTo(lines[lineNumber].getStartPoint());
-       // alien.move(lines[lineNumber].getStartPoint());
-        while (!alien.getCurrentDim().equals(lines[lineNumber].getStartPoint())){
-            System.out.print("");
-        }
+
         alienMap.get(lines[lineNumber]).add(alien);
     }
 
@@ -1367,12 +1344,12 @@ class Line {
         double newX = currentX + GameMap.UNIT * alien.getSpeed();
         double newY = slope * newX + intercept;
 
-    //    System.out.println("new dim" + newX + " " + newY);
-      //  System.out.println("endoflinedim = " + endPoint);
-    //    System.out.println(Double.compare(newX, endPoint.getX()));
+  //      System.out.println("new dim" + newX + " " + newY);
+    //    System.out.println("endoflinedim = " + endPoint);
+      //  System.out.println(Double.compare(newX, endPoint.getX()));
 
         if (Double.compare(newX, endPoint.getX()) >= 0){
-     //       System.out.println("END OF LINE.");
+   //         System.out.println("END OF LINE.");
             return null;
         }
 
