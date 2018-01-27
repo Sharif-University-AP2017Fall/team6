@@ -215,7 +215,9 @@ public class AlienCreeps extends Application {
                 gameMap.focusWeapons();
             } else if (event.getCode() == KeyCode.SHIFT){
                 gameMap.focusAliens();
-            } else{
+            } else if (event.getCode() == KeyCode.U){
+                gameMap.upgradeWeapon();
+            }else{
                 gameMap.moveHero(event);
             }
         });

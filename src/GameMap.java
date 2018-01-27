@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import sun.awt.windows.ThemeReader;
@@ -63,9 +64,6 @@ public class GameMap {
     }
 
     /*** TEXT TIME  ***/
-
-
-
 
     GameMap(Hero hero) {
         flag = new Dimension(750, 300);
@@ -512,6 +510,20 @@ public class GameMap {
         weapons.get(0).getWeaponView().setFocus();
     }
 
+    void upgradeWeapon(){
+        for (Integer integer : specifiedNumbers.keySet()) {
+            Dimension dimension = specifiedNumbers.get(integer);
+            Mappable m = specifiedLocations.get(dimension);
+            if (m instanceof Weapon) {
+                Weapon weapon = ((Weapon) m);
+                if (weapon.getWeaponView().isFocus()){
+                    upgradeWeaponInPlace(weapon.getName(), integer);
+                    return;
+                }
+            }
+        }
+    }
+
     void focusAliens(){
         ArrayList<Alien> allAliens = new ArrayList<>();
         for (int i = 0; i < routes.size(); i++){
@@ -674,8 +686,6 @@ public class GameMap {
                 reachedFlag[i] = alien;
                 if (i == 4) {
                     System.out.println("GAME OVER");
-                    //TODO SHOW POP UP MESSAGE
-                   // Platform.exit();
                     return true;
                 }
                 break;
@@ -783,17 +793,21 @@ public class GameMap {
     }
 
     void moveHero(KeyEvent event){
-        if (this.hero.isDead()){
-            System.out.println("Hero is dead :( can't move hero.");
-        }else{
-            if (this.hero.setShouldMove(event)){
-                while (this.hero.isShouldMove()){
-                    if (checkWormhole()){
-                        break;
+        KeyCode direction = event.getCode();
+        if (direction == KeyCode.UP || direction == KeyCode.DOWN || direction == KeyCode.RIGHT || direction == KeyCode.LEFT){
+            if (this.hero.isDead()){
+                System.out.println("Hero is dead :( can't move hero.");
+            }else{
+                if (this.hero.setShouldMove(event)){
+                    while (this.hero.isShouldMove()){
+                        if (checkWormhole()){
+                            break;
+                        }
                     }
                 }
             }
         }
+
     }
 
     public boolean checkWormhole(){
