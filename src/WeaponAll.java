@@ -1,10 +1,22 @@
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
 
 
 
@@ -15,14 +27,16 @@ import javafx.scene.layout.StackPane;
  */
 public class WeaponAll extends Weapon {
 
-    
-    WeaponAllView weaponView;
-    
+    private Dimension dim;
+    private WeaponAllView weaponView;
+    private String name;
     WeaponAll(Dimension dimension, String type, int locationNum) {
         
         super(dimension, type, locationNum);
         weaponView = new WeaponAllView(type, dimension);
         super.setWeaponView(weaponView);
+        dim = dimension;
+        name=type;
     }
     
     private Object lock = new Object();
@@ -77,6 +91,16 @@ public class WeaponAll extends Weapon {
                     }
                     
                     numBullet++;
+                    
+                    Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                            .getChildrenUnmodifiable().size(),new ShootViewAll(dim, name ));
+                                       }
+
+                        });
+                    
                 }
             }
             if (numBullet >= maxBullet) { 
@@ -125,8 +149,6 @@ class WeaponAllView extends WeaponView {
 
      public Dimension dim;
 
-
-
      public int index;
 
      public WeaponAllView(String name, Dimension dim_) {
@@ -144,8 +166,8 @@ class WeaponAllView extends WeaponView {
          pic.setVisible(true);
 
          getChildren().addAll(pic);
-         setTranslateX(dim_.getX());
-         setTranslateY(dim_.getX());
+         setTranslateX(dim_.getX()-32);
+         setTranslateY(dim_.getY()-32);
      }
 
     @Override
@@ -164,6 +186,120 @@ class WeaponAllView extends WeaponView {
  }
 
 
+
+
+
+
+
+
+
+
+
+class ShootViewAll extends StackPane {
+       
+    
+    int ind=0; 
+    ImageView[] bullet=new ImageView[6];
+    ShootViewAll(Dimension dim1, String name ){
+    
+          
+         
+         
+         
+                    
+           for (int i=0;i<6;i++){
+               
+               bullet[i]=new ImageView(new Image(getClass()
+                         .getResource("res/weapons/" + name +"/"+String.valueOf(i+10)+".png").toExternalForm()));
+               bullet[i].setFitWidth(32*(i+1));
+               bullet[i].setFitHeight(32*(i+1));
+               bullet[i].setVisible(false);
+               
+           }         
+                
+           Platform.runLater(new Runnable() {
+               
+                            @Override
+                            public void run() {
+                                /*
+                                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[0]);          
+                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[1]);
+                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[2]);
+                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[3]);
+                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[4]);
+                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                                                     .getChildrenUnmodifiable().size(),bullet[5]);
+                                         
+*/
+
+                                getChildren().addAll(bullet);
+                                setTranslateX(dim1.getX()-96);
+                                setTranslateY(dim1.getY()-96);
+                                
+                            }
+                            
+                           
+                        });
+        
+          Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                
+                                Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
+
+
+                                            @Override
+                                            public void handle(ActionEvent event) {
+                                                 clear();
+                                                 if(ind<5)
+                                                    {
+                                                    bullet[ind].setVisible(true);
+                                                    }
+                                                    
+                                                 ind++;
+                                                }
+                                }));
+                                
+                                
+                                
+                                
+                                timeline.setCycleCount(6);
+                                timeline.play();
+                                
+ 
+                            }
+                            
+                           
+                        });
+        
+          
+          
+          
+          
+    
+    }
+    
+    
+    
+    public void clear(){
+    
+         bullet[0].setVisible(false);
+         bullet[1].setVisible(false);
+         bullet[2].setVisible(false);
+         bullet[3].setVisible(false);
+         bullet[4].setVisible(false);
+         bullet[5].setVisible(false);
+         
+    }
+
+
+
+}
 
 
 

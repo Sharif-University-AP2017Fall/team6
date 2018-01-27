@@ -8,6 +8,7 @@ import javafx.animation.FadeTransition;
 
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransition.OrientationType;
+import javafx.application.Platform;
 
 import javafx.scene.image.Image;
 
@@ -232,8 +233,8 @@ class WeaponNearestView extends WeaponView {
                  bul
                 );
          
-         setTranslateX(dim_.getX());
-         setTranslateY(dim_.getY());
+         setTranslateX(dim_.getX()-32);
+         setTranslateY(dim_.getY()-32);
          
      }
 
@@ -261,6 +262,7 @@ class WeaponNearestView extends WeaponView {
      
      }
 
+     
      @Override
      public void shoot(Alien min) {
 
@@ -270,38 +272,7 @@ class WeaponNearestView extends WeaponView {
          
          changePic(deltaX,deltaY);
          
-         ImageView bullet=new ImageView(new Image(getClass()
-                    .getResource("res/weapons/" + nameW +"/10.png").toExternalForm()));;
-         
-                    
-         bullet.setVisible(true);
-         bullet.setFitWidth(10);
-         bullet.setFitHeight(10);
-         
-         Path path = new Path();
-         path.getElements().add (new MoveTo (dim.getX(), dim.getY()));
-         
-         LineTo lineTo=new LineTo(deltaX,deltaY);
-         path.getElements().add (lineTo);
-         
-         PathTransition pathTransition=new PathTransition();
-         pathTransition.setDuration(Duration.millis(100));
-         pathTransition.setNode(bullet);
-         pathTransition.setPath(path);
-         pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
-         pathTransition.setCycleCount(2);
-         pathTransition.setAutoReverse(true);
-
-         pathTransition.play();
-         
-          
-         FadeTransition ft = new FadeTransition(Duration.millis(100), bullet);
-         ft.setFromValue(1.0);
-         ft.setToValue(0);
-         ft.setCycleCount(1);
-         ft.setAutoReverse(false);
-
-         ft.play();
+         new ShootView(dim, prey,nameW );
          
          
      }
@@ -314,18 +285,18 @@ class WeaponNearestView extends WeaponView {
             if (deltaX==0){
                     if(deltaY>0){
 
-                        setPic(1);
+                        setPic(6);
 
                     }
                     else{
 
-                        setPic(6);  
+                        setPic(2);  
 
                     }  
                     return;
                 }
 
-                double slope=Math.atan(deltaY/deltaX);
+                double slope=-Math.atan(deltaY/deltaX);
 
                 if(deltaX>0){
                     if(slope<0.4 && slope>-0.4)
@@ -362,22 +333,22 @@ class WeaponNearestView extends WeaponView {
                        }
                     if(slope>0.4 && slope<1.2)
                        {
-                       setPic(3);
+                       setPic(5);
                        return;
                        }
                     if(slope<-0.4 && slope>-1.2)
                        {
-                       setPic(5);
+                       setPic(3);
                        return;
                        }
                     if(slope<-1.2)
                        {
-                       setPic(6);
+                       setPic(2);
                        return;
                        }
                     if(slope>1.2)
                        {
-                       setPic(2);
+                       setPic(6);
                        return;
                        } 
                 }
@@ -396,7 +367,92 @@ class WeaponNearestView extends WeaponView {
 
 
 
+class ShootView extends StackPane {
+       
+    
+    ShootView(Dimension dim1,Dimension dim2, String name ){
+    
+        
+         double deltaX=Dimension.deltaX(dim1, dim2);
+         double deltaY=Dimension.deltaY(dim1, dim2);
+         
+         
+         ImageView bullet=new ImageView(new Image(getClass()
+                    .getResource("res/weapons/" + name +"/10.png").toExternalForm()));;
+         
+         /*          
+         bullet.setVisible(true);
+         bullet.setFitWidth(10);
+         bullet.setFitHeight(10);
+         
+         Path path = new Path();
+         path.getElements().add (new MoveTo (dim1.getX(), dim1.getY()));
+         
+         LineTo lineTo=new LineTo(deltaX,deltaY);
+         path.getElements().add (lineTo);
+         
+         PathTransition pathTransition=new PathTransition();
+         pathTransition.setDuration(Duration.millis(100));
+         pathTransition.setNode(bullet);
+         pathTransition.setPath(path);
+         pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
+         pathTransition.setCycleCount(1);
+         pathTransition.setAutoReverse(false);
 
+         pathTransition.play();
+         
+          
+         FadeTransition ft = new FadeTransition(Duration.millis(120), bullet);
+         ft.setFromValue(1.0);
+         ft.setToValue(0);
+         ft.setCycleCount(1);
+         ft.setAutoReverse(false);
+
+         ft.play();
+         */
+          Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                bullet.setVisible(true);
+                                bullet.setFitWidth(20);
+                                bullet.setFitHeight(20);
+
+                                Path path = new Path();
+                                path.getElements().add (new MoveTo (dim1.getX(), dim1.getY()));
+
+                                LineTo lineTo=new LineTo(deltaX,deltaY);
+                                path.getElements().add (lineTo);
+
+                                PathTransition pathTransition=new PathTransition();
+                                pathTransition.setDuration(Duration.millis(150));
+                                pathTransition.setNode(bullet);
+                                pathTransition.setPath(path);
+                                pathTransition.setOrientation(OrientationType.ORTHOGONAL_TO_TANGENT);
+                                pathTransition.setCycleCount(1);
+                                pathTransition.setAutoReverse(false);
+
+                                pathTransition.play();
+
+
+                                FadeTransition ft = new FadeTransition(Duration.millis(150), bullet);
+                                ft.setFromValue(1.0);
+                                ft.setToValue(0);
+                                ft.setCycleCount(1);
+                                ft.setAutoReverse(false);
+
+                                ft.play();
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                        .getChildrenUnmodifiable().size(),bullet);
+                            }
+                        });
+         
+    
+    }
+    
+
+
+
+}
 
 
 
