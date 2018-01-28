@@ -1,9 +1,20 @@
 
-import com.sun.deploy.util.DeployUIManager;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import javafx.application.Platform;
-import javafx.scene.layout.StackPane;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.util.Duration;
+
+import java.awt.image.DirectColorModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +35,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     protected boolean shouldShoot;
     protected List<Alien> toShoot;
     protected List<Alien> killed;
+
+    public abstract BulletView getBulletView();
 
     double getRadius() {
         return radius;
@@ -60,6 +73,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
         //System.out.println("moved to " + dimension);
     }
 
+
+
     void setEnergy(int energy) {
         this.energy = energy;
     }
@@ -88,6 +103,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
         }
 
     }
+
+
 
     void increaseBulletPower() {
         this.powerOfBullet = (int) (this.powerOfBullet * 1.1);
@@ -124,11 +141,19 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                 }
                 synchronized (lock){
                     if (shouldShoot){
+                        if (numBullet == 0){
+                            getBulletView().shoot(getShootingPoint(), min.getCurrentDim(), 1000 / maxBullet - 55, maxBullet);
+                        }
+                        if (numBullet == maxBullet - 1){
+                            getBulletView().clear();
+                        }
                         if (!min.isCanFly()) {
                             min.stop();
                             min.reduceEnergy(this.powerOfBullet);
                             min.setShoot(true);
                             min.setToShoot(this);
+
+
                             //     System.out.println(this.getClass().getName() + "has " + (maxBullet - numBullet) + " bullets left");
 
                             if (this.isDead()){
@@ -145,6 +170,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                                 Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
+                                        AlienCreeps.removeElementFromGameRoot(getBulletView());
                                         AlienCreeps.removeElementFromGameRoot(getWarriorView());
                                     }
                                 });
@@ -291,5 +317,142 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 }
 
 class BulletView extends StackPane{
+
+    ImageView[] direction = new ImageView[8];
+
+    Dimension dest;
+
+    BulletView(){
+        System.out.println("SETTING BULLET VIEW");
+        for (int i = 0; i < 8; i++){
+            direction[i] = new ImageView(new Image(getClass()
+                    .getResource("res/hero/shoot/images/bullet_0" + (i + 1) + ".png").toExternalForm()));
+            direction[i].setFitHeight(20);
+            direction[i].setFitWidth(20);
+        }
+
+        clear();
+
+//        direction[0].setVisible(true);
+
+       // relocate(400, 500);
+
+        getChildren().addAll(direction);
+    }
+
+    void clear(){
+        for (int i = 0; i < 8; i++){
+            direction[i].setVisible(false);
+        }
+    }
+
+    public void setDirection(double deltaX, double deltaY){
+        clear();
+
+        if (Double.compare(deltaX, 0) == 0){
+            if (deltaY > 0){ //down
+                direction[6].setVisible(true);
+            } else { //up
+                direction[2].setVisible(true);
+            }
+            return;
+        }
+
+        if (Double.compare(deltaY, 0) == 0){
+            if (deltaX > 0){ //right
+                direction[0].setVisible(true);
+            } else { //left
+                direction[4].setVisible(true);
+            }
+            return;
+        }
+
+        double slope = deltaY / deltaX;
+
+        if (deltaY < 0){ //upwards
+            if (slope >= 3 || slope <= -3){
+                direction[2].setVisible(true);
+                return;
+            }
+
+            if (slope <= 0.25){
+                direction[0].setVisible(true);
+                return;
+            }
+
+            if (slope >= -0.25){
+                direction[4].setVisible(true);
+                return;
+            }
+
+            if (slope >= 0.25 && slope <= 3){
+                direction[1].setVisible(true);
+                return;
+            }
+
+            if (slope <= -0.25 && slope >= -3){
+                direction[3].setVisible(true);
+                return;
+            }
+        } else{
+            if (slope >= 3 || slope <= -3){
+                direction[6].setVisible(true);
+                return;
+            }
+
+            if (slope <= 0.25){
+                direction[4].setVisible(true);
+                return;
+            }
+
+            if (slope >= -0.25){
+                direction[0].setVisible(true);
+                return;
+            }
+
+            if (slope >= 0.25 && slope <= 3){
+                System.out.println("v");
+                direction[5].setVisible(true);
+                return;
+            }
+
+            if (slope <= -0.25 && slope >= -3){
+                direction[7].setVisible(true);
+                return;
+            }
+        }
+    }
+
+    public void shoot(Dimension start, Dimension dest, double duration, int cycle){
+        double deltaX = dest.getX() - start.getX();
+        double deltaY = dest.getY() - start.getY();
+        setDirection(deltaX, deltaY);
+
+
+
+        PathTransition pt = new PathTransition(
+                Duration.millis(duration),
+                new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
+                this
+        );
+
+        PathTransition pt1 = new PathTransition(
+                Duration.millis(duration),
+                new Path(new MoveTo(start.getX() + 32, start.getY() + 32), new LineTo(dest.getX(), dest.getY())),
+                this
+        );
+        pt1.setCycleCount(cycle);
+        pt1.play();
+
+        Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 10),
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        clear();
+                    }
+                }));
+        clearingTime.setCycleCount(1);
+        clearingTime.play();
+    }
 
 }

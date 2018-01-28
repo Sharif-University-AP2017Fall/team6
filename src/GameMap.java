@@ -57,7 +57,7 @@ public class GameMap {
             return;
         }
 
-    //    System.out.println("NUM = " + Alien.getNUM());
+        System.out.println("NUM = " + Alien.getNUM());
         /*if (Alien.isSTART()) {
             System.out.println("NUM = " + Alien.getNUM());
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
@@ -361,7 +361,7 @@ public class GameMap {
 
         if (this.hero.isDead()) {
             this.secondsLeftToResurrectHero--;
-            System.out.println("hero will be back in " + secondsLeftToResurrectHero);
+     //       System.out.println("hero will be back in " + secondsLeftToResurrectHero);
             if (this.secondsLeftToResurrectHero == 0) {
                 this.hero.setEnergy(300);
                 Platform.runLater(new Runnable() {
@@ -399,6 +399,8 @@ public class GameMap {
 
                                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                         soldier.getWarriorView());
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        soldier.getBulletView());
                             }
                         });
            //             System.out.println("BARRACK MADE NEW SOLDIER");

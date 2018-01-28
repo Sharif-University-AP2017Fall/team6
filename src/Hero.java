@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.effect.Glow;
+import org.omg.CORBA.PRIVATE_MEMBER;
+
 /**
  *
  * @author Tara
@@ -35,11 +37,21 @@ public class Hero extends Warrior {
     private boolean shouldMove;
     private Dimension moveTo;
 
+    private BulletView bulletView;
+
+    @Override
+    public BulletView getBulletView() {
+        return this.bulletView;
+    }
 
     Hero(Dimension dimension) {
         warriorView = new WarriorView("hero", "5/", new Dimension(400, 300));
 
         achievement = new Achievement();
+
+        bulletView = new BulletView();
+
+        //TODO : ADD TO SOLDIER IF IT WORKS
 
         setDimension(dimension);
         setMoney(10000);

@@ -1,3 +1,6 @@
+import javafx.application.Platform;
+import javafx.print.PageLayout;
+
 import java.util.List;
 
 /**
@@ -7,6 +10,7 @@ import java.util.List;
 public class Soldier extends Warrior {
 
     private WarriorView warriorView;
+    private BulletView bulletView;
 
     void increaseRadius() {
         setRadius(getRadius() * 1.1);
@@ -22,6 +26,8 @@ public class Soldier extends Warrior {
 
     Soldier() {
        // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
+        bulletView = new BulletView();
+
         shouldShoot = false;
         setRadius(3);
         setEnergy(150);
@@ -47,6 +53,11 @@ public class Soldier extends Warrior {
         return "\tplace: " + super.getDimension() +
                 "\tenergy left : " + super.getEnergy() +
                 "\n";
+    }
+
+    @Override
+    public BulletView getBulletView() {
+        return this.bulletView;
     }
 
     @Override

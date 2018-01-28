@@ -333,6 +333,7 @@ public class AlienCreeps extends Application {
         root.getChildren().addAll(hero.getAchievementView());
         root.getChildren().add(timeText);
         root.getChildren().add(hero.getWarriorView());
+        root.getChildren().add(hero.getBulletView());
 
 
 //        launchGame();
