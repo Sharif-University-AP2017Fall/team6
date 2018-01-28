@@ -269,6 +269,8 @@ class ShootViewAll extends StackPane {
 
     ShootViewAll(Dimension dim1, String name) {
 
+        player.play();
+
         for (int i = 0; i < 6; i++) {
             bullet[i] = new ImageView(new Image(getClass()
                     .getResource("res/weapons/" + name + "/" + String.valueOf(i + 10) + ".png").toExternalForm()));
@@ -291,8 +293,6 @@ class ShootViewAll extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                
-                player.play();
                 
                 Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
                     @Override

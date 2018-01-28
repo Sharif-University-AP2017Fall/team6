@@ -6,6 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
+import java.awt.font.TextHitInfo;
 import java.util.*;
 
 public class GameMap {
@@ -351,8 +352,10 @@ public class GameMap {
         if (this.hero.isDead()) {
             this.secondsLeftToResurrectHero--;
             System.out.println("hero will be back in " + secondsLeftToResurrectHero);
-            if (this.secondsLeftToResurrectHero == 0) {
+            if (this.secondsLeftToResurrectHero <= 0) {
+                this.secondsLeftToResurrectHero = 0;
                 this.hero.setEnergy(300);
+                hero.getHealthBar().initBar();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -360,6 +363,8 @@ public class GameMap {
                                 hero.getWarriorView());
                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                 hero.getBulletView());
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                hero.getHealthBar());
                     }
                 });
             }
@@ -382,16 +387,19 @@ public class GameMap {
 
                        // new Thread(soldier).start();
 
-                        int finalI = i;
-                        soldier.setWarriorView(finalI + 1, hero.getDimension().add(hero.getSoldierDims()[finalI]));
+                        soldier.setWarriorView(i + 1, hero.getDimension().add(hero.getSoldierDims()[i]));
+                        int finalI1 = i;
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
 
                                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                         soldier.getWarriorView());
-                              //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                //        soldier.getBulletView());
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        soldier.getHealthBar());
+                                soldier.getHealthBar().setDim(900, 240 + finalI1 * 30);
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        soldier.getBulletView());
                             }
                         });
            //             System.out.println("BARRACK MADE NEW SOLDIER");

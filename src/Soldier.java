@@ -11,6 +11,14 @@ public class Soldier extends Warrior {
 
     private WarriorView warriorView;
     private BulletView bulletView;
+    private ProgressBar healthBar;
+
+
+    @Override
+    public ProgressBar getHealthBar() {
+        return healthBar;
+    }
+
 
     void increaseRadius() {
         setRadius(getRadius() * 1.1);
@@ -27,10 +35,13 @@ public class Soldier extends Warrior {
     Soldier() {
        // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
         bulletView = new BulletView();
+        healthBar = new ProgressBar("health");
+        healthBar.initBar();
 
         shouldShoot = false;
         setRadius(3);
         setEnergy(150);
+        setMaximumEnergy(150);
         setShootingSpeed(5);
         setPowerOfBullet(10);
     }

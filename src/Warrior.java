@@ -31,6 +31,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     private int powerOfBullet;
     private int shootingSpeed;
     private int energy;
+    private int maximumEnergy;
 
     private int numKilled;
 
@@ -39,6 +40,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     protected List<Alien> killed;
 
     public abstract BulletView getBulletView();
+
+    public abstract ProgressBar getHealthBar();
 
     double getRadius() {
         return radius;
@@ -102,6 +105,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
             System.out.println("current energy : " + this.energy);
             System.out.println("reduction amount : " + a);
             System.out.println("new energy : " + (this.energy - a));*/
+            getHealthBar().setProgress(this.energy, this.maximumEnergy);
         }
 
     }
@@ -175,6 +179,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                                     public void run() {
                                         AlienCreeps.removeElementFromGameRoot(getBulletView());
                                         AlienCreeps.removeElementFromGameRoot(getWarriorView());
+                                        AlienCreeps.removeElementFromGameRoot(getHealthBar());
                                     }
                                 });
 
@@ -317,6 +322,10 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     public Dimension getShootingPoint() {
         return this.dimension;
     }
+
+    public void setMaximumEnergy(int maximumEnergy) {
+        this.maximumEnergy = maximumEnergy;
+    }
 }
 
 class BulletView extends StackPane{
@@ -358,7 +367,7 @@ class BulletView extends StackPane{
                 this
         );*/
 
-        player.play();
+//        player.play();
         bullet.setVisible(true);
 
         PathTransition pt1 = new PathTransition(

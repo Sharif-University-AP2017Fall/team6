@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
+import java.net.PortUnreachableException;
 import java.security.interfaces.DSAPublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,31 +35,57 @@ public class Hero extends Warrior {
     private int powerLevel;
     private int experienceLevel;
     private int money;
+    private int maximumMoney;
     private Achievement achievement;
     
     private boolean shouldMove;
     private Dimension moveTo;
 
     private BulletView bulletView;
-
-    
-   
+    private ProgressBar healthBar;
+    private ProgressBar moneyBar;
     
     @Override
     public BulletView getBulletView() {
         return this.bulletView;
     }
 
+    @Override
+    public ProgressBar getHealthBar() {
+        return this.healthBar;
+    }
+
+    public ProgressBar getMoneyBar(){
+        return this.moneyBar;
+    }
+
     Hero(Dimension dimension) {
         warriorView = new WarriorView("hero", "5/", new Dimension(400, 300));
+        bulletView = new BulletView();
+        healthBar = new ProgressBar("health");
+        moneyBar = new ProgressBar("money");
+        moneyBar.initBar();
+        healthBar.initBar();
+
+        /*Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        healthBar);
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        moneyBar);
+                healthBar.setDim(910, 140);
+                moneyBar.setDim(910, 100);
+            }
+        });*/
 
         achievement = new Achievement();
 
-        bulletView = new BulletView();
-
         setDimension(dimension);
-        setMoney(10000);
+        setMoney(5000);
+        setMaximumMoney(5000);
         setEnergy(300);
+        setMaximumEnergy(300);
         setRadius(4);
         setShootingSpeed(7);
         setPowerOfBullet(20);
@@ -109,6 +136,7 @@ public class Hero extends Warrior {
 
     void addMoney(int amount) {
         this.money += amount;
+        moneyBar.setProgress(money, maximumMoney);
     }
 
     Achievement getAchievement() {
@@ -117,6 +145,7 @@ public class Hero extends Warrior {
 
     void reduceMoney(int amount) {
         this.money -= amount;
+        moneyBar.setProgress(money, maximumMoney);
     }
 
     private boolean addPowerLevel() {
@@ -360,7 +389,6 @@ public class Hero extends Warrior {
                             changeDim.setY(yRemain);
                         }
                         Dimension.correctDim(changeDim);
-
                         move(changeDim);
                     }
                 }
@@ -426,6 +454,10 @@ public class Hero extends Warrior {
 
     public boolean isShouldMove() {
         return shouldMove;
+    }
+
+    public void setMaximumMoney(int maximumMoney) {
+        this.maximumMoney = maximumMoney;
     }
 }
 

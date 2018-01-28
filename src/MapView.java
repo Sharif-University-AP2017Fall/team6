@@ -1,3 +1,4 @@
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -5,6 +6,9 @@ import javafx.scene.image.Image;
 import java.io.*;
 
 import javafx.scene.image.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class MapView {
     private Canvas canvas;
@@ -35,11 +39,120 @@ public class MapView {
         drawTrees(false);
         drawTrees(true);
         drawBushes();
-        drawBoard();
 
-        gc.drawImage(new Image("res/menu/status.png"), GameMap.XBOUND, 0, 300, GameMap.YBOUND);
+        drawStatus();
     }
 
+    private void drawStatus(){
+        /*** BACKGROUND BOARDS ***/
+        gc.drawImage(new Image("res/menu/status/bg.png"), GameMap.XBOUND, 0, 200, 100);
+        gc.drawImage(new Image("res/menu/status/bg.png"), GameMap.XBOUND, 100, 200, 140);
+        gc.drawImage(new Image("res/menu/status/bg.png"), GameMap.XBOUND, 240, 200, 110);
+        gc.drawImage(new Image("res/menu/status/bg.png"), GameMap.XBOUND, 350, 200, GameMap.YBOUND - (110 + 140 + 100));
+
+        /** TIME BOARD ***/
+        drawBoard();
+
+        heroStatus();
+        knightStatus();
+        weaponStatus();
+        alienStatus();
+
+    }
+
+    private void heroStatus(){
+        gc.drawImage(new Image("res/menu/item/name.png"), 1060, 100, 27, 140);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 30);
+        Text heroText = new Text("Hero");
+        heroText.relocate(1045, 160);
+        //heroText.relocate(500, 500);
+        heroText.setFill(Color.rgb(50, 20, 15));
+        heroText.setFont(font);
+        heroText.setRotate(90);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        heroText);
+            }
+        });
+    }
+
+    private void knightStatus(){
+        gc.drawImage(new Image("res/menu/item/name.png"), 1060, 100 + 130, 27, 120);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 30);
+        Text soldier = new Text("Soldiers");
+        soldier.relocate(1032, 160 + 130);
+        //heroText.relocate(500, 500);
+        soldier.setFill(Color.rgb(50, 20, 15));
+        soldier.setFont(font);
+        soldier.setRotate(90);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        soldier);
+            }
+        });
+    }
+
+    private void weaponStatus(){
+        gc.drawImage(new Image("res/menu/item/name.png"), 1060, 350, 27, 575 - 350);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 30);
+        Text weapons = new Text("Weapon");
+        weapons.relocate(1030, 160 + 75 + (575 - 350));
+        //heroText.relocate(500, 500);
+        weapons.setFill(Color.rgb(50, 20, 15));
+        weapons.setFont(font);
+        weapons.setRotate(90);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        weapons);
+            }
+        });
+    }
+
+    private void alienStatus(){
+
+        gc.drawImage(new Image("res/menu/item/name.png"), 1060, 575, 27, 700 - 575);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 30);
+        Text alien = new Text("Alien");
+        alien.relocate(1045, 160 + 120 + (575 - 350) + (700 - 575));
+        //heroText.relocate(500, 500);
+        alien.setFill(Color.rgb(50, 20, 15));
+        alien.setFont(font);
+        alien.setRotate(90);
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        alien);
+            }
+        });
+
+    }
 
     public void drawGrass(){
         try {
@@ -285,8 +398,8 @@ public class MapView {
        
         gc.drawImage(new Image(getClass()
                  .getResource(address).toExternalForm())
-                ,190 ,-20, 4*32,3*32 );
-        
+                ,920 ,20, 160,80);
+/*
         gc.drawImage(new Image(getClass()
                  .getResource(address).toExternalForm())
                 ,290 ,-20, 4*32,3*32 );
@@ -301,10 +414,8 @@ public class MapView {
         
         gc.drawImage(new Image(getClass()
                  .getResource(address).toExternalForm())
-                ,625 ,-20, 5*32,3*32+2 );
-        
-    
-    
+                ,625 ,-20, 5*32,3*32+2 );*/
+
     }
     
     

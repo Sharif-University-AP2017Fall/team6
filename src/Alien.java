@@ -57,6 +57,7 @@ public class Alien implements Movable, Comparable, Runnable {
         currentDim = new Dimension(0.0, 0.0);
         alienView = new AlienView("aliens", name);
         progressBar = new ProgressBar("health");
+        progressBar.setDim(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
 
         this.cycleNumLeft = 10;
         this.cycleNum = 10;
@@ -713,13 +714,14 @@ class ProgressBar extends StackPane{
             progress[i] = new ImageView(new Image(getClass()
                     .getResource("res/progressbar/" + kind + "/" + i + ".png").toExternalForm()));
             progress[i].setVisible(false);
-            progress[i].setFitWidth(300 - 30);
+            progress[i].setFitWidth(180 - 30);
             progress[i].setFitHeight(50 - 5);
         }
+      //  progress[0].setVisible(true);
 
 
         getChildren().addAll(progress);
-        relocate(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
+        //relocate(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
     }
 
     public void setProgress(int current, int max){
@@ -747,6 +749,14 @@ class ProgressBar extends StackPane{
                 progress[i].setVisible(false);
             }
         }
+    }
+
+    public void setDim(double x, double y){
+        relocate(x, y);
+    }
+
+    public void initBar(){
+        progress[8].setVisible(true);
     }
 
 }

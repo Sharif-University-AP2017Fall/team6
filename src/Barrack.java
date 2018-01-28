@@ -79,13 +79,13 @@ public class Barrack implements Mappable {
                     training = new Soldier();
                     new Thread(training).start();
 
-                    Platform.runLater(new Runnable() {
+                    /*Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
                             AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                     training.getBulletView());
                         }
-                    });
+                    });*/
                     //soldierLifeCycle.start();
                     currentTime = 0;
                     timeNeeded.remove(0);

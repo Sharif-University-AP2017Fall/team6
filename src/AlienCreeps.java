@@ -41,7 +41,7 @@ public class AlienCreeps extends Application {
     private Hero hero = new Hero(new Dimension(400, 300));
     static GameMap gameMap = new GameMap();//hero);
     static AlienCreeps game = new AlienCreeps();
-    private Text timeText=new Text(240,27," : : "); 
+    private Text timeText = new Text(935,60,"");
     public static void main(String[] args) {
         launch(args);
     }
@@ -245,7 +245,7 @@ public class AlienCreeps extends Application {
 
 
     static Scene menuScene = new Scene(new Group(),540, 1000);
-    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 300, GameMap.YBOUND);
+    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 200, GameMap.YBOUND);
     static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
     static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
@@ -338,8 +338,10 @@ public class AlienCreeps extends Application {
         root.getChildren().add(timeText);
         root.getChildren().add(hero.getWarriorView());
         root.getChildren().add(hero.getBulletView());
-
-
+        root.getChildren().add(hero.getHealthBar());
+        root.getChildren().add(hero.getMoneyBar());
+        hero.getHealthBar().setDim(900, 140);
+        hero.getMoneyBar().setDim(900, 100);
 //        launchGame();
 
         return root;
@@ -749,7 +751,8 @@ public class AlienCreeps extends Application {
 
     public static void addElementToGameRoot(int index, Node ... node){
         for (int i = 0; i < node.length; i++){
-            ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
+            if (!((Group) gameScene.getRoot()).getChildren().contains(node[i]))
+                ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
         }
     }
 
@@ -758,11 +761,29 @@ public class AlienCreeps extends Application {
     }
 
     public void updateTime(int day,int hour,int sec){
-        
-           Font font = new Font(20);
-           timeText.setText(""+day+":"+hour+":"+sec);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+        String daystring = String.valueOf(day);
+        String hourString = String.valueOf(hour);
+        String secondString = String.valueOf(sec);
+        if (day < 10){
+            daystring = "0" + day;
+        }
+
+        if (hour < 10){
+            hourString = "0" + hour;
+        }
+
+        if (sec < 10){
+            secondString = "0" + sec;
+        }
+
+           timeText.setText(""+daystring+":"+hourString+":"+secondString);
            timeText.setFont(font);
-           timeText.setFill(Color.rgb(171, 214, 29));
+           timeText.setFill(Color.rgb(50, 20, 15));
            
     }
     
