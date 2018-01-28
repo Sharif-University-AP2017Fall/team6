@@ -16,6 +16,8 @@ import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 /**
  *
@@ -320,6 +322,9 @@ class BulletView extends StackPane{
 
     ImageView bullet = new ImageView();
 
+    Media sound=new Media(getClass().getResource("res/sound/hero.wav").toExternalForm());
+    MediaPlayer player=new MediaPlayer(sound);
+    
     BulletView(){
         System.out.println("SETTING BULLET VIEW");
         bullet = new ImageView(new Image(getClass()
@@ -336,6 +341,79 @@ class BulletView extends StackPane{
 
         getChildren().add(bullet);
     }
+
+
+    public void shoot(Dimension start, Dimension dest, double duration, int cycle){
+        
+        
+        /*double deltaX = dest.getX() - start.getX();
+        double deltaY = dest.getY() - start.getY();
+        setDirection(deltaX, deltaY);*/
+
+
+
+        /*PathTransition pt = new PathTransition(
+                Duration.millis(duration),
+                new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
+                this
+        );*/
+        player.play();
+        bullet.setVisible(true);
+
+        PathTransition pt1 = new PathTransition(
+                Duration.millis(duration),
+                new Path(new MoveTo(start.getX() + 16, start.getY() + 16), new LineTo(dest.getX() + 16, dest.getY() + 16)),
+                this
+        );
+        pt1.setCycleCount(cycle);
+        pt1.play();
+        
+        Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 20),
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        bullet.setVisible(false);
+                    }
+                }));
+        clearingTime.setCycleCount(1);
+        clearingTime.play();
+        player=new MediaPlayer(sound);
+        
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*    void clear(){
         for (int i = 0; i < 8; i++){
@@ -419,39 +497,3 @@ class BulletView extends StackPane{
             }
         }
     }*/
-
-    public void shoot(Dimension start, Dimension dest, double duration, int cycle){
-        /*double deltaX = dest.getX() - start.getX();
-        double deltaY = dest.getY() - start.getY();
-        setDirection(deltaX, deltaY);*/
-
-
-
-        /*PathTransition pt = new PathTransition(
-                Duration.millis(duration),
-                new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
-                this
-        );*/
-
-        bullet.setVisible(true);
-
-        PathTransition pt1 = new PathTransition(
-                Duration.millis(duration),
-                new Path(new MoveTo(start.getX() + 16, start.getY() + 16), new LineTo(dest.getX() + 16, dest.getY() + 16)),
-                this
-        );
-        pt1.setCycleCount(cycle);
-        pt1.play();
-
-        Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 20),
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        bullet.setVisible(false);
-                    }
-                }));
-        clearingTime.setCycleCount(1);
-        clearingTime.play();
-    }
-
-}

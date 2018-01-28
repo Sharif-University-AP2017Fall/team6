@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.effect.Glow;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 //import org.omg.CORBA.PRIVATE_MEMBER;
 
 /**
@@ -39,6 +41,9 @@ public class Hero extends Warrior {
 
     private BulletView bulletView;
 
+    
+   
+    
     @Override
     public BulletView getBulletView() {
         return this.bulletView;

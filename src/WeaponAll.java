@@ -15,6 +15,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
@@ -256,8 +258,14 @@ class WeaponAllView extends WeaponView {
 
 
 class ShootViewAll extends StackPane {
+    
+    
     int ind = 0;
+    
     ImageView[] bullet = new ImageView[6];
+    
+    Media sound=new Media(getClass().getResource("res/sound/weapon.wav").toExternalForm());
+    MediaPlayer player=new MediaPlayer(sound);
 
     ShootViewAll(Dimension dim1, String name) {
 
@@ -272,21 +280,8 @@ class ShootViewAll extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                                /*
-                                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[0]);          
-                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[1]);
-                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[2]);
-                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[3]);
-                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[4]);
-                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                                     .getChildrenUnmodifiable().size(),bullet[5]);
+
                                          
-*/
                 getChildren().addAll(bullet);
                 setTranslateX(dim1.getX() - 96);
                 setTranslateY(dim1.getY() - 96);
@@ -296,7 +291,9 @@ class ShootViewAll extends StackPane {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-
+                
+                player.play();
+                
                 Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
@@ -310,6 +307,7 @@ class ShootViewAll extends StackPane {
                 }));
                 timeline.setCycleCount(6);
                 timeline.play();
+                
             }
         });
     }
@@ -324,6 +322,43 @@ class ShootViewAll extends StackPane {
         bullet[5].setVisible(false);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
