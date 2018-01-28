@@ -92,27 +92,19 @@ public class WeaponAll extends Weapon {
 
                         /******/
                         super.toShoot.remove(ai);
-                        if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
-                            AlienCreeps.gameMap.reduceAllWeaponsPrice();
+                        if (Alien.addDeadAliens(ai)) {
+                            if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
+                                AlienCreeps.gameMap.reduceAllWeaponsPrice();
+                            }
+                            AlienCreeps.gameMap.getHero().addMoney(10);
                         }
-                        AlienCreeps.gameMap.getHero().addMoney(10);
                         List<Alien> dummy = new ArrayList<>();
                         dummy.add(ai);
                         AlienCreeps.gameMap.updateAchievements(dummy, "weapon");
-                        Alien.reduceNum(1);
                         for (int j = 0; j < AlienCreeps.gameMap.getRoutes().size(); j++) {
                             AlienCreeps.gameMap.removeAliensFromRoute(AlienCreeps.gameMap.getRoutes().get(j), dummy);
                         }
                         /******/
-
-
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                AlienCreeps.removeElementFromGameRoot(ai.getAlienLifeBar());
-                                AlienCreeps.removeElementFromGameRoot(ai.getAlienView());
-                            }
-                        });
                     }
 
                     numBullet++;

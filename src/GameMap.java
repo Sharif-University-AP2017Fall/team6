@@ -57,15 +57,15 @@ public class GameMap {
             return;
         }
 
-
-        if (Alien.isSTART()) {
+    //    System.out.println("NUM = " + Alien.getNUM());
+        /*if (Alien.isSTART()) {
             System.out.println("NUM = " + Alien.getNUM());
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
                 System.out.println("YOU WON");
                 //AlienCreeps.endGame(false);
                 return;
             }
-        }
+        }*/
     }
 
     /*** TEXT TIME  ***/
@@ -361,8 +361,16 @@ public class GameMap {
 
         if (this.hero.isDead()) {
             this.secondsLeftToResurrectHero--;
+            System.out.println("hero will be back in " + secondsLeftToResurrectHero);
             if (this.secondsLeftToResurrectHero == 0) {
                 this.hero.setEnergy(300);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                hero.getWarriorView());
+                    }
+                });
             }
         }
 
@@ -370,6 +378,7 @@ public class GameMap {
 
         if (barrack != null) {
             barrack.proceed();
+       //     System.out.println("proceed barrack ");
             Soldier soldier = barrack.getSoldier();
             barrack.removeSoldier();
             if (soldier != null) {
@@ -377,18 +386,23 @@ public class GameMap {
                     if (hero.getSoldiers()[i] == null) {
                         Dimension soldierDimension = hero.getDimension().add(hero.getSoldierDims()[i]);
                         soldier.setDimension(soldierDimension);
-                        soldier.setWarriorView(i + 1, hero.getDimension().add(hero.getSoldierDims()[i]));
+
                         hero.getSoldiers()[i] = soldier;
 
+                        new Thread(soldier).start();
+
+                        int finalI = i;
+                        soldier.setWarriorView(finalI + 1, hero.getDimension().add(hero.getSoldierDims()[finalI]));
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
+
                                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                         soldier.getWarriorView());
                             }
                         });
-                        System.out.println("BARRACK MADE NEW SOLDIER");
-                        System.out.println("welcome soldier " + i);
+           //             System.out.println("BARRACK MADE NEW SOLDIER");
+             //           System.out.println("welcome soldier " + i);
                         break;
                     }
                 }
@@ -718,7 +732,7 @@ public class GameMap {
                         name = "Aironion";
                         break;
                 }
-                newAlien = new Alien(name);
+                newAlien = new Alien("Activionion");
 
                 Platform.runLater(new Runnable() {
                     @Override
@@ -1095,7 +1109,7 @@ public class GameMap {
     private Object lock2 = new Object();
 
     private void heroAndSoldiersShoot() {
-        List<Alien> dead = new ArrayList<>();
+    //    List<Alien> dead = new ArrayList<>();
 
         if (!this.hero.isDead()) {
             List<Alien> toShoot = new ArrayList<>();
@@ -1105,8 +1119,9 @@ public class GameMap {
 
             if (!toShoot.isEmpty()) {
                 hero.setShouldShoot(toShoot);
+            }
 
-                /*while (hero.isShouldShoot()){
+/*while (hero.isShouldShoot()){
                     try {
                         Thread.sleep(2);
                     } catch (InterruptedException e) {
@@ -1129,20 +1144,24 @@ public class GameMap {
                 }
                 if (this.hero.isDead()) {
                     this.secondsLeftToResurrectHero = this.hero.getResurrectionTime();
-                }*/
+                }
+
             } else {
               //  System.out.println("no aliens in hero radius");
-            }
+            }*/
         }
 
         Soldier soldiers[] = this.hero.getSoldiers();
         for (int j = 0; j < 3; j++) {
             if (soldiers[j] != null) {
+               // System.out.println("checking for soldier " + (j + 1));
                 List<Alien> toShoot = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
                     toShoot.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
                 }
-                soldiers[j].setShouldShoot(toShoot);
+                if (!toShoot.isEmpty()){
+                    soldiers[j].setShouldShoot(toShoot);
+                }
 
                 /*if (!toShoot.isEmpty()) {
                     soldiers[j].setShouldShoot(toShoot);
@@ -1516,8 +1535,8 @@ class Route {
                     System.out.println(shooter.getShootingPoint().distanceFrom(a.getCurrentDim()));
                     System.out.println("•••••••••");*/
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
-                    System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
-                    System.out.println("*********");
+                 //   System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
+                   // System.out.println("*********");
                     toShoot.add(a);
                 }
             }

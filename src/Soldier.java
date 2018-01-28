@@ -1,3 +1,4 @@
+import java.util.List;
 
 /**
  *
@@ -21,6 +22,7 @@ public class Soldier extends Warrior {
 
     Soldier() {
        // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
+        shouldShoot = false;
         setRadius(3);
         setEnergy(150);
         setShootingSpeed(5);
@@ -79,8 +81,21 @@ public class Soldier extends Warrior {
     @Override
     public void run() {
         while (true){
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             if (shouldShoot){
-                killed.addAll(shoot(toShoot));
+            //    System.out.println("SOLDIER SHOULD SHOOT");
+                List<Alien> fuckthisshit =  shoot(toShoot);
+                if (fuckthisshit != null){
+                    if (!fuckthisshit.isEmpty()){
+
+                        killed.addAll(shoot(toShoot));
+                    }
+                }
             }
         }
     }

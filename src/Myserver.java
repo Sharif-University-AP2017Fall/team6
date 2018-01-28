@@ -14,6 +14,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -22,17 +23,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 /**
  *
  * @author Tara
  */
 public class Myserver extends Application {
-    Stage stage;
-    // Start scene
-    Group root=new Group();
-    Scene scene =new Scene(root,400, 800);
-    
     int port=9999;
     ServerSocket serverSocket;
     Socket socket;
@@ -41,10 +38,7 @@ public class Myserver extends Application {
     ObjectInputStream objectInputStream;
     
     
-    TextField textField = new TextField();
-    TextArea textArea = new TextArea();
-    Button button = new Button("Send");
-    private ImageView bg;
+
     
     public void run() {
         initializeServer();
@@ -126,20 +120,40 @@ public class Myserver extends Application {
         textField.setText("");
         
     }
+
+
+    TextField textField = new TextField();
+    TextArea textArea = new TextArea();
+    Button button = new Button("Send");
+    private ImageView bg;
+
+    Stage stage;
+    // Start scene
+    Group root=new Group();
+    Scene scene =new Scene(root,400, 800);
+
+    private Parent makeMainSceneContent(){
+        Group root = new Group();
+
+       // ImageView background = new ImageView(new Image(getClass()
+       //         .getResource(address).toExternalForm()));
+
+
+        return root;
+    }
     
     
     public void start(Stage primaryStage) {
 
         //this.run();
         run();
-        /*
-        String address="res/menu/bg/chatBG.png";
+        String address="res/menu/bg/background.jpg";
         bg=new ImageView(new Image(getClass()
                  .getResource(address).toExternalForm()));
         bg.setFitWidth(400);
         bg.setFitHeight(800);
         bg.setVisible(true);
-        /*/
+
         
         button.setOnAction(event -> {
             sendMessage(textField.getText());
@@ -165,14 +179,12 @@ public class Myserver extends Application {
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
         
-        root.getChildren().addAll(button,textField,textArea);
+        root.getChildren().addAll(bg, button,textField,textArea);
         
         stage = primaryStage;
         //makeStartscene(); p
         stage.setTitle("Server ");
         stage.setScene(scene);
-        /*stage.setX(200);
-        stage.setY(50);*/
         stage.show();
         
     }

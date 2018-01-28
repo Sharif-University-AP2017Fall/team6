@@ -297,12 +297,6 @@ public class AlienCreeps extends Application {
         stage.centerOnScreen();
     }
 
-    Parent createStatusSceneContent(){
-        Group root = new Group();
-
-        return root;
-    }
-
     static void endGame(boolean gameOver) {
         System.out.println("setting endgame scene");
 

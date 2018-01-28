@@ -11,7 +11,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
 import java.security.interfaces.DSAPublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.effect.Glow;
@@ -62,7 +64,8 @@ public class Hero extends Warrior {
         return achievement.getAchievementView().getAchievementView();
         
     }
-    
+
+    @Override
     public WarriorView getWarriorView() {
         return warriorView;
     }
@@ -118,6 +121,15 @@ public class Hero extends Warrior {
 
     Soldier[] getSoldiers() {
         return soldiers;
+    }
+
+    public void removeSoldier(Soldier s){
+        for (int i = 0; i < 3; i++){
+            if (soldiers[i] == s){
+                soldiers[i] = null;
+                return;
+            }
+        }
     }
 
     boolean addExperienceLevel(int amount) {
@@ -340,7 +352,14 @@ public class Hero extends Warrior {
             }
 
             if (shouldShoot){
-                killed.addAll(shoot(toShoot));
+               // System.out.println("HERO SHOULD SHOOT");
+                List<Alien> fuckthisshit =  shoot(toShoot);
+                if (fuckthisshit != null){
+                    if (!fuckthisshit.isEmpty()){
+
+                        killed.addAll(shoot(toShoot));
+                    }
+                }
             }
         }
     }

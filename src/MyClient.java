@@ -45,7 +45,8 @@ public class MyClient extends Application {
 
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
-    
+
+    ImageView bg;
     
     TextField textField = new TextField();
     TextArea textArea = new TextArea();
@@ -152,6 +153,13 @@ public class MyClient extends Application {
         bg.setFitHeight(800);
         bg.setVisible(true);
         /*/
+
+        String address="res/menu/bg/background.jpg";
+        bg=new ImageView(new Image(getClass()
+                .getResource(address).toExternalForm()));
+        bg.setFitWidth(400);
+        bg.setFitHeight(800);
+        bg.setVisible(true);
         
         button.setOnAction(event -> {
             sendMessage(textField.getText());
@@ -177,15 +185,13 @@ public class MyClient extends Application {
         textArea.setLayoutY(50);
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
-        root.getChildren().addAll(button,textField,textArea);
+        root.getChildren().addAll(bg, button,textField,textArea);
         
         stage = primaryStage;
         //makeStartscene(); p
         stage.setTitle("Clinet");
         stage.setScene(scene);
         stage.show();
-        /*stage.setX(200);
-        stage.setY(400);*/
         run();
     }
 

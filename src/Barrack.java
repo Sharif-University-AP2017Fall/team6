@@ -13,6 +13,7 @@ public class Barrack implements Mappable {
     private List<Integer> timeNeeded;
     private int currentTime;
     private Soldier training;
+    private ArrayList<Soldier> requested = new ArrayList<>();
 
     private ImageView barrackView;
 
@@ -53,11 +54,18 @@ public class Barrack implements Mappable {
     }
 
     void requestSoldier(int timeNeeded) {
-        //   System.out.println("adding one soldier in line");
-        // System.out.println("waiting time = " + timeNeeded);
+        System.out.println("adding one soldier in line");
+        System.out.println("waiting time = " + timeNeeded);
         this.timeNeeded.add(timeNeeded);
         inUse = true;
         soldiersInDemand++;
+    }
+
+    void requestSoldier(int timeNeeded, Soldier rip) {
+        if (!requested.contains(rip)){
+            requestSoldier(timeNeeded);
+            requested.add(rip);
+        }
     }
 
     void proceed() {
@@ -65,7 +73,7 @@ public class Barrack implements Mappable {
             if (inUse) {
                 //        System.out.println("barrack in currently in use");
                 currentTime++;
-                //        System.out.println("current time is " + currentTime);
+            //            System.out.println("current time is " + currentTime);
                 //       System.out.println("time left is " + (timeNeeded - currentTime));
                 if (currentTime >= timeNeeded.get(0)) {
                     training = new Soldier();
@@ -74,7 +82,7 @@ public class Barrack implements Mappable {
                     currentTime = 0;
                     timeNeeded.remove(0);
                     soldiersInDemand--;
-                    //           System.out.println(soldiersInDemand + " soldiers left to make");
+               //                System.out.println(soldiersInDemand + " soldiers left to make");
                     if (soldiersInDemand == 0) {
                         inUse = false;
                         //timeNeeded = 0;
@@ -87,11 +95,11 @@ public class Barrack implements Mappable {
     }
 
     Soldier getSoldier() {
-        /*if (inUse) {
+        if (inUse) {
             if (training == null) {
                 //          System.out.println("not ready yet");
             }
-        }*/
+        }
         return training;
     }
 
