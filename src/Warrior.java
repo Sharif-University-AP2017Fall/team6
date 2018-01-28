@@ -64,16 +64,22 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
     private Object lock2 = new Object();
     void reduceEnergy(int a) {
-        energy = energy - a;
+        //energy = energy - a;
         //TODO check if the below line is correct
-        /*try {
+        try {
             Thread.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         synchronized (lock2){
             energy -= a;
-        }*/
+            System.out.println("••••••••••••");
+            System.out.println(this.getClass().getName());
+            System.out.println("••••••••••••");
+            System.out.println("current energy : " + this.energy);
+            System.out.println("reduction amount : " + a);
+            System.out.println("new energy : " + (this.energy - a));
+        }
 
     }
 
@@ -106,7 +112,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
             for (int numBullet = 0; numBullet < maxBullet; numBullet++) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(1000 / maxBullet - 10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -116,13 +122,52 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                         min.reduceEnergy(this.powerOfBullet);
                         min.setShoot(true);
                         min.setToShoot(this);
-                //        System.out.println("hero has " + (maxBullet - numBullet) + " bullets left");
+                        System.out.println("hero has " + (maxBullet - numBullet) + " bullets left");
+
+                        if (this.isDead()){
+                            if (this.getClass().getName().toLowerCase().equals("hero")){
+                                AlienCreeps.gameMap.secondsLeftToResurrectHero = AlienCreeps.gameMap.getHero().getResurrectionTime();
+                            } else{
+                                AlienCreeps.gameMap.barrack.requestSoldier(AlienCreeps.gameMap.getHero().getResurrectionTime());
+                            }
+                        }
+
                         if (min.isDead()) {
                             min.setShoot(false);
                             min.setToShoot(null);
                             deadAliens.add(min);
                             aliens.remove(min);
-                            //TODO: REMOVE ALIEN FROM SCREEN
+                            System.out.println(this.getClass().getName() + " killed " + min.getName());
+
+                            /*****/
+                            toShoot.remove(min);
+
+                            List<Alien> dummy = new ArrayList<>();
+                            dummy.add(min);
+                            /***** UPDATING HERO'S ACHIEVEMENTS***/
+                            AlienCreeps.gameMap.updateAchievements(dummy,
+                                    this.getClass().getName().toLowerCase());
+                            /***REDUCING NUMBER OF TOTAL ALIENS*/
+                            Alien.reduceNum(1);
+                            /***DELETING THE ALIEN FROM ROUTES***/
+                            for (int i = 0; i < AlienCreeps.gameMap.getRoutes().size(); i++){
+                                AlienCreeps.gameMap.removeAliensFromRoute(AlienCreeps.gameMap.getRoutes().get(i), dummy);
+                            }
+
+                            /****ADDING MONEY AND EXPERIENCE LEVEL TO HERO***/
+                            if (this.getClass().getName().toLowerCase().equals("hero")){
+                                if (AlienCreeps.gameMap.getHero().addExperienceLevel(15)) {
+                                    AlienCreeps.gameMap.reduceAllWeaponsPrice();
+                                }
+                                AlienCreeps.gameMap.getHero().addMoney(10);
+                            }else{
+                                if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
+                                    AlienCreeps.gameMap.reduceAllWeaponsPrice();
+                                }
+                                AlienCreeps.gameMap.getHero().addMoney(10);
+                            }
+
+                            /****/
 
                             numKilled++;
                             if (aliens.isEmpty()) {
@@ -142,14 +187,14 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                             //System.out.println("killed " + min.getName());
                         }
                     } else {
-           //             System.out.println("hero's bullet won't reach " + min.getName());
+                        System.out.println("hero's bullet won't reach " + min.getName());
                         min = findClosest(aliens);
                     }
                 }
             }
             //min.shoot(this);
         }
- //       System.out.println("hero finished shooting");
+        System.out.println("hero finished shooting");
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {

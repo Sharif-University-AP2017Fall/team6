@@ -154,6 +154,8 @@ public class MyClient extends Application {
         stage.setTitle("Clinet");
         stage.setScene(scene);
         stage.show();
+        /*stage.setX(200);
+        stage.setY(400);*/
         run();
     }
 

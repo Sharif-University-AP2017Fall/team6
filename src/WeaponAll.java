@@ -63,30 +63,30 @@ public class WeaponAll extends Weapon {
 
             if (!ai.isDead()) {
                 try {
-                    
+
                     Thread.sleep(100);
-                    
+
                 } catch (InterruptedException e) {
-                    
+
                     e.printStackTrace();
-                    
+
                 }
-                
-                synchronized (lock){
-                    
+
+                synchronized (lock) {
+
                     ai.reduceSpeed(this.getSpeedReduction() / 100);
-                    
+
                     if (ai.isCanFly()) {
-                        
+
                         ai.reduceEnergy(this.getPowerOfBulletAir());
-                        
+
                     } else {
-                        
+
                         ai.reduceEnergy(this.getPowerOfBullet());
-                        
+
                     }
                     if (ai.isDead()) {
-                        
+
                         System.out.println(getName() + " killed " + ai.getName());
                         deadAliens.add(ai);
 
@@ -100,7 +100,7 @@ public class WeaponAll extends Weapon {
                         dummy.add(ai);
                         AlienCreeps.gameMap.updateAchievements(dummy, "weapon");
                         Alien.reduceNum(1);
-                        for (int j = 0; j < AlienCreeps.gameMap.getRoutes().size(); j++){
+                        for (int j = 0; j < AlienCreeps.gameMap.getRoutes().size(); j++) {
                             AlienCreeps.gameMap.removeAliensFromRoute(AlienCreeps.gameMap.getRoutes().get(j), dummy);
                         }
                         /******/
@@ -109,22 +109,23 @@ public class WeaponAll extends Weapon {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
+                                AlienCreeps.removeElementFromGameRoot(ai.getAlienLifeBar());
                                 AlienCreeps.removeElementFromGameRoot(ai.getAlienView());
                             }
                         });
                     }
-                    
-                    numBullet++;
-                    
-                    Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                                            .getChildrenUnmodifiable().size(),new ShootViewAll(dim, name ));
-                                       }
 
-                        });
-                    
+                    numBullet++;
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                    .getChildrenUnmodifiable().size(), new ShootViewAll(dim, name));
+                        }
+
+                    });
+
                 }
             }
             if (numBullet >= maxBullet) { 
@@ -181,7 +182,7 @@ class WeaponAllView extends WeaponView {
 
          isFocus = false;
          
-         System.out.println("setting view for " + name);
+         //System.out.println("setting view for " + name);
          
          dim=dim_;
          

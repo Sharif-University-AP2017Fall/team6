@@ -155,6 +155,8 @@ public class Myserver extends Application {
         //makeStartscene(); p
         stage.setTitle("Server ");
         stage.setScene(scene);
+        /*stage.setX(200);
+        stage.setY(50);*/
         stage.show();
         
     }

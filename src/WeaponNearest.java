@@ -126,6 +126,7 @@ public class WeaponNearest extends Weapon {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
+                                AlienCreeps.removeElementFromGameRoot(finalMin.getAlienLifeBar());
                                 AlienCreeps.removeElementFromGameRoot(finalMin.getAlienView());
                             }
                         });
@@ -216,7 +217,7 @@ class WeaponNearestView extends WeaponView {
      
      public WeaponNearestView(String name, Dimension dim_) {
 
-         System.out.println("setting view for " + name);
+        // System.out.println("setting view for " + name);
          this.pic = new ImageView[8];
          index = 5;
          dim = dim_;

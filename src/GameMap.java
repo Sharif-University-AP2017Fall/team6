@@ -1,6 +1,7 @@
 
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.scene.PointLight;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,7 +29,7 @@ public class GameMap {
     private List<Wormhole> wormholes = new ArrayList<>();
     private Map<Dimension, Mappable> specifiedLocations = new HashMap<>();
     private Map<Integer, Dimension> specifiedNumbers = new HashMap<>();
-    private Barrack barrack;
+     Barrack barrack;
 
     private Dimension flag;
     private Alien[] reachedFlag = new Alien[5];
@@ -37,7 +38,7 @@ public class GameMap {
     private Hero hero;
     private Weapon tesla;
 
-    private int secondsLeftToResurrectHero = 0;
+     int secondsLeftToResurrectHero = 0;
     private int weatherCondition = 0;
     private double weatherConditionConstant = 1;
 
@@ -50,12 +51,12 @@ public class GameMap {
     void nextSecond() {
         oneTimeActions();
 
+        shootAliens();
         if (moveAliens()) {
             AlienCreeps.endGame(true);
             return;
         }
 
-        shootAliens();
 
         if (Alien.isSTART()) {
             System.out.println("NUM = " + Alien.getNUM());
@@ -520,6 +521,39 @@ public class GameMap {
         }
     }
 
+    void unFocusAll(){
+        ArrayList<Weapon> weapons = new ArrayList<>();
+
+        for (Integer integer : specifiedNumbers.keySet()) {
+            Dimension dimension = specifiedNumbers.get(integer);
+            Mappable m = specifiedLocations.get(dimension);
+            if (m instanceof Weapon) {
+                Weapon weapon = ((Weapon) m);
+                if (weapon.getWeaponView().isFocus()){
+                    weapon.getWeaponView().setUnfocus();
+                }
+            }
+        }
+
+        ArrayList<Alien> allAliens = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            allAliens.addAll(routes.get(i).getAliens());
+        }
+
+        for (int i = 0; i < allAliens.size(); i++){
+            if (allAliens.get(i).getAlienView().isFocus()){
+                allAliens.get(i).getAlienView().setUnfocus();
+                int finalI = i;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI).getAlienLifeBar());
+                    }
+                });
+            }
+        }
+    }
+
     void upgradeWeapon(){
         for (Integer integer : specifiedNumbers.keySet()) {
             Dimension dimension = specifiedNumbers.get(integer);
@@ -543,15 +577,47 @@ public class GameMap {
         for (int i = 0; i < allAliens.size(); i++){
             if (allAliens.get(i).getAlienView().isFocus()){
                 allAliens.get(i).getAlienView().setUnfocus();
+                int finalI1 = i;
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI1).getAlienLifeBar());
+                    }
+                });
+
                 if (i + 1 < allAliens.size()){
                     allAliens.get(i + 1).getAlienView().setFocus();
+                    int finalI = i;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                    allAliens.get(finalI + 1).getAlienLifeBar());
+                        }
+                    });
                 }else{
                     allAliens.get(0).getAlienView().setFocus();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                    allAliens.get(0).getAlienLifeBar());
+                        }
+                    });
                 }
                 return;
             }
         }
-        allAliens.get(0).getAlienView().setFocus();
+        if (!allAliens.isEmpty()){
+            allAliens.get(0).getAlienView().setFocus();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                            allAliens.get(0).getAlienLifeBar());
+                }
+            });
+        }
     }
 
     void putWeaponInPlace(String weaponName, int whichPlace) {
@@ -744,6 +810,7 @@ public class GameMap {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
+                                AlienCreeps.removeElementFromGameRoot(alien.getAlienLifeBar());
                                 AlienCreeps.removeElementFromGameRoot(alien.getAlienView());
                             }
                         });
@@ -965,7 +1032,7 @@ public class GameMap {
     }
 
     private void shootAliens() {
-        //heroAndSoldiersShoot();
+        heroAndSoldiersShoot();
         weaponsShoot();
     }
 
@@ -1075,6 +1142,7 @@ public class GameMap {
                 for (int i = 0; i < routes.size(); i++) {
                     toShoot.addAll(routes.get(i).aliensWithinRadius(soldiers[j]));
                 }
+                soldiers[j].setShouldShoot(toShoot);
 
                 /*if (!toShoot.isEmpty()) {
                     soldiers[j].setShouldShoot(toShoot);
@@ -1443,12 +1511,10 @@ class Route {
             List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
-                if (!shooter.getClass().getName().equalsIgnoreCase("hero")){
-                    System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
+                    /*System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
                     System.out.println(a.getName() + ": " + a.getCurrentDim());
                     System.out.println(shooter.getShootingPoint().distanceFrom(a.getCurrentDim()));
-                    System.out.println("•••••••••");
-                }
+                    System.out.println("•••••••••");*/
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
                     System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                     System.out.println("*********");

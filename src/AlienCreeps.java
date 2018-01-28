@@ -58,6 +58,7 @@ public class AlienCreeps extends Application {
                 Thread heroLifeCycle = new Thread(hero);
                 heroLifeCycle.start();
 
+
                 while (true){
                     try {
                         Thread.sleep(1000);
@@ -218,7 +219,9 @@ public class AlienCreeps extends Application {
                 gameMap.upgradeWeapon();
             } else if (event.getCode() == KeyCode.T){
                 popupTeslaDimStage.showAndWait();
-            }else{
+            } else if(event.getCode() == KeyCode.ESCAPE){
+                gameMap.unFocusAll();
+            } else{
                 gameMap.moveHero(event);
             }
         });
@@ -240,18 +243,20 @@ public class AlienCreeps extends Application {
 
 
     static Scene menuScene = new Scene(new Group(),540, 1000);
-    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND, GameMap.YBOUND);
+    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 300, GameMap.YBOUND);
     static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
     static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
     static Scene popupLocationNumScene = new Scene(new Group(), 300, 600);
     static Scene popupTeslaDimScene  = new Scene(new Group(), 450, 275);
+    static Scene statusScene = new Scene(new Group(),300, GameMap.YBOUND);
 
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
     static Stage popupEndGameStage = new Stage();
     static Stage popupLocationNUmStage = new Stage();
     static Stage popupTeslaDimStage = new Stage();
+    //static Stage statusStage = new Stage();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -265,20 +270,37 @@ public class AlienCreeps extends Application {
         popupHeroDimScene.setRoot(createPopupAskDimContent(true));
         popupHeroDimStage.setScene(popupHeroDimScene);
         popupHeroDimStage.initModality(Modality.APPLICATION_MODAL);
+        popupHeroDimStage.centerOnScreen();
 
         popupLocationNumScene.setRoot(createLocationNumContent());
         popupLocationNUmStage.setScene(popupLocationNumScene);
         popupLocationNUmStage.initModality(Modality.APPLICATION_MODAL);
+        popupLocationNUmStage.centerOnScreen();
 
         popupEndGameStage.setScene(popupEndGameScene);
         popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
         popupEndGameStage.setAlwaysOnTop(true);
+        popupEndGameStage.centerOnScreen();
 
         popupTeslaDimScene.setRoot(createPopupAskDimContent(false));
         popupTeslaDimStage.setScene(popupTeslaDimScene);
         popupTeslaDimStage.initModality(Modality.APPLICATION_MODAL);
+        popupTeslaDimStage.centerOnScreen();
+
+        /*statusScene.setRoot(createStatusSceneContent());
+        statusStage.setScene(statusScene);
+        statusStage.initModality(Modality.APPLICATION_MODAL);
+        statusStage.setX(stage.getX() + GameMap.XBOUND);
+        statusStage.setY(stage.getY());*/
 
         stage.show();
+        stage.centerOnScreen();
+    }
+
+    Parent createStatusSceneContent(){
+        Group root = new Group();
+
+        return root;
     }
 
     static void endGame(boolean gameOver) {
@@ -308,7 +330,7 @@ public class AlienCreeps extends Application {
 
     private Parent createGameContent(){
         Group root = new Group();
-        Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
+        Canvas canvas = new Canvas(GameMap.XBOUND + 300, GameMap.YBOUND);
         root.getChildren().add(canvas);
         MapView mapView = new MapView(canvas);
         gameMap = new GameMap();
@@ -438,10 +460,18 @@ public class AlienCreeps extends Application {
         askWeaponScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER){
                 stage.setScene(gameScene);
+                stage.centerOnScreen();
+                //stage.show();
                 if (!START){
+                  //  System.out.println("status = " + statusStage.focusedProperty());
+                   // statusStage.show();
                     START = true;
                     launchGame();
                 }
+               // stage.requestFocus();
+               // System.out.println("main = " + stage.focusedProperty());
+                //stage.requestFocus();
+                //stage.show();
             }
         });
 

@@ -18,6 +18,7 @@ public class MapView {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
 
+
         drawGrass();
         drawGrassDetails();
 
@@ -35,7 +36,8 @@ public class MapView {
         drawTrees(true);
         drawBushes();
         drawBoard();
-        
+
+        gc.drawImage(new Image("res/menu/status.png"), GameMap.XBOUND, 0, 300, GameMap.YBOUND);
     }
 
 

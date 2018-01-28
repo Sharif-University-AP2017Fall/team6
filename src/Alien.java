@@ -14,20 +14,24 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+
 public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 5;
+    private static int MAXNUM = 1;//5;
     private static boolean START = false;
 
     /**** PROPERTIES ****/
     private String name;
     private Dimension currentDim;
     private int energy;
+    private int initialEnergy;
     private int speed;
     private int initialSpeed;
     private int shootingSpeed;
@@ -48,10 +52,13 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** VIEW ***/
     private AlienView alienView;
+    private AlienLifeBar alienLifeBar;
     
     Alien(String name) {
         currentDim = new Dimension(0.0, 0.0);
         alienView = new AlienView("aliens", name);
+        alienLifeBar = new AlienLifeBar();
+
         this.cycleNumLeft = 10;
         this.cycleNum = 10;
         NUM++;
@@ -60,6 +67,7 @@ public class Alien implements Movable, Comparable, Runnable {
         switch (name) {
             case "Albertonion":
                 this.energy = 250;
+                this.initialEnergy = 250;
                 this.speed = 4; //8
                 this.initialSpeed = 4; //8
                 this.shootingSpeed = 5;
@@ -69,6 +77,7 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Algwasonion":
                 this.energy = 150;
+                this.initialEnergy = 150;
                 this.speed = 3; //4
                 this.initialSpeed = 3; //4
                 this.shootingSpeed = 10;
@@ -78,7 +87,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Activionion":
                 this.energy = 400;
-                this.speed = 1; //2
+                this.initialEnergy = 400;
+                this.initialEnergy = 1; //2
                 this.initialSpeed = 1; //2
                 this.shootingSpeed = 2;
                 this.strength = 40;
@@ -87,6 +97,7 @@ public class Alien implements Movable, Comparable, Runnable {
                 break;
             case "Aironion":
                 this.energy = 200;
+                this.initialEnergy = 200;
                 this.speed = 2; //5
                 this.initialSpeed = 2; //5
                 this.shootingSpeed = 5;
@@ -143,6 +154,7 @@ public class Alien implements Movable, Comparable, Runnable {
             System.out.println("reduction amount : " + amount);
             System.out.println("new energy : " + (this.energy - amount));
             this.energy -= amount;
+            getAlienLifeBar();
         }
     }
 
@@ -202,7 +214,7 @@ public class Alien implements Movable, Comparable, Runnable {
         int maxBullet = shootingSpeed;
         for (int i = 0; i < maxBullet; i++) {
             try {
-                Thread.sleep(100);
+                Thread.sleep(1000 / maxBullet - 10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -221,9 +233,9 @@ public class Alien implements Movable, Comparable, Runnable {
                     return true;
                 }
             }
-            //     System.out.println(name + " has " + (maxBullet - i) + " bullets left");
+                 System.out.println(name + " has " + (maxBullet - i) + " bullets left");
         }
-        // System.out.println(name + " finished shooting");
+         System.out.println(name + " finished shooting");
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -410,6 +422,12 @@ public class Alien implements Movable, Comparable, Runnable {
 
     public void setThreadID(long threadID) {
         this.threadID = threadID;
+    }
+
+    public AlienLifeBar getAlienLifeBar() {
+        //System.out.println("getting alien life bar");
+        alienLifeBar.setProgress(energy, initialEnergy);
+        return alienLifeBar;
     }
 }
 
@@ -603,9 +621,6 @@ public class Alien implements Movable, Comparable, Runnable {
                  clear();
              }
          });
-
-
-
      }
      
      public void moveRight(double delta) {
@@ -685,6 +700,52 @@ public class Alien implements Movable, Comparable, Runnable {
          });
      }
  }
+
+class AlienLifeBar extends StackPane{
+
+    ImageView[] progress = new ImageView[9];
+
+    AlienLifeBar(){
+        for (int i = 0; i < 9; i++){
+            progress[i] = new ImageView(new Image(getClass()
+                    .getResource("res/progressbar/health/" + i + ".png").toExternalForm()));
+            progress[i].setVisible(false);
+            progress[i].setFitWidth(300 - 30);
+            progress[i].setFitHeight(50 - 5);
+        }
+
+
+        getChildren().addAll(progress);
+        relocate(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
+    }
+
+    public void setProgress(int alienEnergy, int maximumEnergy){
+
+        double percent = (((double) alienEnergy) / maximumEnergy) * 100;
+        //System.out.println("energy percent = " + percent);
+        for (int i = 9; i >= 1; i--){
+            if (percent >= i * 10){
+                System.out.println("energy is higher than " + (i * 10));
+               // System.out.println("setting picture " + (i - 1) + " visible");
+                clearRest(i - 1);
+                progress[i - 1].setVisible(true);
+                return;
+            }
+        }
+        progress[0].setVisible(true);
+        clearRest(0);
+    }
+
+    private void clearRest(int visible){
+        for (int i = 0; i < 9; i++){
+            if (i != visible){
+               // System.out.println("setting picture " + i + " invisible");
+                progress[i].setVisible(false);
+            }
+        }
+    }
+
+}
 
 
 
