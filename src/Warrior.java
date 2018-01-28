@@ -12,6 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -351,12 +352,12 @@ class BulletView extends StackPane{
         setDirection(deltaX, deltaY);*/
 
 
-
         /*PathTransition pt = new PathTransition(
                 Duration.millis(duration),
                 new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
                 this
         );*/
+
         player.play();
         bullet.setVisible(true);
 
