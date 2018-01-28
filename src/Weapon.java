@@ -413,7 +413,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
             case "freezer":
                 return 10/5;
             case "tesla":
-                return 20/5;
+                return 20/2;
             default:
                 return -1;
         }

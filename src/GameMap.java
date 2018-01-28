@@ -35,7 +35,7 @@ public class GameMap {
     private ArrayList<Thread> alienLifeCycles;
 
     private Hero hero;
-    private ImageView teslaView;
+    private Weapon tesla;
 
     private int secondsLeftToResurrectHero = 0;
     private int weatherCondition = 0;
@@ -515,7 +515,9 @@ public class GameMap {
                 return;
             }
         }
-        weapons.get(0).getWeaponView().setFocus();
+        if (!weapons.isEmpty()){
+            weapons.get(0).getWeaponView().setFocus();
+        }
     }
 
     void upgradeWeapon(){
@@ -860,22 +862,30 @@ public class GameMap {
         if (Weapon.NUM_USED_TESLA < 2) {
             if (!Weapon.TESLA_IN_USE) {
 
-                teslaView = new ImageView(new Image(getClass()
+                /*teslaView = new ImageView(new Image(getClass()
                         .getResource("res/weapons/tesla/images/tesla.png").toExternalForm()));
                 teslaView.setFitHeight(64);
                 teslaView.setFitWidth(64);
                 teslaView.relocate(dimension.getX() - 32, dimension.getY() - 32);
-                teslaView.setVisible(true);
+                teslaView.setVisible(true);*/
 
-                Platform.runLater(new Runnable() {
+                /*Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                 teslaView);
                     }
+                });*/
+
+                tesla = Weapon.WeaponFactory(dimension, "Tesla", 0);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                tesla.getWeaponView());
+                    }
                 });
 
-                Weapon tesla = Weapon.WeaponFactory(dimension, "Tesla", 0);
                 List<Alien> aliensToKill = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
                     aliensToKill.addAll(routes.get(i).aliensWithinRadius(tesla));
@@ -893,6 +903,7 @@ public class GameMap {
                         }
                     });
                 }
+                Alien.reduceNum(aliensToKill.size());
 
                 this.hero.addMoney(aliensToKill.size() * 10);
                 updateAchievements(aliensToKill, "weapon");
@@ -916,10 +927,40 @@ public class GameMap {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        AlienCreeps.removeElementFromGameRoot(teslaView);
+                        AlienCreeps.removeElementFromGameRoot(tesla.getWeaponView());
                     }
                 });
+            } else{
+                proceedTesla();
             }
+        }
+    }
+
+    private void proceedTesla(){
+        List<Alien> aliensToKill = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++) {
+            aliensToKill.addAll(routes.get(i).aliensWithinRadius(tesla));
+        }
+        if (this.hero.addExperienceLevel(aliensToKill.size() * 5)) {
+            reduceAllWeaponsPrice();
+        }
+
+        for (int i = 0; i < aliensToKill.size(); i++){
+            int finalI = i;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    AlienCreeps.removeElementFromGameRoot(aliensToKill.get(finalI).getAlienView());
+                }
+            });
+        }
+
+        Alien.reduceNum(aliensToKill.size());
+
+        this.hero.addMoney(aliensToKill.size() * 10);
+        updateAchievements(aliensToKill, "weapon");
+        for (int i = 0; i < routes.size(); i++) {
+            this.removeAliensFromRoute(routes.get(i), aliensToKill);
         }
     }
 
@@ -1402,13 +1443,15 @@ class Route {
             List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
-                /*System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
-                System.out.println(a.getName() + ": " + a.getCurrentDim());
-                System.out.println(shooter.getShootingPoint().distanceFrom(a.getCurrentDim()));
-                System.out.println(4 * GameMap.UNIT);*/
+                if (!shooter.getClass().getName().equalsIgnoreCase("hero")){
+                    System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
+                    System.out.println(a.getName() + ": " + a.getCurrentDim());
+                    System.out.println(shooter.getShootingPoint().distanceFrom(a.getCurrentDim()));
+                    System.out.println("•••••••••");
+                }
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
-               //     System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
-                 //   System.out.println("*********");
+                    System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
+                    System.out.println("*********");
                     toShoot.add(a);
                 }
             }
