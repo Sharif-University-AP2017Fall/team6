@@ -36,8 +36,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     private double initialRadius;
 
     private boolean shouldShoot;
-    private List<Alien> toShoot;
-    private List<Alien> killed;
+     List<Alien> toShoot;
+     List<Alien> killed;
 
     static int NUM_USED_TESLA = 0;
     static int SECONDS_LEFT_TO_USE_TESLA = 10;

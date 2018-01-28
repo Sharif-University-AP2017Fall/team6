@@ -136,11 +136,12 @@ public class Alien implements Movable, Comparable, Runnable {
             e.printStackTrace();
         }
         synchronized (lock4) {
-            /*System.out.println(this.name);
-            System.out.println("*************");
+            System.out.println("••••••••••••");
+            System.out.println(this.name);
+            System.out.println("••••••••••••");
             System.out.println("current energy : " + this.energy);
             System.out.println("reduction amount : " + amount);
-            System.out.println("new energy : " + (this.energy - amount));*/
+            System.out.println("new energy : " + (this.energy - amount));
             this.energy -= amount;
         }
     }
@@ -330,7 +331,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     static void reduceNum(int NUM) {
         Alien.NUM -= NUM;
-        System.out.println("NUM = " + Alien.NUM);
+       // System.out.println("NUM = " + Alien.NUM);
     }
 
     private Object lock1 = new Object();

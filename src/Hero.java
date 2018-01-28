@@ -42,7 +42,7 @@ public class Hero extends Warrior {
         setDimension(dimension);
         setMoney(10000);
         setEnergy(300);
-        setRadius(0.5);
+        setRadius(4);
         setShootingSpeed(7);
         setPowerOfBullet(20);
 

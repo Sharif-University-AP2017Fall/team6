@@ -1,4 +1,4 @@
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -39,7 +39,7 @@ public class AlienCreeps extends Application {
 
     private Scanner scanner = new Scanner(System.in);
     private Hero hero = new Hero(new Dimension(400, 300));
-    private GameMap gameMap = new GameMap(hero);
+    static GameMap gameMap = new GameMap();//hero);
     static AlienCreeps game = new AlienCreeps();
     private Text timeText=new Text(240,27," : : "); 
     public static void main(String[] args) {
@@ -206,11 +206,8 @@ public class AlienCreeps extends Application {
 
         Runnable r3 = () -> gameScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.M){
-                popupHeroDimStage.setX(200);
-                popupHeroDimStage.setY(200);
                 popupHeroDimStage.showAndWait();
             } else if (event.getCode() == KeyCode.B){
-//                askWeaponScene.setRoot(createAskWeaponContent());
                 stage.setScene(askWeaponScene);
                 stage.show();
             } else if (event.getCode() == KeyCode.TAB){
@@ -219,6 +216,8 @@ public class AlienCreeps extends Application {
                 gameMap.focusAliens();
             } else if (event.getCode() == KeyCode.U){
                 gameMap.upgradeWeapon();
+            } else if (event.getCode() == KeyCode.T){
+                popupTeslaDimStage.showAndWait();
             }else{
                 gameMap.moveHero(event);
             }
@@ -246,11 +245,13 @@ public class AlienCreeps extends Application {
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
     static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
     static Scene popupLocationNumScene = new Scene(new Group(), 300, 600);
+    static Scene popupTeslaDimScene  = new Scene(new Group(), 450, 275);
 
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
     static Stage popupEndGameStage = new Stage();
     static Stage popupLocationNUmStage = new Stage();
+    static Stage popupTeslaDimStage = new Stage();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -261,7 +262,7 @@ public class AlienCreeps extends Application {
         gameScene.setRoot(createGameContent());
         askWeaponScene.setRoot(createAskWeaponContent());
 
-        popupHeroDimScene.setRoot(createPopupHeroDimContent());
+        popupHeroDimScene.setRoot(createPopupAskDimContent(true));
         popupHeroDimStage.setScene(popupHeroDimScene);
         popupHeroDimStage.initModality(Modality.APPLICATION_MODAL);
 
@@ -272,6 +273,10 @@ public class AlienCreeps extends Application {
         popupEndGameStage.setScene(popupEndGameScene);
         popupEndGameStage.initModality(Modality.APPLICATION_MODAL);
         popupEndGameStage.setAlwaysOnTop(true);
+
+        popupTeslaDimScene.setRoot(createPopupAskDimContent(false));
+        popupTeslaDimStage.setScene(popupTeslaDimScene);
+        popupTeslaDimStage.initModality(Modality.APPLICATION_MODAL);
 
         stage.show();
     }
@@ -306,6 +311,8 @@ public class AlienCreeps extends Application {
         Canvas canvas = new Canvas(GameMap.XBOUND, GameMap.YBOUND);
         root.getChildren().add(canvas);
         MapView mapView = new MapView(canvas);
+        gameMap = new GameMap();
+        gameMap.setHero(this.hero);
 
         root.getChildren().addAll(hero.getAchievementView());
         root.getChildren().add(timeText);
@@ -632,7 +639,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createPopupHeroDimContent(){
+    private Parent createPopupAskDimContent(boolean forHero){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -645,6 +652,15 @@ public class AlienCreeps extends Application {
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 40);
 
+        Text question = new Text("");
+        question.setFont(font);
+        question.setFill(Color.rgb(132, 171, 37));
+        question.relocate(55, 30);
+        if (forHero){
+            question.setText("Enter hero's destination");
+        } else{
+            question.setText("Enter Tesla's dimension");
+        }
 
         TextField x = new TextField();
         Label lblx = new Label("");
@@ -662,23 +678,41 @@ public class AlienCreeps extends Application {
         y.opacityProperty().set(0.0);
         y.setOnKeyPressed(new TextEventHandler(lbly));
 
-        popupHeroDimScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER){
-                if (lblx.getText() != "" && lbly.getText() != ""){
-                    Dimension change = new Dimension(Integer.parseInt(lblx.getText())- hero.getDimension().getX(),
-                            Integer.parseInt(lbly.getText()) - hero.getDimension().getY());
-                    hero.setShouldMove(change);
+        if (forHero){
+            popupHeroDimScene.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER){
+                    if (lblx.getText() != "" && lbly.getText() != ""){
+                        Dimension change = new Dimension(Integer.parseInt(lblx.getText())- hero.getDimension().getX(),
+                                Integer.parseInt(lbly.getText()) - hero.getDimension().getY());
+                        hero.setShouldMove(change);
+                    }
+                    x.clear();
+                    y.clear();
+                    lblx.setText("");
+                    lbly.setText("");
+                    x.requestFocus();
+                    popupHeroDimStage.close();
                 }
-                x.clear();
-                y.clear();
-                lblx.setText("");
-                lbly.setText("");
-                x.requestFocus();
-                popupHeroDimStage.close();
-            }
-        });
+            });
+        } else {
+            popupTeslaDimScene.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.ENTER){
+                    if (lblx.getText() != "" && lbly.getText() != ""){
+                        gameMap.useTesla(new Dimension(Integer.parseInt(lblx.getText()),
+                                Integer.parseInt(lbly.getText())));
+                    }
+                    x.clear();
+                    y.clear();
+                    lblx.setText("");
+                    lbly.setText("");
+                    x.requestFocus();
+                    popupTeslaDimStage.close();
+                }
+            });
+        }
 
-        root.getChildren().addAll(background, x, y, lblx, lbly);
+
+        root.getChildren().addAll(background, question, x, y, lblx, lbly);
 
         return root;
     }

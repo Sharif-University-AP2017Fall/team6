@@ -12,7 +12,7 @@ public class Soldier extends Warrior {
     }
 
     void resetRadius() {
-        setRadius(0.5);
+        setRadius(3);
     }
 
     void reduceRadius() {
@@ -21,7 +21,7 @@ public class Soldier extends Warrior {
 
     Soldier() {
        // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
-        setRadius(0.5);
+        setRadius(3);
         setEnergy(150);
         setShootingSpeed(5);
         setPowerOfBullet(10);

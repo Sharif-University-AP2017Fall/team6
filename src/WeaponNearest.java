@@ -77,7 +77,7 @@ public class WeaponNearest extends Weapon {
             for (int numBullet = 0; numBullet < maxBullet; numBullet++) {
                 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(90);
                     
                 } catch (InterruptedException e) {
                     
@@ -106,6 +106,22 @@ public class WeaponNearest extends Weapon {
                         deadAliens.add(min);
                         canShoot.remove(min);
 
+                        /*********/
+                        super.toShoot.remove(min);
+                        if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
+                            AlienCreeps.gameMap.reduceAllWeaponsPrice();
+                        }
+                        AlienCreeps.gameMap.getHero().addMoney(10);
+                        List<Alien> dummy = new ArrayList<>();
+                        dummy.add(min);
+                        AlienCreeps.gameMap.updateAchievements(dummy, "weapon");
+                        Alien.reduceNum(1);
+                        for (int i = 0; i < AlienCreeps.gameMap.getRoutes().size(); i++){
+                            AlienCreeps.gameMap.removeAliensFromRoute(AlienCreeps.gameMap.getRoutes().get(i), dummy);
+                        }
+                        /*********/
+
+
                         Alien finalMin = min;
                         Platform.runLater(new Runnable() {
                             @Override
@@ -113,6 +129,7 @@ public class WeaponNearest extends Weapon {
                                 AlienCreeps.removeElementFromGameRoot(finalMin.getAlienView());
                             }
                         });
+
                         if (!canShoot.isEmpty()) {
                             min = findClosest(canShoot);
                         } else {
