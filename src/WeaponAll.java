@@ -33,12 +33,12 @@ public class WeaponAll extends Weapon {
     private WeaponAllView weaponView;
     private String name;
     WeaponAll(Dimension dimension, String type, int locationNum) {
-        
+
         super(dimension, type, locationNum);
         weaponView = new WeaponAllView(type, dimension);
         super.setWeaponView(weaponView);
         dim = dimension;
-        name=type;
+        name = type;
     }
     
     private Object lock = new Object();
