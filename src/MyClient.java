@@ -3,13 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package myserver;
+//package myserver;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -31,7 +37,7 @@ public class MyClient extends Application {
     Stage stage;
     // Start scene
     Group root=new Group();
-    Scene scene =new Scene(root,800, 350);
+    Scene scene =new Scene(root,400, 800);
     
     int port=9999;
     //ServerSocket serverSocket;
@@ -45,6 +51,7 @@ public class MyClient extends Application {
     TextArea textArea = new TextArea();
     Button button = new Button("Send");
     
+
     
     
     public void run() {
@@ -120,19 +127,39 @@ public class MyClient extends Application {
 
     
     
-    
+     
     
     @Override
     public void start(Stage primaryStage) {
         
         //this.run();
         
+        //String address="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src/res/menu/bgchatBG.jpg";
+        //bg=new ImageView(new Image(getClass()
+          //       .getResource(address).toExternalForm()));
+        //String address="res/menu/bg/chatBG.png";
+       // ImageView bg=new ImageView(new Image(getClass()
+         //        .getResource(address).toExternalForm()));
+        /*
+        Image image=null; 
+        try {
+            image = new Image(new FileInputStream("/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src/res/menu/bg/chatBG.png"));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MyClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ImageView bg=new ImageView(image);
+        bg.setFitWidth(400);
+        bg.setFitHeight(800);
+        bg.setVisible(true);
+        /*/
+        
         button.setOnAction(event -> {
             sendMessage(textField.getText());
         });
         
-        button.setLayoutX(700);
-        button.setLayoutY(300);
+        button.setLayoutX(325);
+        button.setLayoutY(710);
+        
         
         textField.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -141,12 +168,15 @@ public class MyClient extends Application {
             }
         });
         textField.setLayoutX(50);
-        textField.setLayoutY(300);
+        textField.setLayoutY(700);
+        textField.setPrefHeight(50);
+        textField.setPrefWidth(250);
         
         textArea.setEditable(false);
         textArea.setLayoutX(50);
         textArea.setLayoutY(50);
-        
+        textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
+        textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
         root.getChildren().addAll(button,textField,textArea);
         
         stage = primaryStage;
