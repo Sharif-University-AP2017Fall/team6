@@ -379,51 +379,26 @@ class BulletView extends StackPane{
         clearingTime.setCycleCount(1);
         clearingTime.play();
         
-        Timeline voice= new Timeline(new KeyFrame(Duration.millis(duration),
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        player.play();
-                        player=new MediaPlayer(sound);
-                    }
-                }));
-        voice.setCycleCount(cycle);
-        voice.play();
+       // Timeline voice= new Timeline(new KeyFrame(Duration.millis(duration),
+        //        new EventHandler<ActionEvent>() {
+         //           @Override
+         //           public void handle(ActionEvent event) {
+          //              player.play();
+         //               player=new MediaPlayer(sound);
+         //           }
+          //      }));
+      //  voice.setCycleCount(cycle);
+      //  voice.play();
         
-        
+      
+      
+        player.play();
+        player=new MediaPlayer(sound);
             
         
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -511,3 +486,40 @@ class BulletView extends StackPane{
             }
         }
     }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
