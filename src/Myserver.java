@@ -146,7 +146,7 @@ public class Myserver extends Application {
     public void start(Stage primaryStage) {
 
         //this.run();
-        //run();
+        run();
         String address="res/menu/bg/background.jpg";
         bg=new ImageView(new Image(getClass()
                  .getResource(address).toExternalForm()));
@@ -163,16 +163,28 @@ public class Myserver extends Application {
        // button.setLayoutY(710);
        
        
-       String address2="res/menu/item/Send.png";
+       String address2="res/menu/item/Exit.png";
        
-       sendButton=new ImageView(new Image(getClass()
-                 .getResource(address2).toExternalForm()));
+       //sendButton=new ImageView(new Image(getClass()
+       //          .getResource(address2).toExternalForm()));
+       MenuItem sendBtn=new MenuItem(new Image(getClass()
+                 .getResource(address2).toExternalForm()),60,25);
        
-       sendButton.setFitHeight(25);
-       sendButton.setFitWidth(60);
-       sendButton.setLayoutX(325);
-       sendButton.setLayoutY(710);
-       
+       sendBtn.setDim(325, 710);
+       sendBtn.setOnAction(() -> {
+            
+          sendMessage(textField.getText());
+            
+        });
+      // sendButton.setFitHeight(25);
+       //sendButton.setFitWidth(60);
+       //sendButton.setLayoutX(325);
+       //sendButton.setLayoutY(710);
+       //sendButton.setOnMouseClicked(event -> {
+            
+       //    sendMessage(textField.getText());
+            
+       // });
        
        
        
@@ -198,7 +210,7 @@ public class Myserver extends Application {
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
         
-        root.getChildren().addAll(bg,sendButton,textField,textArea);
+        root.getChildren().addAll(bg,sendBtn,textField,textArea);
         
         stage = primaryStage;
         //makeStartscene(); p

@@ -22,6 +22,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -50,8 +51,9 @@ public class MyClient extends Application {
     
     TextField textField = new TextField();
     TextArea textArea = new TextArea();
-    Button button = new Button("Send");
+    //Button button = new Button("Send");
     
+    ImageView sendButton;
 
     
     
@@ -133,26 +135,7 @@ public class MyClient extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        //this.run();
-        
-        //String address="/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src/res/menu/bgchatBG.jpg";
-        //bg=new ImageView(new Image(getClass()
-          //       .getResource(address).toExternalForm()));
-        //String address="res/menu/bg/chatBG.png";
-       // ImageView bg=new ImageView(new Image(getClass()
-         //        .getResource(address).toExternalForm()));
-        /*
-        Image image=null; 
-        try {
-            image = new Image(new FileInputStream("/Users/Apple/Documents/TaraFiles/University/term 7/JAVA/project4/team6/src/res/menu/bg/chatBG.png"));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MyClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        ImageView bg=new ImageView(image);
-        bg.setFitWidth(400);
-        bg.setFitHeight(800);
-        bg.setVisible(true);
-        /*/
+
 
         String address="res/menu/bg/background.jpg";
         bg=new ImageView(new Image(getClass()
@@ -161,13 +144,41 @@ public class MyClient extends Application {
         bg.setFitHeight(800);
         bg.setVisible(true);
         
-        button.setOnAction(event -> {
-            sendMessage(textField.getText());
+
+        
+      /*  String address2="res/menu/item/Exit.png";
+       Glow glow = new Glow();
+
+        //setting level of the glow effect 
+       glow.setLevel(0.9);
+       
+       sendButton=new ImageView(new Image(getClass()
+                 .getResource(address2).toExternalForm()));
+       
+       sendButton.setFitHeight(25);
+       sendButton.setFitWidth(60);
+       sendButton.setLayoutX(325);
+       sendButton.setLayoutY(710);
+       sendButton.setOnMouseClicked(event -> {
+           
+           
+           sendMessage(textField.getText());
+            
+        });*/
+       String address2="res/menu/item/Exit.png";
+       
+       //sendButton=new ImageView(new Image(getClass()
+       //          .getResource(address2).toExternalForm()));
+       MenuItem sendBtn=new MenuItem(new Image(getClass()
+                 .getResource(address2).toExternalForm()),60,25);
+       
+       sendBtn.setDim(325, 710);
+       sendBtn.setOnAction(() -> {
+            
+          sendMessage(textField.getText());
+            
         });
-        
-        button.setLayoutX(325);
-        button.setLayoutY(710);
-        
+       
         
         textField.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -185,7 +196,7 @@ public class MyClient extends Application {
         textArea.setLayoutY(50);
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
-        root.getChildren().addAll(bg, button,textField,textArea);
+        root.getChildren().addAll(bg, sendBtn,textField,textArea);
         
         stage = primaryStage;
         //makeStartscene(); p
