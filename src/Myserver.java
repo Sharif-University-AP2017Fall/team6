@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.omg.CORBA.PRIVATE_MEMBER;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -37,7 +38,7 @@ public class Myserver extends Application {
     ObjectOutputStream objectOutputStream;
     ObjectInputStream objectInputStream;
     
-    
+    ImageView sendButton;
 
     
     public void run() {
@@ -124,7 +125,7 @@ public class Myserver extends Application {
 
     TextField textField = new TextField();
     TextArea textArea = new TextArea();
-    Button button = new Button("Send");
+    //Button button = new Button("Send");
     private ImageView bg;
 
     Stage stage;
@@ -153,25 +154,57 @@ public class Myserver extends Application {
         bg.setFitWidth(400);
         bg.setFitHeight(800);
         bg.setVisible(true);
-
         
-        button.setOnAction(event -> {
-            sendMessage(textField.getText());
+        
+       //button.setOnAction(event -> {
+       //     sendMessage(textField.getText());
+       // });
+        
+       // button.setLayoutX(325);
+       // button.setLayoutY(710);
+       
+       
+       String address2="res/menu/item/Send.png";
+       
+       //sendButton=new ImageView(new Image(getClass()
+       //          .getResource(address2).toExternalForm()));
+       MenuItem sendBtn=new MenuItem(new Image(getClass()
+                 .getResource(address2).toExternalForm()),75,25);
+       
+       sendBtn.setDim(310, 700);
+       sendBtn.setOnAction(() -> {
+            
+          sendMessage(textField.getText());
+            
         });
-        
-        button.setLayoutX(325);
-        button.setLayoutY(710);
-        
+      // sendButton.setFitHeight(25);
+       //sendButton.setFitWidth(60);
+       //sendButton.setLayoutX(325);
+       //sendButton.setLayoutY(710);
+       //sendButton.setOnMouseClicked(event -> {
+            
+       //    sendMessage(textField.getText());
+            
+       // });
+       
+       
+       
+       
         textField.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 sendMessage(textField.getText());
             }
         });
+        
+        
+        
+        
         textField.setLayoutX(50);
-        textField.setLayoutY(700);
-        textField.setPrefHeight(50);
+        textField.setLayoutY(670);
+        textField.setPrefHeight(75);
         textField.setPrefWidth(250);
+        
         
         textArea.setEditable(false);
         textArea.setLayoutX(50);
@@ -179,14 +212,19 @@ public class Myserver extends Application {
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
         
-        root.getChildren().addAll(bg, button,textField,textArea);
+        //textArea.setStyle("-fx-text-inner-color: green;");
+        //textArea.setStyle("text-area-background: LIGHTBLUE;");
+        textField.setStyle("-fx-text-inner-color: green;");
+        textField.setStyle("-fx-background-color: LIGHTBLUE;");
+        
+        root.getChildren().addAll(bg,sendBtn,textField,textArea);
         
         stage = primaryStage;
         //makeStartscene(); p
         stage.setTitle("Server ");
         stage.setScene(scene);
         stage.show();
-        
+        //Color.LIGHTBLUE
     }
 
     /**

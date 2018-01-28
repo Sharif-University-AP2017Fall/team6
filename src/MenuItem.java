@@ -45,6 +45,20 @@ public class MenuItem extends StackPane{
 
         setOnMouseExited(e -> onDeselect());
     }
+    
+    public MenuItem(Image view,int w,int h){
+        setAlignment(Pos.CENTER);
+
+        normal = new ImageView(view);
+        normal.setFitWidth(w);
+        normal.setFitHeight(h);
+
+        getChildren().add(normal);
+
+        setOnMouseEntered(e -> onSelect());
+
+        setOnMouseExited(e -> onDeselect());
+    }
 
     public MenuItem(Image view, String text){
         setAlignment(Pos.CENTER);
