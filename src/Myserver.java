@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.omg.CORBA.PRIVATE_MEMBER;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -163,14 +164,14 @@ public class Myserver extends Application {
        // button.setLayoutY(710);
        
        
-       String address2="res/menu/item/Exit.png";
+       String address2="res/menu/item/Send.png";
        
        //sendButton=new ImageView(new Image(getClass()
        //          .getResource(address2).toExternalForm()));
        MenuItem sendBtn=new MenuItem(new Image(getClass()
-                 .getResource(address2).toExternalForm()),60,25);
+                 .getResource(address2).toExternalForm()),75,25);
        
-       sendBtn.setDim(325, 710);
+       sendBtn.setDim(310, 700);
        sendBtn.setOnAction(() -> {
             
           sendMessage(textField.getText());
@@ -200,15 +201,21 @@ public class Myserver extends Application {
         
         
         textField.setLayoutX(50);
-        textField.setLayoutY(700);
-        textField.setPrefHeight(50);
+        textField.setLayoutY(670);
+        textField.setPrefHeight(75);
         textField.setPrefWidth(250);
+        
         
         textArea.setEditable(false);
         textArea.setLayoutX(50);
         textArea.setLayoutY(50);
         textArea.setPrefHeight(600);  //sets height of the TextArea to 400 pixels 
         textArea.setPrefWidth(300);    //sets width of the TextArea to 300 pixels 
+        
+        //textArea.setStyle("-fx-text-inner-color: green;");
+        //textArea.setStyle("text-area-background: LIGHTBLUE;");
+        textField.setStyle("-fx-text-inner-color: green;");
+        textField.setStyle("-fx-background-color: LIGHTBLUE;");
         
         root.getChildren().addAll(bg,sendBtn,textField,textArea);
         
@@ -217,7 +224,7 @@ public class Myserver extends Application {
         stage.setTitle("Server ");
         stage.setScene(scene);
         stage.show();
-        
+        //Color.LIGHTBLUE
     }
 
     /**
