@@ -351,7 +351,7 @@ public class GameMap {
 
         /****   CHANGING WORMHOLE DIMENSIONS RANDOMLY ****/
 
-   //     randomizeWormholes();
+        randomizeWormholes();
 
         /***** SEEING WHETHER WE CAN USE TESLA AGAIN OR NOT ****/
 
@@ -361,7 +361,7 @@ public class GameMap {
 
         if (this.hero.isDead()) {
             this.secondsLeftToResurrectHero--;
-     //       System.out.println("hero will be back in " + secondsLeftToResurrectHero);
+            System.out.println("hero will be back in " + secondsLeftToResurrectHero);
             if (this.secondsLeftToResurrectHero == 0) {
                 this.hero.setEnergy(300);
                 Platform.runLater(new Runnable() {
@@ -670,6 +670,16 @@ public class GameMap {
                 
                 Platform.runLater(() -> AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                         bought.getWeaponView()));
+
+                if (bought instanceof WeaponNearest){
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                    ((WeaponNearest) bought).getBulletView());
+                        }
+                    });
+                }
                 
                 specifiedLocations.put(dimension, bought);
             }
@@ -741,6 +751,8 @@ public class GameMap {
                     public void run() {
                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                 newAlien.getAlienView());
+                      //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        //        newAlien.getBulletView());
                     }
                 });
             //    System.out.println(name + " entered!");

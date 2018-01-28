@@ -51,8 +51,6 @@ public class Hero extends Warrior {
 
         bulletView = new BulletView();
 
-        //TODO : ADD TO SOLDIER IF IT WORKS
-
         setDimension(dimension);
         setMoney(10000);
         setEnergy(300);
@@ -162,6 +160,7 @@ public class Hero extends Warrior {
     Weapon buyWeapon(String nameOfWeapon, Dimension dimension, int locationNum) {
         if (this.getMoney() >= Weapon.getInitialPrice(nameOfWeapon)) {
             Weapon bought = Weapon.WeaponFactory(dimension, nameOfWeapon, locationNum);
+
             if (bought != null) {
                 reduceMoney(bought.getPrice());
             }

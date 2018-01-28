@@ -37,20 +37,20 @@ import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
 public class WeaponNearest extends Weapon {
 
     WeaponNearestView weaponView;
+    private BulletView bulletView;
     
     WeaponNearest(Dimension dimension, String type, int locationNum) {
-        
+
         super(dimension, type, locationNum);
         weaponView=new WeaponNearestView(type,dimension);
         super.setWeaponView(weaponView);
-        
+        bulletView = new BulletView();
     }
 
-    
-   
-    
-    
-    
+    public BulletView getBulletView() {
+        return bulletView;
+    }
+
     private Object lock = new Object();
 
     @Override
@@ -85,7 +85,8 @@ public class WeaponNearest extends Weapon {
                 }
                 synchronized (lock){
                     if (isShouldShoot()){
-                        weaponView.shoot(min);
+                  //      weaponView.shoot(min);
+                        bulletView.shoot(getDimension(), min.getCurrentDim(), 1000 / maxBullet - 55, maxBullet);
 
                         min.reduceSpeed(this.getSpeedReduction() / 100);
 

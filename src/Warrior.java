@@ -14,7 +14,6 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
-import java.awt.image.DirectColorModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,9 +143,6 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                         if (numBullet == 0){
                             getBulletView().shoot(getShootingPoint(), min.getCurrentDim(), 1000 / maxBullet - 55, maxBullet);
                         }
-                        if (numBullet == maxBullet - 1){
-                            getBulletView().clear();
-                        }
                         if (!min.isCanFly()) {
                             min.stop();
                             min.reduceEnergy(this.powerOfBullet);
@@ -158,6 +154,9 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
                             if (this.isDead()){
                             //    System.out.println(this.getClass().getName() + " died");
+                                /*if (!min.isDead()){
+                                    min.backToNormalSpeed();
+                                }*/
 
                                 if (this.getClass().getName().toLowerCase().equals("hero")){
                                     AlienCreeps.gameMap.secondsLeftToResurrectHero = AlienCreeps.gameMap.getHero().getResurrectionTime();
@@ -318,31 +317,28 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
 class BulletView extends StackPane{
 
-    ImageView[] direction = new ImageView[8];
-
-    Dimension dest;
+    ImageView bullet = new ImageView();
 
     BulletView(){
         System.out.println("SETTING BULLET VIEW");
-        for (int i = 0; i < 8; i++){
-            direction[i] = new ImageView(new Image(getClass()
-                    .getResource("res/hero/shoot/images/bullet_0" + (i + 1) + ".png").toExternalForm()));
-            direction[i].setFitHeight(20);
-            direction[i].setFitWidth(20);
-        }
+        bullet = new ImageView(new Image(getClass()
+                .getResource("res/shoot/bullet4.png").toExternalForm()));
 
-        clear();
+        bullet.setFitWidth(10);
+        bullet.setFitHeight(10);
+        bullet.setVisible(false);
 
-//        direction[0].setVisible(true);
+
+//        bullet[0].setVisible(true);
 
        // relocate(400, 500);
 
-        getChildren().addAll(direction);
+        getChildren().add(bullet);
     }
 
-    void clear(){
+/*    void clear(){
         for (int i = 0; i < 8; i++){
-            direction[i].setVisible(false);
+            bullet[i].setVisible(false);
         }
     }
 
@@ -351,18 +347,18 @@ class BulletView extends StackPane{
 
         if (Double.compare(deltaX, 0) == 0){
             if (deltaY > 0){ //down
-                direction[6].setVisible(true);
+                bullet[6].setVisible(true);
             } else { //up
-                direction[2].setVisible(true);
+                bullet[2].setVisible(true);
             }
             return;
         }
 
         if (Double.compare(deltaY, 0) == 0){
             if (deltaX > 0){ //right
-                direction[0].setVisible(true);
+                bullet[0].setVisible(true);
             } else { //left
-                direction[4].setVisible(true);
+                bullet[4].setVisible(true);
             }
             return;
         }
@@ -371,84 +367,86 @@ class BulletView extends StackPane{
 
         if (deltaY < 0){ //upwards
             if (slope >= 3 || slope <= -3){
-                direction[2].setVisible(true);
+                bullet[2].setVisible(true);
                 return;
             }
 
             if (slope <= 0.25){
-                direction[0].setVisible(true);
+                bullet[0].setVisible(true);
                 return;
             }
 
             if (slope >= -0.25){
-                direction[4].setVisible(true);
+                bullet[4].setVisible(true);
                 return;
             }
 
             if (slope >= 0.25 && slope <= 3){
-                direction[1].setVisible(true);
+                bullet[1].setVisible(true);
                 return;
             }
 
             if (slope <= -0.25 && slope >= -3){
-                direction[3].setVisible(true);
+                bullet[3].setVisible(true);
                 return;
             }
         } else{
             if (slope >= 3 || slope <= -3){
-                direction[6].setVisible(true);
+                bullet[6].setVisible(true);
                 return;
             }
 
             if (slope <= 0.25){
-                direction[4].setVisible(true);
+                bullet[4].setVisible(true);
                 return;
             }
 
             if (slope >= -0.25){
-                direction[0].setVisible(true);
+                bullet[0].setVisible(true);
                 return;
             }
 
             if (slope >= 0.25 && slope <= 3){
                 System.out.println("v");
-                direction[5].setVisible(true);
+                bullet[5].setVisible(true);
                 return;
             }
 
             if (slope <= -0.25 && slope >= -3){
-                direction[7].setVisible(true);
+                bullet[7].setVisible(true);
                 return;
             }
         }
-    }
+    }*/
 
     public void shoot(Dimension start, Dimension dest, double duration, int cycle){
-        double deltaX = dest.getX() - start.getX();
+        /*double deltaX = dest.getX() - start.getX();
         double deltaY = dest.getY() - start.getY();
-        setDirection(deltaX, deltaY);
+        setDirection(deltaX, deltaY);*/
 
 
 
-        PathTransition pt = new PathTransition(
+        /*PathTransition pt = new PathTransition(
                 Duration.millis(duration),
                 new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
                 this
-        );
+        );*/
+
+        bullet.setVisible(true);
 
         PathTransition pt1 = new PathTransition(
                 Duration.millis(duration),
-                new Path(new MoveTo(start.getX() + 32, start.getY() + 32), new LineTo(dest.getX(), dest.getY())),
+                new Path(new MoveTo(start.getX() + 16, start.getY() + 16), new LineTo(dest.getX() + 16, dest.getY() + 16)),
                 this
         );
         pt1.setCycleCount(cycle);
         pt1.play();
 
-        Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 10),
+        Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 20),
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        clear();
+                        bullet.setVisible(false);
                     }
                 }));
         clearingTime.setCycleCount(1);
