@@ -377,7 +377,9 @@ class BulletView extends StackPane{
                 }));
         clearingTime.setCycleCount(1);
         clearingTime.play();
-        player=new MediaPlayer(sound);
+        for (int i=0;i<cycle;i++){
+            player.play();
+            player=new MediaPlayer(sound);}
         
     }
 
