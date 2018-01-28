@@ -17,7 +17,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class AlienCreeps extends Application {
+    static boolean START = false;
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
     private static int CURRENT_DAY = 0;
@@ -64,40 +64,41 @@ public class AlienCreeps extends Application {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
-                        //      gameMap.randomWeather();
-                    }
-                    if (CURRENT_SECOND < 9) { //9
-                        CURRENT_SECOND++;
-                        //     gameMap.plague();
-                    } else if (CURRENT_HOUR < 23) { //23
-                        //      gameMap.superNaturalHelp();
-                       //      gameMap.naturalDisaster();
-                        CURRENT_HOUR++;
-                        CURRENT_SECOND = 0;
-                    } else {
-                        //      gameMap.setCanUpgradeSoldiers();
-                        //      gameMap.randomWeather();
-                        CURRENT_DAY++;
-                        CURRENT_HOUR = 0;
-                        CURRENT_SECOND = 0;
-                    }
-                    updateTime(CURRENT_DAY,CURRENT_HOUR,CURRENT_SECOND);
+                    if (START){
+                        if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
+                            //      gameMap.randomWeather();
+                        }
+                        if (CURRENT_SECOND < 9) { //9
+                            CURRENT_SECOND++;
+                            //     gameMap.plague();
+                        } else if (CURRENT_HOUR < 23) { //23
+                            //      gameMap.superNaturalHelp();
+                            //      gameMap.naturalDisaster();
+                            CURRENT_HOUR++;
+                            CURRENT_SECOND = 0;
+                        } else {
+                            //      gameMap.setCanUpgradeSoldiers();
+                            //      gameMap.randomWeather();
+                            CURRENT_DAY++;
+                            CURRENT_HOUR = 0;
+                            CURRENT_SECOND = 0;
+                        }
+                        updateTime(CURRENT_DAY,CURRENT_HOUR,CURRENT_SECOND);
 
                     /*System.out.println("------------------------");
                     System.out.println("Current second = " + CURRENT_SECOND);
                     System.out.println("Current hour = "  + CURRENT_HOUR);
                     System.out.println("Current day = " + CURRENT_DAY);*/
-                    gameMap.nextSecond();
-                    if (gameEnded){
-                        System.out.println("GAME ENDED");
-                        System.exit(0);
+                        gameMap.nextSecond();
+                        if (gameEnded){
+                            System.out.println("GAME ENDED");
+                            //System.exit(0);
                         /*try {
                             stop();
                         } catch (Exception e) {
                             e.printStackTrace();
                         }*/
-                    }
+                        }
 
                     /*synchronized (lock){
                         if (gameMap.nextSecond()) {
@@ -109,6 +110,7 @@ public class AlienCreeps extends Application {
                             return;
                         }
                     }*/
+                    }
                 }
             }
         };
@@ -208,7 +210,7 @@ public class AlienCreeps extends Application {
                 popupHeroDimStage.setY(200);
                 popupHeroDimStage.showAndWait();
             } else if (event.getCode() == KeyCode.B){
-                askWeaponScene.setRoot(createAskWeaponContent());
+//                askWeaponScene.setRoot(createAskWeaponContent());
                 stage.setScene(askWeaponScene);
                 stage.show();
             } else if (event.getCode() == KeyCode.TAB){
@@ -255,6 +257,9 @@ public class AlienCreeps extends Application {
         stage = primaryStage;
         menuScene.setRoot(createMenuContent());
         stage.setScene(menuScene);
+
+        gameScene.setRoot(createGameContent());
+        askWeaponScene.setRoot(createAskWeaponContent());
 
         popupHeroDimScene.setRoot(createPopupHeroDimContent());
         popupHeroDimStage.setScene(popupHeroDimScene);
@@ -306,7 +311,8 @@ public class AlienCreeps extends Application {
         root.getChildren().add(timeText);
         root.getChildren().add(hero.getWarriorView());
 
-        launchGame();
+
+//        launchGame();
 
         return root;
     }
@@ -335,13 +341,25 @@ public class AlienCreeps extends Application {
 
         String address = "res/menu/ask_weapon/";
 
+        Image barrack_btn = new Image(getClass()
+                .getResource(address + "Barrack.png").toExternalForm());
+        MenuItem barrack = new MenuItem(barrack_btn);
+        barrack.setDim(50, 220);
+        ImageView barrack_view = new ImageView(new Image(getClass()
+                .getResource(address + "Barrack_view.png").toExternalForm()));
+        barrack_view.relocate(67, 110);
+        barrack.setOnAction(() -> {
+            requestWeapon = "barrack";
+            popupLocationNUmStage.show();
+        });
+
         Image rocket_btn = new Image(getClass()
                 .getResource(address + "Rocket.png").toExternalForm());
         MenuItem rocket = new MenuItem(rocket_btn);
-        rocket.setDim(100, 220);
+        rocket.setDim(190, 220);
         ImageView rocket_view = new ImageView(new Image(getClass()
                 .getResource(address + "Rocket_view.png").toExternalForm()));
-        rocket_view.relocate(110, 110);
+        rocket_view.relocate(195, 110);
         rocket.setOnAction(() -> {
             requestWeapon = "rocket";
             popupLocationNUmStage.show();
@@ -351,10 +369,10 @@ public class AlienCreeps extends Application {
         Image freezer_btn = new Image(getClass()
                 .getResource(address + "Freezer.png").toExternalForm());
         MenuItem freezer = new MenuItem(freezer_btn);
-        freezer.setDim(280, 220);
+        freezer.setDim(340, 220);
         ImageView freezer_view = new ImageView(new Image(getClass()
                 .getResource(address + "Freezer_view.png").toExternalForm()));
-        freezer_view.relocate(280, 100);
+        freezer_view.relocate(345, 100);
         freezer.setOnAction(() -> {
             requestWeapon = "freezer";
             popupLocationNUmStage.show();
@@ -400,7 +418,11 @@ public class AlienCreeps extends Application {
             popupLocationNUmStage.show();
         });
 
-        root.getChildren().addAll(background, title, rocket, rocket_view,
+
+
+        root.getChildren().addAll(background, title,
+                barrack, barrack_view,
+                rocket, rocket_view,
                 freezer, freezer_view,
                 antiaircraft, antiaircraft_view,
                 machine_gun, machine_gun_view,
@@ -409,6 +431,10 @@ public class AlienCreeps extends Application {
         askWeaponScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER){
                 stage.setScene(gameScene);
+                if (!START){
+                    START = true;
+                    launchGame();
+                }
             }
         });
 
@@ -429,8 +455,9 @@ public class AlienCreeps extends Application {
 
         MenuItem new_item = new MenuItem("NewGame");
         new_item.setOnAction(() -> {
-            gameScene.setRoot(createGameContent());
-            stage.setScene(gameScene);
+//            gameScene.setRoot(createGameContent());
+//            stage.setScene(gameScene);
+            stage.setScene(askWeaponScene);
             stage.show();
         });
         new_item.setDim(390, 300);

@@ -559,6 +559,9 @@ public class GameMap {
                 if (this.barrack == null) {
                     if (hero.getMoney() >= 90) {
                         this.barrack = new Barrack(dimension);
+                        Platform.runLater(() -> AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                barrack.getBarrackView()));
+
                         specifiedLocations.put(dimension, this.barrack);
                         this.hero.reduceMoney(90);
                         barrack.requestSoldier(hero.getResurrectionTime());

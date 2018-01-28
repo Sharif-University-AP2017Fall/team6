@@ -403,17 +403,17 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     private double getInitialRadius(String a) {
         switch (a.toLowerCase()) {
             case "machine gun":
-                return 10/3;
+                return 10/5;
             case "rocket":
-                return 20/3;
+                return 20/5;
             case "laser":
-                return 10/3;
+                return 10/5;
             case "antiaircraft":
-                return 15/3;
+                return 15/5;
             case "freezer":
-                return 10/3;
+                return 10/5;
             case "tesla":
-                return 20/3;
+                return 20/5;
             default:
                 return -1;
         }

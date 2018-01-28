@@ -1,3 +1,7 @@
+import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,8 @@ public class Barrack implements Mappable {
     private int currentTime;
     private Soldier training;
 
+    private ImageView barrackView;
+
 
     public Barrack(int price, Dimension dimension) {
         this.price = price;
@@ -17,6 +23,11 @@ public class Barrack implements Mappable {
         this.inUse = false;
         this.currentTime = 0;
         timeNeeded = new ArrayList<>();
+
+    }
+
+    public ImageView getBarrackView() {
+        return barrackView;
     }
 
     @Override
@@ -32,6 +43,13 @@ public class Barrack implements Mappable {
         this.currentTime = 0;
         this.training = null;
         timeNeeded = new ArrayList<>();
+
+        barrackView = new ImageView(new Image(getClass()
+                .getResource("res/weapons/barrack/barrack.png").toExternalForm()));
+        barrackView.setFitWidth(64);
+        barrackView.setFitHeight(64);
+        barrackView.setVisible(true);
+        barrackView.relocate(dimension.getX() - 32, dimension.getY() - 32);
     }
 
     void requestSoldier(int timeNeeded) {
@@ -43,26 +61,28 @@ public class Barrack implements Mappable {
     }
 
     void proceed() {
-        if (inUse) {
-            //        System.out.println("barrack in currently in use");
-            currentTime++;
-            //        System.out.println("current time is " + currentTime);
-            //       System.out.println("time left is " + (timeNeeded - currentTime));
-            if (currentTime >= timeNeeded.get(0)) {
-                training = new Soldier();
-                Thread soldierLifeCycle = new Thread(training);
-                soldierLifeCycle.start();
-                currentTime = 0;
-                timeNeeded.remove(0);
-                soldiersInDemand--;
-                //           System.out.println(soldiersInDemand + " soldiers left to make");
-                if (soldiersInDemand == 0) {
-                    inUse = false;
-                    //timeNeeded = 0;
+        if (AlienCreeps.START){
+            if (inUse) {
+                //        System.out.println("barrack in currently in use");
+                currentTime++;
+                //        System.out.println("current time is " + currentTime);
+                //       System.out.println("time left is " + (timeNeeded - currentTime));
+                if (currentTime >= timeNeeded.get(0)) {
+                    training = new Soldier();
+                    Thread soldierLifeCycle = new Thread(training);
+                    soldierLifeCycle.start();
+                    currentTime = 0;
+                    timeNeeded.remove(0);
+                    soldiersInDemand--;
+                    //           System.out.println(soldiersInDemand + " soldiers left to make");
+                    if (soldiersInDemand == 0) {
+                        inUse = false;
+                        //timeNeeded = 0;
+                    }
                 }
+            } else {
+                //       System.out.println("barrack is not in use");
             }
-        } else {
-            //       System.out.println("barrack is not in use");
         }
     }
 

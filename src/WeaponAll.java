@@ -246,31 +246,22 @@ class WeaponAllView extends WeaponView {
 
 
 class ShootViewAll extends StackPane {
-       
-    
-    int ind=0; 
-    ImageView[] bullet=new ImageView[6];
-    ShootViewAll(Dimension dim1, String name ){
-    
-          
-         
-         
-         
-                    
-           for (int i=0;i<6;i++){
-               
-               bullet[i]=new ImageView(new Image(getClass()
-                         .getResource("res/weapons/" + name +"/"+String.valueOf(i+10)+".png").toExternalForm()));
-               bullet[i].setFitWidth(32*(i+1));
-               bullet[i].setFitHeight(32*(i+1));
-               bullet[i].setVisible(false);
-               
-           }         
+    int ind = 0;
+    ImageView[] bullet = new ImageView[6];
 
-           Platform.runLater(new Runnable() {
-               
-                            @Override
-                            public void run() {
+    ShootViewAll(Dimension dim1, String name) {
+
+        for (int i = 0; i < 6; i++) {
+            bullet[i] = new ImageView(new Image(getClass()
+                    .getResource("res/weapons/" + name + "/" + String.valueOf(i + 10) + ".png").toExternalForm()));
+            bullet[i].setFitWidth(32 * (i + 1));
+            bullet[i].setFitHeight(32 * (i + 1));
+            bullet[i].setVisible(false);
+
+        }
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
                                 /*
                                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
                                                                      .getChildrenUnmodifiable().size(),bullet[0]);          
@@ -286,69 +277,42 @@ class ShootViewAll extends StackPane {
                                                                      .getChildrenUnmodifiable().size(),bullet[5]);
                                          
 */
+                getChildren().addAll(bullet);
+                setTranslateX(dim1.getX() - 96);
+                setTranslateY(dim1.getY() - 96);
 
-                                getChildren().addAll(bullet);
-                                setTranslateX(dim1.getX()-96);
-                                setTranslateY(dim1.getY()-96);
-                                
-                            }
-                            
-                           
-                        });
-        
-          Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                
-                                Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
+            }
+        });
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
 
+                Timeline timeline = new Timeline(new KeyFrame(Duration.millis(50), new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        clear();
+                        if (ind < 5) {
+                            bullet[ind].setVisible(true);
+                        }
 
-                                            @Override
-                                            public void handle(ActionEvent event) {
-                                                 clear();
-                                                 if(ind<5)
-                                                    {
-                                                    bullet[ind].setVisible(true);
-                                                    }
-                                                    
-                                                 ind++;
-                                                }
-                                }));
-                                
-                                
-                                
-                                
-                                timeline.setCycleCount(6);
-                                timeline.play();
-                                
- 
-                            }
-                            
-                           
-                        });
-        
-          
-          
-          
-          
-    
-    }
-    
-    
-    
-    public void clear(){
-    
-         bullet[0].setVisible(false);
-         bullet[1].setVisible(false);
-         bullet[2].setVisible(false);
-         bullet[3].setVisible(false);
-         bullet[4].setVisible(false);
-         bullet[5].setVisible(false);
-         
+                        ind++;
+                    }
+                }));
+                timeline.setCycleCount(6);
+                timeline.play();
+            }
+        });
     }
 
 
-
+    public void clear() {
+        bullet[0].setVisible(false);
+        bullet[1].setVisible(false);
+        bullet[2].setVisible(false);
+        bullet[3].setVisible(false);
+        bullet[4].setVisible(false);
+        bullet[5].setVisible(false);
+    }
 }
 
 
