@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class AlienCreeps extends Application {
+public class AlienCreeps_c extends Application {
     static boolean START = false;
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
@@ -543,8 +543,7 @@ public class AlienCreeps extends Application {
             }*/
 
 
-
-                     new Myserver().start(new Stage());
+            new MyClient().start(new Stage());
 
 
 
