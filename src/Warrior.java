@@ -153,12 +153,13 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                             //     System.out.println(this.getClass().getName() + "has " + (maxBullet - numBullet) + " bullets left");
 
                             if (this.isDead()){
-                            //    System.out.println(this.getClass().getName() + " died");
+                                System.out.println(this.getClass().getName() + " died");
                                 /*if (!min.isDead()){
                                     min.backToNormalSpeed();
                                 }*/
 
                                 if (this.getClass().getName().toLowerCase().equals("hero")){
+                                    System.out.println("RES = " + AlienCreeps.gameMap.getHero().getResurrectionTime());
                                     AlienCreeps.gameMap.secondsLeftToResurrectHero = AlienCreeps.gameMap.getHero().getResurrectionTime();
 
                                 } else{

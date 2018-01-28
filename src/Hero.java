@@ -86,6 +86,7 @@ public class Hero extends Warrior {
 
     int getResurrectionTime() {
         this.calculateResurrectionTime();
+        System.out.println("RES = " + resurrectionTime);
         return resurrectionTime;
     }
 

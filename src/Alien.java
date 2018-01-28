@@ -1,26 +1,13 @@
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 //import sun.jvm.hotspot.gc_implementation.g1.G1HeapRegionTable;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
 
 public class Alien implements Movable, Comparable, Runnable {
 
@@ -55,7 +42,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** VIEW ***/
     private AlienView alienView;
-    private AlienLifeBar alienLifeBar;
+    private ProgressBar progressBar;
 
     public static boolean addDeadAliens(Alien rip){
         if (!deadAliens.contains(rip)){
@@ -69,7 +56,7 @@ public class Alien implements Movable, Comparable, Runnable {
     Alien(String name) {
         currentDim = new Dimension(0.0, 0.0);
         alienView = new AlienView("aliens", name);
-        alienLifeBar = new AlienLifeBar();
+        progressBar = new ProgressBar("health");
 
         this.cycleNumLeft = 10;
         this.cycleNum = 10;
@@ -165,7 +152,7 @@ public class Alien implements Movable, Comparable, Runnable {
             System.out.println("reduction amount : " + amount);
             System.out.println("new energy : " + (this.energy - amount));*/
             this.energy -= amount;
-            getAlienLifeBar();
+            getProgressBar();
         }
     }
 
@@ -186,7 +173,7 @@ public class Alien implements Movable, Comparable, Runnable {
                 @Override
                 public void run() {
                     AlienCreeps.removeElementFromGameRoot(alienView);
-                    AlienCreeps.removeElementFromGameRoot(alienLifeBar);
+                    AlienCreeps.removeElementFromGameRoot(progressBar);
                 }
             });
             return true;
@@ -241,6 +228,7 @@ public class Alien implements Movable, Comparable, Runnable {
                         return false;
                     }
                     if (warrior.isDead()) {
+                        backToNormalSpeed();
                         setShoot(false);
                         setToShoot(null);
                         return true;
@@ -438,11 +426,11 @@ public class Alien implements Movable, Comparable, Runnable {
         this.threadID = threadID;
     }
 
-    public AlienLifeBar getAlienLifeBar() {
+    public ProgressBar getProgressBar() {
         //System.out.println("getting alien life bar");
         //System.out.println("updating progress bar, initial energy = " + initialEnergy);
-        alienLifeBar.setProgress(energy, initialEnergy);
-        return alienLifeBar;
+        progressBar.setProgress(energy, initialEnergy);
+        return progressBar;
     }
 }
 
@@ -716,14 +704,14 @@ public class Alien implements Movable, Comparable, Runnable {
      }
  }
 
-class AlienLifeBar extends StackPane{
+class ProgressBar extends StackPane{
 
     ImageView[] progress = new ImageView[9];
 
-    AlienLifeBar(){
+    ProgressBar(String kind){
         for (int i = 0; i < 9; i++){
             progress[i] = new ImageView(new Image(getClass()
-                    .getResource("res/progressbar/health/" + i + ".png").toExternalForm()));
+                    .getResource("res/progressbar/" + kind + "/" + i + ".png").toExternalForm()));
             progress[i].setVisible(false);
             progress[i].setFitWidth(300 - 30);
             progress[i].setFitHeight(50 - 5);
@@ -734,10 +722,10 @@ class AlienLifeBar extends StackPane{
         relocate(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
     }
 
-    public void setProgress(int alienEnergy, int maximumEnergy){
+    public void setProgress(int current, int max){
 
-        double percent = (((double) alienEnergy) / maximumEnergy) * 100;
-        //System.out.println(percent + " = " + alienEnergy + " / " + maximumEnergy);
+        double percent = (((double) current) / max) * 100;
+        //System.out.println(percent + " = " + current + " / " + max);
         //System.out.println("energy percent = " + percent);
         for (int i = 9; i >= 1; i--){
             if (percent >= i * 10){

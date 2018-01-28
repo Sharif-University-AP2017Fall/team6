@@ -69,7 +69,7 @@ public class AlienCreeps extends Application {
                         if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
                             //      gameMap.randomWeather();
                         }
-                        if (CURRENT_SECOND < 9) { //9
+                        if (CURRENT_SECOND < 60) { //9
                             CURRENT_SECOND++;
                             //     gameMap.plague();
                         } else if (CURRENT_HOUR < 23) { //23
@@ -78,7 +78,7 @@ public class AlienCreeps extends Application {
                             CURRENT_HOUR++;
                             CURRENT_SECOND = 0;
                         } else {
-                            //      gameMap.setCanUpgradeSoldiers();
+                                  gameMap.setCanUpgradeSoldiers();
                             //      gameMap.randomWeather();
                             CURRENT_DAY++;
                             CURRENT_HOUR = 0;
@@ -215,13 +215,15 @@ public class AlienCreeps extends Application {
                 gameMap.focusWeapons();
             } else if (event.getCode() == KeyCode.SHIFT){
                 gameMap.focusAliens();
-            } else if (event.getCode() == KeyCode.U){
+            } else if (event.getCode() == KeyCode.W){
                 gameMap.upgradeWeapon();
             } else if (event.getCode() == KeyCode.T){
                 popupTeslaDimStage.showAndWait();
             } else if(event.getCode() == KeyCode.ESCAPE){
                 gameMap.unFocusAll();
-            } else{
+            } else if (event.getCode() == KeyCode.S){
+                gameMap.upgradeSoldier();
+            }else{
                 gameMap.moveHero(event);
             }
         });
@@ -302,6 +304,8 @@ public class AlienCreeps extends Application {
 
          gameEnded = true;
 
+         gameMap.stopWalking();
+
         boolean finalGameOver = gameOver;
         Platform.runLater(() -> {
             popupEndGameScene.setRoot(game.createEndGameContent(finalGameOver));
@@ -311,7 +315,7 @@ public class AlienCreeps extends Application {
         Timeline end = new Timeline(new KeyFrame(Duration.millis(1500), new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Platform.exit();
+               // Platform.exit();
                 System.exit(0);
             }
         }));

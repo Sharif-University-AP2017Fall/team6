@@ -1,23 +1,12 @@
 
-import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.scene.PointLight;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
-import sun.awt.windows.ThemeReader;
-import sun.java2d.pipe.ShapeSpanIterator;
 
-import java.sql.Time;
 import java.util.*;
-
-
-import javafx.scene.text.Text;
-
-import javax.swing.plaf.TableHeaderUI;
 
 public class GameMap {
     static double XBOUND = 895;
@@ -57,7 +46,7 @@ public class GameMap {
             return;
         }
 
-        System.out.println("NUM = " + Alien.getNUM());
+      //  System.out.println("NUM = " + Alien.getNUM());
         /*if (Alien.isSTART()) {
             System.out.println("NUM = " + Alien.getNUM());
             if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
@@ -369,6 +358,8 @@ public class GameMap {
                     public void run() {
                         AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                 hero.getWarriorView());
+                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                hero.getBulletView());
                     }
                 });
             }
@@ -389,7 +380,7 @@ public class GameMap {
 
                         hero.getSoldiers()[i] = soldier;
 
-                        new Thread(soldier).start();
+                       // new Thread(soldier).start();
 
                         int finalI = i;
                         soldier.setWarriorView(finalI + 1, hero.getDimension().add(hero.getSoldierDims()[finalI]));
@@ -399,8 +390,8 @@ public class GameMap {
 
                                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                         soldier.getWarriorView());
-                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                        soldier.getBulletView());
+                              //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                //        soldier.getBulletView());
                             }
                         });
            //             System.out.println("BARRACK MADE NEW SOLDIER");
@@ -453,8 +444,9 @@ public class GameMap {
 
     void upgradeSoldier() {
         if (canUpgradeSoldiers) {
-            this.hero.upgradeSoldiers();
-            canUpgradeSoldiers = false;
+            if (this.hero.upgradeSoldiers()) {
+                canUpgradeSoldiers = false;
+            }
         } else {
             System.out.println("Can't upgrade soldiers twice in one day. Try again tomorrow.");
         }
@@ -563,10 +555,20 @@ public class GameMap {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI).getAlienLifeBar());
+                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI).getProgressBar());
                     }
                 });
             }
+        }
+    }
+
+    void stopWalking(){
+        ArrayList<Alien> allAliens = new ArrayList<>();
+        for (int i = 0; i < routes.size(); i++){
+            allAliens.addAll(routes.get(i).getAliens());
+        }
+        for (int i = 0; i < allAliens.size(); i++){
+            allAliens.get(i).stop();
         }
     }
 
@@ -597,7 +599,7 @@ public class GameMap {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI1).getAlienLifeBar());
+                        AlienCreeps.removeElementFromGameRoot(allAliens.get(finalI1).getProgressBar());
                     }
                 });
 
@@ -608,7 +610,7 @@ public class GameMap {
                         @Override
                         public void run() {
                             AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                    allAliens.get(finalI + 1).getAlienLifeBar());
+                                    allAliens.get(finalI + 1).getProgressBar());
                         }
                     });
                 }else{
@@ -617,7 +619,7 @@ public class GameMap {
                         @Override
                         public void run() {
                             AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                    allAliens.get(0).getAlienLifeBar());
+                                    allAliens.get(0).getProgressBar());
                         }
                     });
                 }
@@ -630,7 +632,7 @@ public class GameMap {
                 @Override
                 public void run() {
                     AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                            allAliens.get(0).getAlienLifeBar());
+                            allAliens.get(0).getProgressBar());
                 }
             });
         }
@@ -838,7 +840,7 @@ public class GameMap {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                AlienCreeps.removeElementFromGameRoot(alien.getAlienLifeBar());
+                                AlienCreeps.removeElementFromGameRoot(alien.getProgressBar());
                                 AlienCreeps.removeElementFromGameRoot(alien.getAlienView());
                             }
                         });
