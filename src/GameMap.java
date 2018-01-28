@@ -502,6 +502,7 @@ public class GameMap {
     }
 
     void focusWeapons() {
+
         ArrayList<Weapon> weapons = new ArrayList<>();
 
         for (Integer integer : specifiedNumbers.keySet()) {
