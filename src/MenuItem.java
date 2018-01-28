@@ -1,3 +1,4 @@
+import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Pos;
@@ -7,6 +8,8 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -17,6 +20,10 @@ public class MenuItem extends StackPane{
     private Text msg;
     private Glow glow;
 
+    
+    Media sound=new Media(getClass().getResource("res/sound/click.wav").toExternalForm());
+    MediaPlayer player=new MediaPlayer(sound);
+    
     public MenuItem(String type){
         setAlignment(Pos.CENTER);
 
@@ -96,6 +103,8 @@ public class MenuItem extends StackPane{
 
     public void setOnAction(Runnable action){
         setOnMouseClicked(event -> {
+            
+            player.play();
             action.run();
             /*Timeline act = new Timeline(new KeyFrame(Duration.millis(100),
                     event1 -> action.run()));
@@ -104,3 +113,34 @@ public class MenuItem extends StackPane{
         });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
