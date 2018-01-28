@@ -54,8 +54,8 @@ public class Barrack implements Mappable {
     }
 
     void requestSoldier(int timeNeeded) {
-        System.out.println("adding one soldier in line");
-        System.out.println("waiting time = " + timeNeeded);
+  //      System.out.println("adding one soldier in line");
+    //    System.out.println("waiting time = " + timeNeeded);
         this.timeNeeded.add(timeNeeded);
         inUse = true;
         soldiersInDemand++;

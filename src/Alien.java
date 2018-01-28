@@ -26,7 +26,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
     private static int NUM = 0;
-    private static int MAXNUM = 1;//5;
+    private static int MAXNUM = 5;//5;
     private static boolean START = false;
     private static ArrayList<Alien> deadAliens = new ArrayList<>();
 

@@ -2,6 +2,7 @@
 import com.sun.deploy.util.DeployUIManager;
 import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import javafx.application.Platform;
+import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -287,4 +288,8 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
     public Dimension getShootingPoint() {
         return this.dimension;
     }
+}
+
+class BulletView extends StackPane{
+
 }

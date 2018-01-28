@@ -732,7 +732,7 @@ public class GameMap {
                         name = "Aironion";
                         break;
                 }
-                newAlien = new Alien("Activionion");
+                newAlien = new Alien(name);
 
                 Platform.runLater(new Runnable() {
                     @Override
