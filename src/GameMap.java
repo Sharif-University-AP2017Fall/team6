@@ -842,7 +842,7 @@ public class GameMap {
                 int whichAlien = (int) (Math.random() * 4);
                 String name = null;
                 Alien newAlien;
-
+                
                 switch (whichAlien) {
                     case 0:
                         name = "Albertonion";
@@ -857,28 +857,37 @@ public class GameMap {
                         name = "Aironion";
                         break;
                 }
-                newAlien = new Alien(name);
+                
+                /** changing ALIEN creation for Custom  **/
+                
+                if (Alien.getHashMap().containsKey(name.toLowerCase())){
+                    
+                    newAlien = new Alien(name);
 
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                newAlien.getAlienView());
-                      //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                        //        newAlien.getBulletView());
-                    }
-                });
-            //    System.out.println(name + " entered!");
-                Thread alienLifeCycle = new Thread(newAlien);
-                alienLifeCycles.add(alienLifeCycle);
-                alienLifeCycle.start();
-                newAlien.setThreadID(alienLifeCycle.getId());
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                    newAlien.getAlienView());
+                          //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                            //        newAlien.getBulletView());
+                        }
+                    });
+                //    System.out.println(name + " entered!");
+                    Thread alienLifeCycle = new Thread(newAlien);
+                    alienLifeCycles.add(alienLifeCycle);
+                    alienLifeCycle.start();
+                    newAlien.setThreadID(alienLifeCycle.getId());
 
-                int routeNumber = chooseRandomRoute();
-                Route whichRoute = routes.get(routeNumber);
+                    int routeNumber = chooseRandomRoute();
+                    Route whichRoute = routes.get(routeNumber);
 
-                newAlien.move(whichRoute.getLines()[0].getStartPoint());
-                whichRoute.getAlienMap().get(whichRoute.getLines()[0]).add(newAlien);
+                    newAlien.move(whichRoute.getLines()[0].getStartPoint());
+                    whichRoute.getAlienMap().get(whichRoute.getLines()[0]).add(newAlien);
+                }
+                
+                
+                
             }
         }
     }

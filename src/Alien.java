@@ -62,6 +62,12 @@ public class Alien implements Movable, Comparable, Runnable {
     }
     
     
+    public static HashMap<String,InitialAlien> getHashMap(){
+    
+        return initialAlien;
+    
+    }
+    
     /***** changing static Initial Alien  ******/
     static void changeInitialEnergy(String name,int changed){
         
@@ -169,51 +175,7 @@ public class Alien implements Movable, Comparable, Runnable {
         this.type = initialAlien.get(name).getType();
         this.canFly = initialAlien.get(name).isCanFly();
         
-        /*switch (name) {
-            case "Albertonion":
-                this.energy = 250;
-                this.initialEnergy = 250;
-                this.speed = 4; //8
-                this.initialSpeed = 4; //8
-                this.shootingSpeed = 5;
-                this.strength = 7;
-                this.type = 0;
-                this.canFly = false;
-                break;
-            case "Algwasonion":
-                this.energy = 150;
-                this.initialEnergy = 150;
-                this.speed = 3; //4
-                this.initialSpeed = 3; //4
-                this.shootingSpeed = 10;
-                this.strength = 25;
-                this.type = 1;
-                this.canFly = false;
-                break;
-            case "Activionion":
-                this.energy = 400;
-                this.initialEnergy = 400;
-                this.initialSpeed = 1; //2
-                this.shootingSpeed = 2;
-                this.strength = 40;
-                this.type = 2;
-                this.canFly = false;
-                break;
-            case "Aironion":
-                this.energy = 200;
-                this.initialEnergy = 200;
-                this.speed = 2; //5
-                this.initialSpeed = 2; //5
-                this.shootingSpeed = 5;
-                this.strength = 20;
-                this.type = 3;
-                this.canFly = true;
-                break;
-        }*/
-        
-        
-        
-        
+
         this.shouldMove = false;
         this.shouldShoot = false;
     }
