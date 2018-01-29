@@ -845,16 +845,16 @@ public class GameMap {
                 
                 switch (whichAlien) {
                     case 0:
-                        name = "Albertonion";
+                        name = "albertonion";
                         break;
                     case 1:
-                        name = "Algwasonion";
+                        name = "algwasonion";
                         break;
                     case 2:
-                        name = "Activionion";
+                        name = "activionion";
                         break;
                     case 3:
-                        name = "Aironion";
+                        name = "aironion";
                         break;
                 }
                 
