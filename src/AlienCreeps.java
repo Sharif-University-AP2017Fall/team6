@@ -116,11 +116,13 @@ public class AlienCreeps extends Application {
                     }
                     if (START && !ISPAUSED){
                         if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
+                            gameMap.initialNumFlag();
                             //      gameMap.randomWeather();
                         }
                         if (CURRENT_SECOND < 60) { //9
                             CURRENT_SECOND++;
                                  gameMap.plague();
+                                 gameMap.updateNumFlag();
                         } else if (CURRENT_HOUR < 23) { //23
                                   gameMap.superNaturalHelp();
                             //      gameMap.naturalDisaster();

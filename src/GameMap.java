@@ -11,6 +11,9 @@ import java.awt.font.TextHitInfo;
 import java.util.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class GameMap {
     static double XBOUND = 895;
@@ -43,6 +46,33 @@ public class GameMap {
 
     static ParallelTransition parallelTransition = new ParallelTransition();
 
+    Text numFlag=new Text(GameMap.XBOUND+70,GameMap.YBOUND-80,"0");
+    
+    
+    public void initialNumFlag(){
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 15);
+        numFlag.setFont(font);
+        numFlag.setFill(Color.rgb(50, 20, 15));
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        numFlag);
+            }
+        });
+    
+    }
+    
+    public void updateNumFlag(){
+        
+        numFlag.setText(String.valueOf(getNumReachedFlag()));
+    
+    
+    }
+    
     /*** STATIC FOR CUSTOM ***/
     static private int peakHourMax=16;
     static private int peakHourMin=10;        
@@ -932,6 +962,21 @@ public class GameMap {
         names.forEach(System.out::println);
     }
 
+    public int getNumReachedFlag() {
+        int num = 0;
+        ArrayList<String> names = new ArrayList<>();
+        for (Alien alien : reachedFlag) {
+            if (alien != null) {
+                num++;
+                //names.add(alien.getName());
+            }
+        }
+        //System.out.println(num + " aliens have reached flag.");
+        //names.forEach(System.out::println);
+        return num;
+    }
+    
+    
     private boolean reachFlag(Alien alien) {
         for (int i = 0; i < 5; i++) {
             if (reachedFlag[i] == null) {
