@@ -544,7 +544,7 @@ public class GameMap {
         for (Dimension dimension : specifiedLocations.keySet()) {
             if (specifiedLocations.get(dimension) instanceof Weapon) {
                 Weapon w = ((Weapon) specifiedLocations.get(dimension));
-                w.resetRadius();
+                w.resetRadius(reduceRadiusRate);
             }
         }
     }
