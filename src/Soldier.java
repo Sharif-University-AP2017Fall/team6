@@ -28,8 +28,8 @@ public class Soldier extends Warrior {
         setRadius(3);
     }
 
-    void reduceRadius() {
-        setRadius(getRadius() * 0.85);
+    void reduceRadius(double a) {
+        setRadius(getRadius() * a);
     }
 
     Soldier() {

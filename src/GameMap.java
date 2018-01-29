@@ -38,6 +38,105 @@ public class GameMap {
     private boolean hasBurrowed = false;
     private Bank bank = new Bank();
 
+    /*** STATIC FOR CUSTOM ***/
+    static private int peakHourMax=16;
+    static private int peakHourMin=10;        
+    
+    static private int peakHourMaxAlienRate=2;
+    static private int peakHourMinAlienRate=3;
+
+    
+    
+    public static int getPeakHourMax() {
+        return peakHourMax;
+    }
+    
+    
+
+    public static void setPeakHourMax(int peakHourMax) {
+        GameMap.peakHourMax = peakHourMax;
+    }
+
+    
+    
+    public static int getPeakHourMin() {
+        return peakHourMin;
+    }
+
+    
+    public static void setPeakHourMin(int peakHourMin) {
+        GameMap.peakHourMin = peakHourMin;
+    }
+
+    
+    public static int getPeakHourMaxAlienRate() {
+        return peakHourMaxAlienRate;
+    }
+
+    
+    public static void setPeakHourMaxAlienRate(int peakHourMaxAlienRate) {
+        GameMap.peakHourMaxAlienRate = peakHourMaxAlienRate;
+    }
+
+    
+    public static int getPeakHourMinAlienRate() {
+        return peakHourMinAlienRate;
+    }
+
+    
+    public static void setPeakHourMinAlienRate(int peakHourMinAlienRate) {
+        GameMap.peakHourMinAlienRate = peakHourMinAlienRate;
+    }
+    
+    
+    
+    
+                /*** RADIUS RELATED CUSTOM ***/
+    
+    private static int whenReduceRadius=20;
+    private static int whenResetRadius=4;
+
+    public static int getWhenReduceRadius() {
+        return whenReduceRadius;
+    }
+
+    public static void setWhenReduceRadius(int whenReduceRadius) {
+        GameMap.whenReduceRadius = whenReduceRadius;
+    }
+
+    public static int getWhenResetRadius() {
+        return whenResetRadius;
+    }
+
+    public static void setWhenResetRadius(int whenResetRadius) {
+        GameMap.whenResetRadius = whenResetRadius;
+    }
+    private static double reduceRadiusRate=0.85;
+
+    public static double getReduceRadiusRate() {
+        return reduceRadiusRate;
+    }
+
+    public static void setReduceRadiusRate(double reduceRadiusRate) {
+        GameMap.reduceRadiusRate = reduceRadiusRate;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*** OLD CODES ***/
+    
+    
     void nextSecond() {
         oneTimeActions();
 
@@ -332,10 +431,10 @@ public class GameMap {
 
         /**** REDUCING RADIUS BASED ON HOUR ****/
 
-        if (AlienCreeps.getCurrentHour() == 20 && AlienCreeps.getCurrentSecond() == 0) {
+        if (AlienCreeps.getCurrentHour() == whenReduceRadius && AlienCreeps.getCurrentSecond() == 0) {
             reduceRadius();
         }
-        if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == 4) {
+        if (AlienCreeps.getCurrentSecond() == 0 && AlienCreeps.getCurrentHour() == whenResetRadius) {
             resetRadius();
         }
 
@@ -412,10 +511,10 @@ public class GameMap {
 
         /**** GENERATING ALIENS EVERY SECONS ***/
 
-        if (AlienCreeps.getCurrentHour() <= 16 && AlienCreeps.getCurrentHour() >= 10) {
-            generateAliens(2);
+        if (AlienCreeps.getCurrentHour() <=peakHourMax  && AlienCreeps.getCurrentHour() >= peakHourMin) {
+            generateAliens(peakHourMaxAlienRate);
         } else {
-            generateAliens(3);
+            generateAliens(peakHourMinAlienRate);
         }
     }
 
@@ -423,13 +522,13 @@ public class GameMap {
         for (int i = 0; i < 3; i++) {
             Soldier s = hero.getSoldiers()[i];
             if (s != null) {
-                s.reduceRadius();
+                s.reduceRadius(reduceRadiusRate);
             }
         }
         for (Dimension dimension : specifiedLocations.keySet()) {
             if (specifiedLocations.get(dimension) instanceof Weapon) {
                 Weapon w = ((Weapon) specifiedLocations.get(dimension));
-                w.reduceRadius();
+                w.reduceRadius(reduceRadiusRate);
             }
         }
     }
