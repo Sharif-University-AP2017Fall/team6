@@ -34,7 +34,7 @@ public class Soldier extends Warrior {
 
     Soldier() {
        // warriorView = new WarriorView("soldiers", String.valueOf(number) + "/")
-        bulletView = new BulletView();
+        bulletView = new BulletView("soldier");;
         healthBar = new ProgressBar("health");
         healthBar.initBar();
 

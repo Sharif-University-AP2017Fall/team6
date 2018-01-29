@@ -334,7 +334,8 @@ class BulletView extends StackPane{
 
     Media sound=new Media(getClass().getResource("res/sound/hero.wav").toExternalForm());
     MediaPlayer player=new MediaPlayer(sound);
-    
+    boolean shouldPlay=true;
+
     BulletView(){
     //    System.out.println("SETTING BULLET VIEW");
         bullet = new ImageView(new Image(getClass()
@@ -348,6 +349,26 @@ class BulletView extends StackPane{
 //        bullet[0].setVisible(true);
 
        // relocate(400, 500);
+
+        getChildren().add(bullet);
+    }
+
+
+    BulletView(String a){
+        //    System.out.println("SETTING BULLET VIEW");
+        bullet = new ImageView(new Image(getClass()
+                .getResource("res/shoot/bullet4.png").toExternalForm()));
+
+        bullet.setFitWidth(10);
+        bullet.setFitHeight(10);
+        bullet.setVisible(false);
+
+        if (a.equalsIgnoreCase("soldier"))
+            shouldPlay=false;
+
+//        bullet[0].setVisible(true);
+
+        // relocate(400, 500);
 
         getChildren().add(bullet);
     }
@@ -375,9 +396,10 @@ class BulletView extends StackPane{
                 }));
         clearingTime.setCycleCount(1);
         clearingTime.play();
-
-        player=new MediaPlayer(sound);
-        player.play();
+        if(shouldPlay){
+            player=new MediaPlayer(sound);
+            player.play();
+        }
     }
 
 }
