@@ -129,6 +129,7 @@ public class MenuItem extends StackPane{
             
             player.play();
             action.run();
+            player=new MediaPlayer(sound);
             /*Timeline act = new Timeline(new KeyFrame(Duration.millis(100),
                     new EventHandler<ActionEvent>() {
                         @Override
