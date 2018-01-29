@@ -19,9 +19,10 @@ public class InitialWeapon{
         weaponNames.add("Antiaircraft".toLowerCase());
         weaponNames.add("Freezer".toLowerCase());
         weaponNames.add("Barrack".toLowerCase());
+        weaponNames.add("Tesla".toLowerCase());
 
         isOnAirOnly.put("Machine Gun".toLowerCase(), false);
-        radius.put("Machine Gun".toLowerCase(), 2.);
+        radius.put("Machine Gun".toLowerCase(), 3.);
         bulletSpeed.put("Machine Gun".toLowerCase(), 10);
         bulletPower.put("Machine Gun".toLowerCase(), 10);
         bulletPowerAir.put("Machine Gun".toLowerCase(), 5);
@@ -30,7 +31,7 @@ public class InitialWeapon{
 
 
         isOnAirOnly.put("Rocket".toLowerCase(), false);
-        radius.put("Rocket".toLowerCase(), 4.);
+        radius.put("Rocket".toLowerCase(), 5.);
         bulletSpeed.put("Rocket".toLowerCase(), 3);
         bulletPower.put("Rocket".toLowerCase(), 20);
         bulletPowerAir.put("Rocket".toLowerCase(), 10);
@@ -38,7 +39,7 @@ public class InitialWeapon{
         price.put("Rocket".toLowerCase(), 180);
 
         isOnAirOnly.put("Laser".toLowerCase(), false);
-        radius.put("Laser".toLowerCase(), 2.);
+        radius.put("Laser".toLowerCase(), 3.);
         bulletSpeed.put("Laser".toLowerCase(), 7);
         bulletPower.put("Laser".toLowerCase(), 10);
         bulletPowerAir.put("Laser".toLowerCase(), 7);
@@ -46,7 +47,7 @@ public class InitialWeapon{
         price.put("Laser".toLowerCase(), 150);
 
         isOnAirOnly.put("Antiaircraft".toLowerCase(), true);
-        radius.put("Antiaircraft".toLowerCase(), 3.);
+        radius.put("Antiaircraft".toLowerCase(), 4.);
         bulletSpeed.put("Antiaircraft".toLowerCase(), 15);
         bulletPower.put("Antiaircraft".toLowerCase(), 0);
         bulletPowerAir.put("Antiaircraft".toLowerCase(), 12);
@@ -54,12 +55,14 @@ public class InitialWeapon{
         price.put("antiaircraft".toLowerCase(), 180);
 
         isOnAirOnly.put("Freezer".toLowerCase(), false);
-        radius.put("Freezer".toLowerCase(), 2.);
+        radius.put("Freezer".toLowerCase(), 3.);
         bulletSpeed.put("Freezer".toLowerCase(), 5);
         bulletPower.put("Freezer".toLowerCase(), 5);
         bulletPowerAir.put("Freezer".toLowerCase(), 3);
         speedReduction.put("Freezer".toLowerCase(), 60);
         price.put("freezer".toLowerCase(), 170);
+
+        radius.put("Tesla".toLowerCase(), 7.);
     }
 
     public static boolean getIsOnAirOnly(String name) {

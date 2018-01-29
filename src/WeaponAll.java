@@ -38,7 +38,7 @@ public class WeaponAll extends Weapon {
 
         super(dimension, type, locationNum);
         weaponView = new WeaponAllView(type, dimension);
-        super.setWeaponView(weaponView);
+        setWeaponView(weaponView);
         dim = dimension;
         name = type;
     }
@@ -76,6 +76,17 @@ public class WeaponAll extends Weapon {
 
                 synchronized (lock) {
 
+                    if (numBullet == 0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
+                                        .getChildrenUnmodifiable().size(), new ShootViewAll(dim, name));
+                            }
+
+                        });
+                    }
+
                     ai.reduceSpeed(this.getSpeedReduction() / 100);
 
                     if (ai.isCanFly()) {
@@ -108,18 +119,7 @@ public class WeaponAll extends Weapon {
                         }
                         /******/
                     }
-
                     numBullet++;
-
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot()
-                                    .getChildrenUnmodifiable().size(), new ShootViewAll(dim, name));
-                        }
-
-                    });
-
                 }
             }
             if (numBullet >= maxBullet) { 
@@ -236,10 +236,6 @@ class WeaponAllView extends WeaponView {
      public void clear() {
          pic.setVisible(false);
      }
-
-
-     @Override
-     public  void shoot(Alien min){}
      
      @Override
      public void setPic(int i){}

@@ -336,7 +336,7 @@ class BulletView extends StackPane{
     MediaPlayer player=new MediaPlayer(sound);
     
     BulletView(){
-        System.out.println("SETTING BULLET VIEW");
+    //    System.out.println("SETTING BULLET VIEW");
         bullet = new ImageView(new Image(getClass()
                 .getResource("res/shoot/bullet4.png").toExternalForm()));
 
@@ -354,20 +354,7 @@ class BulletView extends StackPane{
 
 
     public void shoot(Dimension start, Dimension dest, double duration, int cycle){
-        
-        
-        /*double deltaX = dest.getX() - start.getX();
-        double deltaY = dest.getY() - start.getY();
-        setDirection(deltaX, deltaY);*/
 
-
-        /*PathTransition pt = new PathTransition(
-                Duration.millis(duration),
-                new Path(new MoveTo(start.getX(), start.getY()), new LineTo(dest.getX(), dest.getY())),
-                this
-        );*/
-
-//        player.play();
         bullet.setVisible(true);
 
         PathTransition pt1 = new PathTransition(
@@ -376,8 +363,9 @@ class BulletView extends StackPane{
                 this
         );
         pt1.setCycleCount(cycle);
-        pt1.play();
-        
+        GameMap.parallelTransition.getChildren().addAll(pt1);
+        GameMap.parallelTransition.play();
+
         Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 20),
                 new EventHandler<ActionEvent>() {
                     @Override
@@ -387,24 +375,9 @@ class BulletView extends StackPane{
                 }));
         clearingTime.setCycleCount(1);
         clearingTime.play();
-        
-       // Timeline voice= new Timeline(new KeyFrame(Duration.millis(duration),
-        //        new EventHandler<ActionEvent>() {
-         //           @Override
-         //           public void handle(ActionEvent event) {
-          //              player.play();
-         //               player=new MediaPlayer(sound);
-         //           }
-          //      }));
-      //  voice.setCycleCount(cycle);
-      //  voice.play();
-        
-      
-      
-        player.play();
+
         player=new MediaPlayer(sound);
-            
-        
+        player.play();
     }
 
 }

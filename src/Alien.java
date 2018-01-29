@@ -46,7 +46,7 @@ public class Alien implements Movable, Comparable, Runnable {
     private AlienView alienView;
     private ProgressBar progressBar;
 
-    private static HashMap<String,InitialAlien> initialAlien= new HashMap<String,InitialAlien>();
+    private static HashMap<String,InitialAlien> initialAlien = new HashMap<>();
     private static ArrayList<String> initialAlienName = new ArrayList<>();
     
     static{
@@ -62,8 +62,6 @@ public class Alien implements Movable, Comparable, Runnable {
     
     initialAlien.put("Aironion".toLowerCase(), new InitialAlien("Aironion".toLowerCase()));
     initialAlienName.add("Aironion".toLowerCase());
-    //initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
-
     }
     
     
@@ -162,6 +160,8 @@ public class Alien implements Movable, Comparable, Runnable {
     
     
     /*** کد های قبلی ****/
+
+    BulletView bulletView;
      
     
     public static boolean addDeadAliens(Alien rip){
@@ -176,6 +176,8 @@ public class Alien implements Movable, Comparable, Runnable {
     Alien(String name) {
         currentDim = new Dimension(0.0, 0.0);
         alienView = new AlienView("aliens", name);
+        bulletView = new BulletView();
+
         progressBar = new ProgressBar("health");
         progressBar.setDim(GameMap.XBOUND + 15, GameMap.YBOUND - 55);
 
@@ -265,6 +267,7 @@ public class Alien implements Movable, Comparable, Runnable {
                 public void run() {
                     AlienCreeps.removeElementFromGameRoot(alienView);
                     AlienCreeps.removeElementFromGameRoot(progressBar);
+                    AlienCreeps.removeElementFromGameRoot(bulletView);
                 }
             });
             return true;
@@ -304,11 +307,12 @@ public class Alien implements Movable, Comparable, Runnable {
         int maxBullet = shootingSpeed;
         for (int i = 0; i < maxBullet; i++) {
             try {
-                Thread.sleep(1000 / maxBullet - 10);
+                Thread.sleep(1000 / maxBullet - 50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             synchronized (lock2) {
+                bulletView.shoot(currentDim, warrior.getShootingPoint(), 1000 / maxBullet - 55, maxBullet);
                 if (warrior != null){
                     if (energy > 0) {
                         warrior.reduceEnergy(strength);
@@ -557,7 +561,7 @@ public class Alien implements Movable, Comparable, Runnable {
          move_right_index = 0;
          move_left_index = 0;
 
-         String FileName=Alien.getHashMap().get(name).getFileName();
+         String FileName=Alien.getHashMap().get(alienName).getFileName();
          
          String address = "res/" + name + "/movement/" + FileName + "/";
          move_down[0] = new ImageView(new Image(getClass()

@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.FadeTransition;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransition.OrientationType;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
@@ -19,6 +22,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
 //import jdk.management.resource.internal.inst.FileOutputStreamRMHooks;
@@ -43,7 +48,7 @@ public class WeaponNearest extends Weapon {
 
         super(dimension, type, locationNum);
         weaponView=new WeaponNearestView(type,dimension);
-        super.setWeaponView(weaponView);
+        setWeaponView(weaponView);
         bulletView = new BulletView();
     }
 
@@ -86,7 +91,12 @@ public class WeaponNearest extends Weapon {
                 synchronized (lock){
                     if (isShouldShoot()){
                   //      weaponView.shoot(min);
-                        bulletView.shoot(getDimension(), min.getCurrentDim(), 1000 / maxBullet - 55, maxBullet);
+
+                        if (numBullet == 0){
+                            bulletView.shoot(getDimension(), min.getCurrentDim(), 1000 / maxBullet - 55, maxBullet);
+                        }
+                        weaponView.changePic(min.getCurrentDim().getX() - getShootingPoint().getX(),
+                                min.getCurrentDim().getY() - getShootingPoint().getY());
 
                         min.reduceSpeed(this.getSpeedReduction() / 100);
 
@@ -205,10 +215,12 @@ class WeaponNearestView extends WeaponView {
      private boolean isFocus;
 
      public int indB;
+
      
-     public ImageView bul;
-     
-     private String nameW; 
+     private String nameW;
+
+    Media sound=new Media(getClass().getResource("res/sound/hero.wav").toExternalForm());
+    MediaPlayer player=new MediaPlayer(sound);
      
      public WeaponNearestView(String name, Dimension dim_) {
 
@@ -238,14 +250,6 @@ class WeaponNearestView extends WeaponView {
 
          }
 
-
-         bul = new ImageView(new Image(getClass()
-                 .getResource(address + "10.png").toExternalForm()));
-         bul.setFitWidth(10);
-         bul.setFitHeight(10);
-         bul.setVisible(true);
-
-
          pic[4].setVisible(true);
          getChildren().addAll(pic[0],
                  pic[1],
@@ -254,27 +258,11 @@ class WeaponNearestView extends WeaponView {
                  pic[4],
                  pic[5],
                  pic[6],
-                 pic[7],
-                 bul
+                 pic[7]
          );
 
-         setTranslateX(dim_.getX() - 32);
-         setTranslateY(dim_.getY() - 32);
-
-         /*setOnMouseEntered(new EventHandler<MouseEvent>() {
-             @Override
-             public void handle(MouseEvent event) {
-                 onSelect();
-             }
-         });
-
-         setOnMouseExited(new EventHandler<MouseEvent>() {
-             @Override
-             public void handle(MouseEvent event) {
-                 onDeselect();
-             }
-         });*/
-
+         setTranslateX(dim_.getX()-32);
+         setTranslateY(dim_.getY()-32);
      }
 
      @Override
@@ -301,23 +289,8 @@ class WeaponNearestView extends WeaponView {
      
      }
 
-     
-     @Override
-     public void shoot(Alien min) {
-
-         Dimension prey=min.getCurrentDim();
-         double deltaX=Dimension.deltaX(this.dim, prey);
-         double deltaY=Dimension.deltaY(this.dim, prey);
-         
-         changePic(deltaX,deltaY);
-         
-         new ShootView(dim, prey,nameW );
-         
-         
-     }
-
     private void onSelect(){
-        bul.setEffect(new Glow(10));
+        //bul.setEffect(new Glow(10));
         for (int i = 0; i < 8; i++){
             if (pic[i].isVisible()){
                 pic[i].setEffect(new Glow(10));
@@ -326,7 +299,7 @@ class WeaponNearestView extends WeaponView {
     }
 
     private void onDeselect(){
-        bul.setEffect(new Glow(0));
+        //bul.setEffect(new Glow(0));
         for (int i = 0; i < 8; i++){
             pic[i].setEffect(new Glow(0));
         }
@@ -425,12 +398,6 @@ class WeaponNearestView extends WeaponView {
                        return;
                        } 
                 }
-
-
-     
-     
-     
-     
      
      } 
      

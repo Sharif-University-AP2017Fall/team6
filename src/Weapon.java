@@ -72,20 +72,24 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     private void setType(String a) {
         setLevel(1);
 
-        initialPrice = InitialWeapon.getPrice(a.toLowerCase());//Weapon.getInitialPrice(a);
-        setPrice(initialPrice);
+        if (!a.equalsIgnoreCase("tesla")){
+            initialPrice = InitialWeapon.getPrice(a.toLowerCase());//Weapon.getInitialPrice(a);
+            setPrice(initialPrice);
 
-        initialSpeedOfBullet = InitialWeapon.getBulletSpeed(a.toLowerCase());
-        setSpeedOfBullet(initialSpeedOfBullet);
+            initialSpeedOfBullet = InitialWeapon.getBulletSpeed(a.toLowerCase());
+            setSpeedOfBullet(initialSpeedOfBullet);
 
-        initialPowerOfBullet = InitialWeapon.getBulletPower(a.toLowerCase());
-        setPowerOfBullet(initialPowerOfBullet);
+            initialPowerOfBullet = InitialWeapon.getBulletPower(a.toLowerCase());
+            setPowerOfBullet(initialPowerOfBullet);
 
-        initialPowerOfBulletAir = InitialWeapon.getBulletPowerAir(a.toLowerCase());
-        setPowerOfBulletAir(initialPowerOfBulletAir);
+            initialPowerOfBulletAir = InitialWeapon.getBulletPowerAir(a.toLowerCase());
+            setPowerOfBulletAir(initialPowerOfBulletAir);
 
-        initialSpeedReduction = InitialWeapon.getSpeedReduction(a.toLowerCase());
-        setSpeedReduction(initialSpeedReduction);
+            initialSpeedReduction = InitialWeapon.getSpeedReduction(a.toLowerCase());
+            setSpeedReduction(initialSpeedReduction);
+
+        }
+
 
         initialRadius = InitialWeapon.getRadius(a.toLowerCase());
         setRadius(initialRadius);
@@ -242,6 +246,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
         System.out.println("distance : " + this.dimension.distanceFrom(dimension));
         System.out.println("radius : " + this.radius * GameMap.UNIT);
         System.out.println(this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT);*/
+        System.out.println(this.dimension);
+        System.out.println(dimension);
         return this.dimension.distanceFrom(dimension) <= this.radius * GameMap.UNIT;
     }
 

@@ -147,7 +147,7 @@ public class Hero extends Warrior {
 
         setDimension(dimension);
         setMoney(initialMoney);
-        setMaximumMoney(5000);
+        setMaximumMoney(3000);
         setEnergy(300);
         setMaximumEnergy(300);
         setRadius(4);
@@ -263,7 +263,7 @@ public class Hero extends Warrior {
     }
 
     Weapon buyWeapon(String nameOfWeapon, Dimension dimension, int locationNum) {
-        if (this.getMoney() >= Weapon.getInitialPrice(nameOfWeapon)) {
+        if (this.getMoney() >= InitialWeapon.getPrice(nameOfWeapon)) {
             Weapon bought = Weapon.WeaponFactory(dimension, nameOfWeapon, locationNum);
 
             if (bought != null) {
@@ -271,6 +271,7 @@ public class Hero extends Warrior {
             }
             return bought;
         }
+        AlienCreeps.showPopupWarning("Not enough money", 35, 83);
         System.out.println("Not enough money");
         return null;
     }
@@ -287,6 +288,7 @@ public class Hero extends Warrior {
             }
         }
         if (numAlive == 0) {
+            AlienCreeps.showPopupWarning("No soldiers", 105, 105);
             System.out.println("There are no soldiers to upgrade.");
         } else {
             if (this.getMoney() >= numAlive * CoinForEachYarane) {
@@ -298,6 +300,7 @@ public class Hero extends Warrior {
                 }
                 return true;
             } else {
+                AlienCreeps.showPopupWarning("Not enough money", 35, 83);
                 System.out.println("Not enough money");
             }
         }
@@ -498,6 +501,7 @@ public class Hero extends Warrior {
             Dimension.correctDim(newDim);
             this.moveTo = newDim;
         } else {
+            AlienCreeps.showPopupWarning("Out of range.", 70, 80);
             System.out.println("out of range.");
             this.shouldMove = false;
         }

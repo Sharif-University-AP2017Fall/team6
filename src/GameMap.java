@@ -1,4 +1,5 @@
 
+import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,6 +40,8 @@ public class GameMap {
 
     private boolean hasBurrowed = false;
     private Bank bank = new Bank();
+
+    static ParallelTransition parallelTransition = new ParallelTransition();
 
     /*** STATIC FOR CUSTOM ***/
     static private int peakHourMax=16;
@@ -97,6 +100,8 @@ public class GameMap {
     
     private static int whenReduceRadius = 20;
     private static int whenResetRadius = 4;
+    private static double reduceRadiusRate=0.85;
+
 
     public static int getWhenReduceRadius() {
         return whenReduceRadius;
@@ -109,19 +114,17 @@ public class GameMap {
     public static int getWhenResetRadius() {
         return whenResetRadius;
     }
-
     public static void setWhenResetRadius(int whenResetRadius) {
         GameMap.whenResetRadius = whenResetRadius;
     }
-    private static double reduceRadiusRate=0.85;
 
     public static double getReduceRadiusRate() {
         return reduceRadiusRate;
     }
 
-    public static void setReduceRadiusRate(int reduceRadiusRate) {
+    public static void setReduceRadiusRate(double reduceRadiusRate) {
 
-        GameMap.reduceRadiusRate = (double)reduceRadiusRate / 100.0;
+        GameMap.reduceRadiusRate = reduceRadiusRate ;
     }
     
     
@@ -558,6 +561,7 @@ public class GameMap {
                 canUpgradeSoldiers = false;
             }
         } else {
+            AlienCreeps.showPopupWarning("Try tomorrow", 85, 105);
             System.out.println("Can't upgrade soldiers twice in one day. Try again tomorrow.");
         }
     }
@@ -774,6 +778,7 @@ public class GameMap {
                         barrack.requestSoldier(hero.getResurrectionTime());
                     }
                 } else {
+                    AlienCreeps.showPopupWarning("Only one Barrack.", 39, 83);
                     System.out.println("You already have a barrack.");
                 }
             } else {
@@ -800,6 +805,7 @@ public class GameMap {
                 }
             }
         } else {
+            AlienCreeps.showPopupWarning("Location occupied.", 45, 85);
             System.out.println("There is already a weapon in this location.");
         }
         
@@ -818,9 +824,11 @@ public class GameMap {
                 Weapon toUpgrade = ((Weapon) specifiedLocations.get(dimension));
                 if (toUpgrade.getName().equalsIgnoreCase(weaponName)) {
                     if (!hero.upgradeWeapon(toUpgrade)) {
-                        System.out.println("Not enough money.");
+                        AlienCreeps.showPopupWarning("Not enough money.", 35, 84);
+                      //  System.out.println("Not enough money.");
                     } else {
-                        System.out.println("Upgraded successfully");
+                        AlienCreeps.showPopupWarning("Upgrade successful.", 30, 105);
+                      //  System.out.println("Upgraded successfully");
                         //System.out.println(hero.payBack());
                     }
                 } else {
@@ -828,7 +836,8 @@ public class GameMap {
                 }
             } else {
                 if (weaponName.equalsIgnoreCase("Barrack")) {
-                    System.out.println("Can't upgrade barrack.");
+                    AlienCreeps.showPopupWarning("Invalid weapon", 75, 105);
+                  //  System.out.println("Can't upgrade barrack.");
                 } else {
                     System.out.println("Incorrect name");
                 }
@@ -843,7 +852,7 @@ public class GameMap {
             if ((int) (Math.random() * probabilityInv) == 0) {
 
                 
-                int size=Alien.getInitialAlienName().size();
+                int size = Alien.getInitialAlienName().size();
                 
                 
                 int whichAlien = (int) (Math.random() * size);
@@ -883,8 +892,8 @@ public class GameMap {
                         public void run() {
                             AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                                     newAlien.getAlienView());
-                          //  AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                            //        newAlien.getBulletView());
+                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                    newAlien.bulletView);
                         }
                     });
                 //    System.out.println(name + " entered!");
@@ -1114,7 +1123,6 @@ public class GameMap {
                 });*/
 
                 tesla = Weapon.WeaponFactory(dimension, "Tesla", 0);
-                player.play();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1122,6 +1130,7 @@ public class GameMap {
                                 tesla.getWeaponView());
                     }
                 });
+                player.play();
 
                 List<Alien> aliensToKill = new ArrayList<>();
                 for (int i = 0; i < routes.size(); i++) {
@@ -1151,9 +1160,11 @@ public class GameMap {
                 player=new MediaPlayer(sound);
                 
             } else {
+                AlienCreeps.showPopupWarning("Wait " + Weapon.SECONDS_LEFT_TO_USE_TESLA + " seconds.", 55, 110);
                 System.out.println("You must wait " + Weapon.SECONDS_LEFT_TO_USE_TESLA + " more seconds.");
             }
         } else {
+            AlienCreeps.showPopupWarning("Only twice.", 100, 105);
             System.out.println("Can't use tesla more than twice.");
         }
 
@@ -1689,10 +1700,11 @@ class Route {
             List<Alien> checking = alienMap.get(lines[i]); //get the aliens of each line
             for (int j = 0; j < checking.size(); j++) {
                 Alien a = checking.get(j);
-                    /*System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
-                    System.out.println(a.getName() + ": " + a.getCurrentDim());
+//                    System.out.println(shooter.getClass().getName() + ": " + shooter.getShootingPoint());
+                    /*System.out.println(a.getName() + ": " + a.getCurrentDim());
                     System.out.println(shooter.getShootingPoint().distanceFrom(a.getCurrentDim()));
                     System.out.println("•••••••••");*/
+                    //a.getCurrentDim();
                 if (shooter.isWithinRadius(a.getCurrentDim())) {
                  //   System.out.println(a.getName() + " is within radius of " + shooter.getClass().getName());
                    // System.out.println("*********");
