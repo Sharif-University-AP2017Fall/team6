@@ -123,6 +123,7 @@ public class AlienCreeps extends Application {
                             CURRENT_SECOND++;
                                  gameMap.plague();
                                  gameMap.updateNumFlag();
+                                 status.setText(gameMap.getHero().toString());
                         } else if (CURRENT_HOUR < 23) { //23
                                   gameMap.superNaturalHelp();
                             //      gameMap.naturalDisaster();
@@ -375,7 +376,7 @@ public class AlienCreeps extends Application {
         stage.centerOnScreen();
     }
 
-    
+    Text status;
    private Parent createStatusSceneContent(){
         Group root = new Group();
 
@@ -402,7 +403,7 @@ public class AlienCreeps extends Application {
         textBg.setY(80);
 
 
-        Text status=new Text(70,160, gameMap.getHero().toString());
+        status=new Text(70,160, gameMap.getHero().toString());
         Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
