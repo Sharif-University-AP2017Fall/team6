@@ -869,7 +869,7 @@ public class GameMap {
                 */
                 
                 
-                name=Alien.getInitialAlienName().get(whichAlien);
+                name=Alien.getInitialAlienName().get(whichAlien).toLowerCase();
                 
                 
                 /** changing ALIEN creation for Custom  **/

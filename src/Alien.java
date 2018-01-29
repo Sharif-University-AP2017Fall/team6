@@ -51,16 +51,16 @@ public class Alien implements Movable, Comparable, Runnable {
     
     static{
     
-    initialAlien.put("Albertonion".toLowerCase(), new InitialAlien("Albertonion"));
+    initialAlien.put("Albertonion".toLowerCase(), new InitialAlien("Albertonion".toLowerCase()));
     initialAlienName.add("Albertonion".toLowerCase());
     
-    initialAlien.put("Algwasonion".toLowerCase(), new InitialAlien("Algwasonion"));
+    initialAlien.put("Algwasonion".toLowerCase(), new InitialAlien("Algwasonion".toLowerCase()));
     initialAlienName.add("Algwasonion".toLowerCase());
     
-    initialAlien.put("Activionion".toLowerCase(), new InitialAlien("Activionion"));
+    initialAlien.put("Activionion".toLowerCase(), new InitialAlien("Activionion".toLowerCase()));
     initialAlienName.add("Activionion".toLowerCase());
     
-    initialAlien.put("Aironion".toLowerCase(), new InitialAlien("Aironion"));
+    initialAlien.put("Aironion".toLowerCase(), new InitialAlien("Aironion".toLowerCase()));
     initialAlienName.add("Aironion".toLowerCase());
     //initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
 
@@ -183,7 +183,7 @@ public class Alien implements Movable, Comparable, Runnable {
         this.cycleNum = 10;
         NUM++;
         START = true;
-        this.name = name;
+        this.name = name.toLowerCase();
         
         this.energy =  initialAlien.get(name).getInitialEnergy();
         this.initialEnergy = initialAlien.get(name).getInitialEnergy();
@@ -557,7 +557,9 @@ public class Alien implements Movable, Comparable, Runnable {
          move_right_index = 0;
          move_left_index = 0;
 
-         String address = "res/" + name + "/movement/" + alienName + "/";
+         String FileName=Alien.getHashMap().get(name).getFileName();
+         
+         String address = "res/" + name + "/movement/" + FileName + "/";
          move_down[0] = new ImageView(new Image(getClass()
                  .getResource(address + "down1.png").toExternalForm()));
          move_down[0].setFitWidth(30);
@@ -863,9 +865,17 @@ class InitialAlien {
     private int strength;
     private int type;
     private boolean canFly;
+    private String fileName;
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
     
-    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength,boolean canFly){
+    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength,boolean canFly,String fileName_){
         
         
         setInitialEnergy(initialEnergy);
@@ -873,11 +883,11 @@ class InitialAlien {
         setShootingSpeed(shootingSpeed);
         setStrength(strength);
         setCanFly(canFly);
-    
+        fileName=fileName_;
     
     }
     
-    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength){
+    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength,String fileName_){
         
         
         setInitialEnergy(initialEnergy);
@@ -885,7 +895,7 @@ class InitialAlien {
         setShootingSpeed(shootingSpeed);
         setStrength(strength);
         setCanFly(false);
-    
+        fileName=fileName_;
     
     }
     
@@ -940,6 +950,8 @@ class InitialAlien {
     
     
     InitialAlien(String name){
+        
+        
     switch (name.toLowerCase()) {
             case "albertonion":
                 //this.energy = 250;
@@ -981,6 +993,9 @@ class InitialAlien {
                 this.canFly = true;
                 break;
         }
+    
+    fileName=name;
+    
     }
 
 
