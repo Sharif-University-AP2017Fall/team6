@@ -93,8 +93,8 @@ public class GameMap {
     
                 /*** RADIUS RELATED CUSTOM ***/
     
-    private static int whenReduceRadius=20;
-    private static int whenResetRadius=4;
+    private static int whenReduceRadius = 20;
+    private static int whenResetRadius = 4;
 
     public static int getWhenReduceRadius() {
         return whenReduceRadius;
@@ -117,8 +117,9 @@ public class GameMap {
         return reduceRadiusRate;
     }
 
-    public static void setReduceRadiusRate(double reduceRadiusRate) {
-        GameMap.reduceRadiusRate = reduceRadiusRate;
+    public static void setReduceRadiusRate(int reduceRadiusRate) {
+
+        GameMap.reduceRadiusRate = (double)reduceRadiusRate / 100.0;
     }
     
     
@@ -512,9 +513,9 @@ public class GameMap {
         /**** GENERATING ALIENS EVERY SECONS ***/
 
         if (AlienCreeps.getCurrentHour() <=peakHourMax  && AlienCreeps.getCurrentHour() >= peakHourMin) {
-            generateAliens(peakHourMaxAlienRate);
+            generateAliens(10 - peakHourMaxAlienRate);
         } else {
-            generateAliens(peakHourMinAlienRate);
+            generateAliens(10 - peakHourMinAlienRate);
         }
     }
 

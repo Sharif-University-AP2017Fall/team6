@@ -52,11 +52,11 @@ public class Hero extends Warrior {
     private static double YaranePercent = 0.1;
     private static String heroPic = "5/";
     
-    static void setHeroPic(String a) {
-
+    static void setHeroPic(int a) {
         heroPic = a + "/";
-
     }
+
+
     
     
     static void setInitialMoney(int a) {
@@ -101,6 +101,10 @@ public class Hero extends Warrior {
 
         return YaranePercent;
 
+    }
+
+    public void updateWarriorView(){
+        warriorView = new WarriorView("hero", heroPic, new Dimension(400, 300));
     }
     
     

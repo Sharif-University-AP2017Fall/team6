@@ -33,8 +33,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.omg.PortableServer.POA;
+import sun.jvm.hotspot.runtime.posix.POSIXSignals;
 
 import java.lang.management.RuntimeMXBean;
+import java.security.Key;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -599,8 +603,6 @@ public class AlienCreeps extends Application {
 
         MenuItem new_item = new MenuItem("NewGame");
         new_item.setOnAction(() -> {
-//            gameScene.setRoot(createGameContent());
-//            stage.setScene(gameScene);
             restart = false;
             stage.setScene(askWeaponScene);
             stage.show();
@@ -863,7 +865,8 @@ public class AlienCreeps extends Application {
 
     static Scene customizeWeaponScene = new Scene(new Group(), 800, 500);
     static Scene customizeAliensScene = new Scene(new Group(), 800, 500);
-    static Scene customizeHeroScene = new Scene(new Group(), 600, 500);
+    static Scene customizeHeroScene = new Scene(new Group(), 800, 500);
+    static Scene customizeGameMapScene = new Scene(new Group(), 800, 500);
 
     /*static Stage customizeWeaponStage = new Stage();
     static Stage customizeAliensStage = new Stage();
@@ -872,15 +875,13 @@ public class AlienCreeps extends Application {
 
     public void customizeGame(){
         customizeWeaponScene.setRoot(createCustomizeWeaponContent());
-        //customizeWeaponStage.setScene(customizeWeaponScene);
 
         customizeAliensScene.setRoot(createCustomizeAliensContent());
-        //customizeAliensStage.setScene(customizeAliensScene);
 
         customizeHeroScene.setRoot(createCustomizeHeroContent());
-        //customizeHeroStage.setScene(customizeHeroScene);
 
-        //customizeWeaponStage.show();
+        customizeGameMapScene.setRoot(createCustomizeGameMapContent());
+
         stage.setScene(customizeWeaponScene);
         stage.show();
     }
@@ -1350,7 +1351,7 @@ public class AlienCreeps extends Application {
         coinEffectChoice.setPrefWidth(50);
 
         HBox inputs = new HBox();
-        inputs.getChildren().addAll(moneyChoice, coinEffectChoice, soldierCoinChoice);
+        inputs.getChildren().addAll(moneyChoice, soldierCoinChoice, coinEffectChoice);
         inputs.setSpacing(100);
         inputs.relocate(50, 150);
 
@@ -1372,7 +1373,7 @@ public class AlienCreeps extends Application {
         });
 
 
-        MenuItem effect_btn = new MenuItem(view, 50, 50, "OK");
+        MenuItem effect_btn = new MenuItem(view, 50, 40, "OK");
         effect_btn.setOnAction(new Runnable() {
             @Override
             public void run() {
@@ -1384,14 +1385,351 @@ public class AlienCreeps extends Application {
         buttons.setSpacing(100);
         buttons.relocate(50, 200);
 
+
+
+        /***** ANIMATION ****/
+
+        Text sprite = new Text("Hero's View");
+        sprite.setFont(font);
+        sprite.relocate(150, 250);
+
+        MenuItem choose_view7 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view11 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view12 = new MenuItem(view, 90, 40, "Choose");
+        HBox choose_btns = new HBox();
+        choose_btns.setSpacing(100);
+        choose_btns.getChildren().addAll(choose_view7, choose_view11, choose_view12);
+        choose_btns.relocate(50, 400);
+
+        choose_view7.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.removeElementFromGameRoot(hero.getWarriorView());
+                hero.setHeroPic(7);
+                hero.updateWarriorView();
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        hero.getWarriorView());
+                stage.setScene(customizeGameMapScene);
+            }
+        });
+
+        choose_view11.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.removeElementFromGameRoot(hero.getWarriorView());
+                hero.setHeroPic(11);
+                hero.updateWarriorView();
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        hero.getWarriorView());
+                stage.setScene(customizeGameMapScene);
+            }
+        });
+
+        choose_view12.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.removeElementFromGameRoot(hero.getWarriorView());
+                hero.setHeroPic(12);
+                hero.updateWarriorView();
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        hero.getWarriorView());
+                stage.setScene(customizeGameMapScene);
+            }
+        });
+        String address = "res/hero/movement/";
+
+        ImageView[] view1 = new ImageView[12];
+        view1[0] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/down1.png").toExternalForm()));
+        view1[1] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/down1.png").toExternalForm()));
+        view1[2] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/down3.png").toExternalForm()));
+        view1[3] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/left1.png").toExternalForm()));
+        view1[4] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/left2.png").toExternalForm()));
+        view1[5] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/left3.png").toExternalForm()));
+        view1[6] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/up1.png").toExternalForm()));
+        view1[7] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/up2.png").toExternalForm()));
+        view1[8] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/up3.png").toExternalForm()));
+        view1[9] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/right1.png").toExternalForm()));
+        view1[10] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/right2.png").toExternalForm()));
+        view1[11] = new ImageView(new Image(getClass()
+                .getResource(address + 1 + "/right3.png").toExternalForm()));
+
+
+        ImageView[] view7 = new ImageView[12];
+        view7[0] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/down1.png").toExternalForm()));
+        view7[1] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/down1.png").toExternalForm()));
+        view7[2] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/down3.png").toExternalForm()));
+        view7[3] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/left1.png").toExternalForm()));
+        view7[4] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/left2.png").toExternalForm()));
+        view7[5] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/left3.png").toExternalForm()));
+        view7[6] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/up1.png").toExternalForm()));
+        view7[7] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/up2.png").toExternalForm()));
+        view7[8] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/up3.png").toExternalForm()));
+        view7[9] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/right1.png").toExternalForm()));
+        view7[10] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/right2.png").toExternalForm()));
+        view7[11] = new ImageView(new Image(getClass()
+                .getResource(address + 7 + "/right3.png").toExternalForm()));
+
+        ImageView[] view8 = new ImageView[12];
+        view8[0] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/down1.png").toExternalForm()));
+        view8[1] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/down1.png").toExternalForm()));
+        view8[2] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/down3.png").toExternalForm()));
+        view8[3] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/left1.png").toExternalForm()));
+        view8[4] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/left2.png").toExternalForm()));
+        view8[5] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/left3.png").toExternalForm()));
+        view8[6] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/up1.png").toExternalForm()));
+        view8[7] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/up2.png").toExternalForm()));
+        view8[8] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/up3.png").toExternalForm()));
+        view8[9] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/right1.png").toExternalForm()));
+        view8[10] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/right2.png").toExternalForm()));
+        view8[11] = new ImageView(new Image(getClass()
+                .getResource(address + 8 + "/right3.png").toExternalForm()));
+
+        ImageView[] view11 = new ImageView[12];
+        view11[0] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/down1.png").toExternalForm()));
+        view11[1] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/down2.png").toExternalForm()));
+        view11[2] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/down3.png").toExternalForm()));
+        view11[3] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/left1.png").toExternalForm()));
+        view11[4] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/left2.png").toExternalForm()));
+        view11[5] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/left3.png").toExternalForm()));
+        view11[6] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/up1.png").toExternalForm()));
+        view11[7] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/up2.png").toExternalForm()));
+        view11[8] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/up3.png").toExternalForm()));
+        view11[9] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/right1.png").toExternalForm()));
+        view11[10] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/right2.png").toExternalForm()));
+        view11[11] = new ImageView(new Image(getClass()
+                .getResource(address + 11 + "/right3.png").toExternalForm()));
+
+        ImageView[] view12 = new ImageView[12];
+        view12[0] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/down1.png").toExternalForm()));
+        view12[1] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/down2.png").toExternalForm()));
+        view12[2] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/down3.png").toExternalForm()));
+        view12[3] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/left1.png").toExternalForm()));
+        view12[4] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/left2.png").toExternalForm()));
+        view12[5] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/left3.png").toExternalForm()));
+        view12[6] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/up1.png").toExternalForm()));
+        view12[7] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/up2.png").toExternalForm()));
+        view12[8] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/up3.png").toExternalForm()));
+        view12[9] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/right1.png").toExternalForm()));
+        view12[10] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/right2.png").toExternalForm()));
+        view12[11] = new ImageView(new Image(getClass()
+                .getResource(address + 12 + "/right3.png").toExternalForm()));
+
+        for (int i = 0; i < 12; i++){
+            view1[i].setFitWidth(50);
+            view1[i].setFitHeight(50);
+            view1[i].setVisible(false);
+            view1[i].relocate(100, 300);
+
+            view7[i].setFitWidth(50);
+            view7[i].setFitHeight(50);
+            view7[i].setVisible(false);
+            view7[i].relocate(200, 300);
+
+            view8[i].setFitWidth(50);
+            view8[i].setFitHeight(50);
+            view8[i].setVisible(false);
+            view8[i].relocate(300, 300);
+
+            view11[i].setFitWidth(50);
+            view11[i].setFitHeight(50);
+            view11[i].setVisible(false);
+            view11[i].relocate(400, 300);
+
+            view12[i].setFitWidth(50);
+            view12[i].setFitHeight(50);
+            view12[i].setVisible(false);
+            view12[i].relocate(500, 300);
+        }
+        view1[0].setVisible(true);
+        view7[0].setVisible(true);
+        view8[0].setVisible(true);
+        view11[0].setVisible(true);
+        view12[0].setVisible(true);
+
+        Timeline view_heros = new Timeline(new KeyFrame(Duration.millis(200),
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        boolean flag = false;
+                        for (int i = 0; i < 12; i++){
+                            if (view7[i].isVisible()){
+                                flag = true;
+                                view1[i].setVisible(false);
+                                view7[i].setVisible(false);
+                                view8[i].setVisible(false);
+                                view12[i].setVisible(false);
+                                view11[i].setVisible(false);
+                                if (i + 1 < 12){
+                                    view1[i + 1].setVisible(true);
+                                    view7[i + 1].setVisible(true);
+                                    view8[i + 1].setVisible(true);
+                                    view12[i + 1].setVisible(true);
+                                    view11[i + 1].setVisible(true);
+                                } else {
+                                    view1[0].setVisible(true);
+                                    view7[0].setVisible(true);
+                                    view8[0].setVisible(true);
+                                    view11[0].setVisible(true);
+                                    view12[0].setVisible(true);
+                                }
+                                break;
+                            }
+                        }
+                        if (!flag){
+                            view1[0].setVisible(true);
+                            view7[0].setVisible(true);
+                            view8[0].setVisible(true);
+                            view11[0].setVisible(true);
+                            view12[0].setVisible(true);
+                        }
+                    }
+                }));
+        view_heros.setCycleCount(Animation.INDEFINITE);
+        view_heros.play();
+
         root.getChildren().addAll(background);
         root.getChildren().addAll(options);
         root.getChildren().addAll(inputs);
         root.getChildren().addAll(buttons);
+        root.getChildren().addAll(choose_btns);
+        root.getChildren().addAll(view1);
+        root.getChildren().addAll(view7);
+        root.getChildren().addAll(view8);
+        root.getChildren().addAll(view12);
+        root.getChildren().addAll(view11);
+
         return root;
     }
 
+    private Parent createCustomizeGameMapContent(){
+        Group root = new Group();
 
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/custom/bg.png").toExternalForm()));
+        background.setFitWidth(800);
+        Image view = new Image(getClass()
+                .getResource("res/menu/custom/option.png").toExternalForm());
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        Text choose_max_rate = new Text("Enter alien max rate (1 to 10) :");
+        choose_max_rate.setFont(font);
+        Text choose_max_hour = new Text("Enter max rate hour :");
+        choose_max_hour.setFont(font);
+
+        Text choose_min_rate = new Text("Enter alien min rate :");
+        choose_min_rate.setFont(font);
+        Text choose_min_hour = new Text("Enter min rate hour :");
+        choose_min_hour.setFont(font);
+
+        Text choose_reduce_hour = new Text("Enter radius reduce hour :");
+        choose_reduce_hour.setFont(font);
+        Text choose_reduce_rate = new Text("Enter radius reduce rate :");
+        choose_reduce_rate.setFont(font);
+        Text choose_reset_hour = new Text("Enter radius reset hour :");
+        choose_reset_hour.setFont(font);
+
+        VBox commands = new VBox();
+        commands.setSpacing(15);
+        commands.setAlignment(Pos.BASELINE_LEFT);
+        commands.setTranslateX(70);
+        commands.setTranslateY(70);
+        commands.getChildren().addAll(choose_max_hour, choose_max_rate, choose_min_hour,
+                choose_min_rate, choose_reduce_hour, choose_reset_hour, choose_reduce_rate);
+
+        TextField max_rate = new TextField(String.valueOf(GameMap.getPeakHourMaxAlienRate()));
+        TextField max_hour = new TextField(String.valueOf(GameMap.getPeakHourMax()));
+        TextField min_rate = new TextField(String.valueOf(GameMap.getPeakHourMinAlienRate()));
+        TextField min_hour = new TextField(String.valueOf(GameMap.getPeakHourMin()));
+        TextField reduce_hour = new TextField(String.valueOf(GameMap.getWhenReduceRadius()));
+        TextField reset_hour = new TextField(String.valueOf(GameMap.getWhenResetRadius()));
+        TextField reduce_rate = new TextField(String.valueOf(GameMap.getReduceRadiusRate()));
+        VBox inputs = new VBox();
+        inputs.setSpacing(20);
+        inputs.setAlignment(Pos.BASELINE_LEFT);
+        inputs.setTranslateX(370);
+        inputs.setTranslateY(70);
+        inputs.getChildren().addAll(max_rate, max_hour, min_rate, min_hour, reduce_hour, reset_hour, reduce_rate);
+
+        customizeGameMapScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER){
+                    GameMap.setPeakHourMaxAlienRate(Integer.parseInt(max_rate.getText()));
+                    GameMap.setPeakHourMax(Integer.parseInt(max_hour.getText()));
+                    GameMap.setPeakHourMinAlienRate(Integer.parseInt(min_rate.getText()));
+                    GameMap.setPeakHourMin(Integer.parseInt(min_hour.getText()));
+                    GameMap.setWhenReduceRadius(Integer.parseInt(reduce_hour.getText()));
+                    GameMap.setWhenResetRadius(Integer.parseInt(reset_hour.getText()));
+                    GameMap.setReduceRadiusRate(Integer.parseInt(reduce_rate.getText()));
+                    stage.setScene(askWeaponScene);
+                }
+            }
+        });
+
+        root.getChildren().addAll(background);
+        root.getChildren().addAll(commands);
+        root.getChildren().addAll(inputs);
+        return root;
+    }
 
 
     public static void addElementToGameRoot(int index, Node ... node){
