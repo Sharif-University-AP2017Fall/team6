@@ -1,4 +1,5 @@
 //import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.sun.corba.se.impl.orb.ParserTable;
 import com.sun.javafx.font.freetype.HBGlyphLayout;
 import com.sun.org.apache.xml.internal.security.Init;
 import javafx.animation.*;
@@ -37,6 +38,7 @@ import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPOutputStream;
 
 public class AlienCreeps extends Application {
@@ -1118,7 +1120,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createCustomizeAliensContent(){
+    private Parent createCustomizeAliensContent() {
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -1288,21 +1290,21 @@ public class AlienCreeps extends Application {
             }
         });
 
-        deletes.get(0).setOnAction(new Runnable() {
+        deletes.get(1).setOnAction(new Runnable() {
             @Override
             public void run() {
                 Alien.changeDeactivate("aironion");
             }
         });
 
-        deletes.get(0).setOnAction(new Runnable() {
+        deletes.get(2).setOnAction(new Runnable() {
             @Override
             public void run() {
                 Alien.changeDeactivate("algwasonion");
             }
         });
 
-        deletes.get(0).setOnAction(new Runnable() {
+        deletes.get(3).setOnAction(new Runnable() {
             @Override
             public void run() {
                 Alien.changeDeactivate("activionion");
@@ -1317,6 +1319,75 @@ public class AlienCreeps extends Application {
     private Parent createCustomizeHeroContent(){
         Group root = new Group();
 
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/custom/bg.png").toExternalForm()));
+        background.setFitWidth(800);
+        Image view = new Image(getClass()
+                .getResource("res/menu/custom/option.png").toExternalForm());
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        Text money = new Text("Money");
+        money.setFont(font);
+        Text soldierCoin = new Text("Soldier Coin");
+        soldierCoin.setFont(font);
+        Text coinEffect = new Text("Coin Effect");
+        coinEffect.setFont(font);
+
+        HBox options = new HBox();
+        options.getChildren().addAll(money, soldierCoin, coinEffect);
+        options.setSpacing(50);
+        options.relocate(50, 50);
+
+        TextField moneyChoice = new TextField(String.valueOf(hero.getInitialMoney()));
+        moneyChoice.setPrefWidth(50);
+        TextField soldierCoinChoice = new TextField(String.valueOf(hero.getCoinForEachYarane()));
+        soldierCoinChoice.setPrefWidth(50);
+        TextField coinEffectChoice = new TextField(String.valueOf(hero.getYaranePercent()));
+        coinEffectChoice.setPrefWidth(50);
+
+        HBox inputs = new HBox();
+        inputs.getChildren().addAll(moneyChoice, coinEffectChoice, soldierCoinChoice);
+        inputs.setSpacing(100);
+        inputs.relocate(50, 150);
+
+        HBox buttons = new HBox();
+        MenuItem money_btn = new MenuItem(view, 50, 50, "OK");
+        money_btn.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Hero.setInitialMoney(Integer.parseInt(moneyChoice.getText()));
+            }
+        });
+
+        MenuItem coin_btn = new MenuItem(view, 50, 50, "OK");
+        coin_btn.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Hero.setCoinForEachYarane(Integer.parseInt(soldierCoinChoice.getText()));
+            }
+        });
+
+
+        MenuItem effect_btn = new MenuItem(view, 50, 50, "OK");
+        effect_btn.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Hero.setYaranePercent(Integer.parseInt(coinEffectChoice.getText()));
+
+            }
+        });
+        buttons.getChildren().addAll(money_btn, coin_btn, effect_btn);
+        buttons.setSpacing(100);
+        buttons.relocate(50, 200);
+
+        root.getChildren().addAll(background);
+        root.getChildren().addAll(options);
+        root.getChildren().addAll(inputs);
+        root.getChildren().addAll(buttons);
         return root;
     }
 

@@ -47,60 +47,60 @@ public class Hero extends Warrior {
     
     /***** STATIC FOR CUSTOM ******/
     
-    private static  int initialMoney=3000;
-    private static int CoinForEachYarane=10;
-    private static double YaranePercent=0.1;
-    private static String heroPic="5/";
+    private static  int initialMoney = 3000;
+    private static int CoinForEachYarane = 10;
+    private static double YaranePercent = 0.1;
+    private static String heroPic = "5/";
     
-    static void setHeroPic(String a){
-        
-        heroPic=a+"/";
-    
+    static void setHeroPic(String a) {
+
+        heroPic = a + "/";
+
     }
     
     
-    static void setInitialMoney(int a){
-        
-        initialMoney=a;
-    
+    static void setInitialMoney(int a) {
+
+        initialMoney = a;
+
     }
     
-    static void setCoinForEachYarane(int a){
-        
-        CoinForEachYarane=a;
-        
+    static void setCoinForEachYarane(int a) {
+
+        CoinForEachYarane = a;
+
     }
     
-    static void setYaranePercent(double a){
-        YaranePercent=a;
-    
-    }
-    
-    
-    
-    static String getHeroPic(){
-        
-       return heroPic;
-    
+    static void setYaranePercent(int a) {
+        YaranePercent = (double)a / 100.0;
+
     }
     
     
-    static int getInitialMoney(){
-        
+    
+    static String getHeroPic() {
+
+        return heroPic;
+
+    }
+    
+    
+    static int getInitialMoney() {
+
         return initialMoney;
-    
+
     }
     
-    static int getCoinForEachYarane(){
-        
+    static int getCoinForEachYarane() {
+
         return CoinForEachYarane;
-        
+
     }
     
-    static double getYaranePercent(double a){
-        
+    static double getYaranePercent() {
+
         return YaranePercent;
-    
+
     }
     
     
