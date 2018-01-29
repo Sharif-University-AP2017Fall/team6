@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -24,14 +25,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.zip.GZIPOutputStream;
 
 public class AlienCreeps extends Application {
     static boolean START = false;
+    static boolean ISPAUSED = false;
     private static int CURRENT_SECOND = 0;
     private static int CURRENT_HOUR = 0;
     private static int CURRENT_DAY = 0;
@@ -43,23 +45,43 @@ public class AlienCreeps extends Application {
     private Hero hero = new Hero(new Dimension(400, 300));
     static GameMap gameMap = new GameMap();//hero);
     static AlienCreeps game = new AlienCreeps();
-    private Text timeText=new Text(240,27," : : "); 
+    private Text timeText = new Text(935,60,"");
+
+    Runnable mainRunnable;
+    static boolean restart;
+
     public static void main(String[] args) {
         launch(args);
     }
 
-    static int number=0;
-
     private String requestWeapon;
 
-    //AlienCreeps(){ number++;}
-    private void launchGame() {
+    private void resetGame(){
+        restart = true;
+        hero = new Hero(new Dimension(400, 300));
+        START = false;
+        ISPAUSED = false;
+        gameEnded = false;
+        gameMap = new GameMap();
+        game = new AlienCreeps();
+        timeText.setText("00:00:00");
+        CURRENT_DAY = 0;
+        CURRENT_HOUR = 0;
+        CURRENT_SECOND = 0;
+        removeElementFromGameRoot(((Group) gameScene.getRoot()));
 
-        Runnable r1 = new Runnable() {
+        gameScene.setRoot(createGameContent());
+        stage.setScene(menuScene);
+    }
+
+    private Runnable makeMainRunnable(){
+        return new Runnable() {
             private final Object lock = new Object();
+
 
             @Override
             public void run() {
+                System.out.println("SETTING MAIN RUNNABLE");
                 Thread heroLifeCycle = new Thread(hero);
                 heroLifeCycle.start();
 
@@ -70,7 +92,11 @@ public class AlienCreeps extends Application {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (START){
+                    if (restart){
+                        System.out.println("quitting main runnable");
+                        break;
+                    }
+                    if (START && !ISPAUSED){
                         if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
                             //      gameMap.randomWeather();
                         }
@@ -83,7 +109,7 @@ public class AlienCreeps extends Application {
                             CURRENT_HOUR++;
                             CURRENT_SECOND = 0;
                         } else {
-                                  gameMap.setCanUpgradeSoldiers();
+                            gameMap.setCanUpgradeSoldiers();
                             //      gameMap.randomWeather();
                             CURRENT_DAY++;
                             CURRENT_HOUR = 0;
@@ -120,10 +146,16 @@ public class AlienCreeps extends Application {
                 }
             }
         };
-        gameTime = new Thread(r1);
+    }
+
+    private void launchGame() {
+        System.out.println("launching game");
+
+        mainRunnable = makeMainRunnable();
+        gameTime = new Thread(mainRunnable);
         gameTime.start();
 
-        Runnable r2 = () -> {
+        /*Runnable r2 = () -> {
             while (true) {
                 String input = scanner.nextLine();
                 String info[] = input.split(" ");
@@ -208,9 +240,9 @@ public class AlienCreeps extends Application {
             }
         };
         gameInput = new Thread(r2);
-        gameInput.start();
+        gameInput.start();*/
 
-        Runnable r3 = () -> gameScene.setOnKeyPressed(event -> {
+        /*Runnable r3 = () -> */gameScene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.M){
                 popupHeroDimStage.showAndWait();
             } else if (event.getCode() == KeyCode.B){
@@ -228,12 +260,17 @@ public class AlienCreeps extends Application {
                 gameMap.unFocusAll();
             } else if (event.getCode() == KeyCode.S){
                 gameMap.upgradeSoldier();
+            } else if (event.getCode() == KeyCode.BACK_SPACE){
+                ISPAUSED = true;
+                popupPauseStage.showAndWait();
+                //TODO TRY SYNCHRONIZED
+                //popupPauseScene.setRoot(createPauseSceneContent());
             }else{
                 gameMap.moveHero(event);
             }
         });
-        gameInput = new Thread(r3);
-        gameInput.start();
+        /*gameInput = new Thread(r3);
+        gameInput.start();*/
     }
 
     static int getCurrentSecond() {
@@ -250,24 +287,24 @@ public class AlienCreeps extends Application {
 
 
     static Scene menuScene = new Scene(new Group(),540, 1000);
-    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 300, GameMap.YBOUND);
+    static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 200, GameMap.YBOUND);
     static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
     static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
     static Scene popupLocationNumScene = new Scene(new Group(), 300, 600);
     static Scene popupTeslaDimScene  = new Scene(new Group(), 450, 275);
-    static Scene statusScene = new Scene(new Group(),300, GameMap.YBOUND);
+    static Scene popupPauseScene = new Scene(new Group(), 275, 300);
 
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
     static Stage popupEndGameStage = new Stage();
     static Stage popupLocationNUmStage = new Stage();
     static Stage popupTeslaDimStage = new Stage();
+    static Stage popupPauseStage = new Stage();
     //static Stage statusStage = new Stage();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        number++;
         stage = primaryStage;
         menuScene.setRoot(createMenuContent());
         stage.setScene(menuScene);
@@ -295,14 +332,67 @@ public class AlienCreeps extends Application {
         popupTeslaDimStage.initModality(Modality.APPLICATION_MODAL);
         popupTeslaDimStage.centerOnScreen();
 
-        /*statusScene.setRoot(createStatusSceneContent());
-        statusStage.setScene(statusScene);
-        statusStage.initModality(Modality.APPLICATION_MODAL);
-        statusStage.setX(stage.getX() + GameMap.XBOUND);
-        statusStage.setY(stage.getY());*/
+        popupPauseScene.setRoot(createPauseSceneContent());
+        popupPauseStage.setScene(popupPauseScene);
+        popupPauseStage.initModality(Modality.APPLICATION_MODAL);
+        popupPauseStage.setAlwaysOnTop(true);
+        popupPauseStage.centerOnScreen();
 
         stage.show();
         stage.centerOnScreen();
+    }
+
+    private Parent createPauseSceneContent(){
+        Group root = new Group();
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/pause/bg.png").toExternalForm()));
+
+        MenuItem quit_to_main_menu = new MenuItem(new Image(getClass()
+                .getResource("res/menu/pause/Quit to main menu.png").toExternalForm()), 220, 55);
+        quit_to_main_menu.setDim(30, 45);
+        quit_to_main_menu.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+
+                resetGame();
+                //game = new AlienCreeps();
+                popupPauseStage.close();
+
+            }
+        });
+
+
+        MenuItem continue_ = new MenuItem(new Image(getClass()
+                .getResource("res/menu/pause/Continue.png").toExternalForm()), 220, 55);
+        continue_.setDim(30, 125);
+        continue_.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                ISPAUSED = false;
+                popupPauseStage.close();
+            }
+        });
+
+        MenuItem show_status = new MenuItem(new Image(getClass()
+                .getResource("res/menu/pause/Show Status.png").toExternalForm()), 220, 55);
+        show_status.setDim(30, 205);
+
+
+
+        /*popupPauseScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER){
+                    ISPAUSED = false;
+                    popupPauseStage.close();
+                }
+            }
+        });*/
+
+        root.getChildren().addAll(background, quit_to_main_menu, continue_, show_status);
+
+        return root;
     }
 
     static void endGame(boolean gameOver) {
@@ -344,8 +434,10 @@ public class AlienCreeps extends Application {
         root.getChildren().add(timeText);
         root.getChildren().add(hero.getWarriorView());
         root.getChildren().add(hero.getBulletView());
-
-
+        root.getChildren().add(hero.getHealthBar());
+        root.getChildren().add(hero.getMoneyBar());
+        hero.getHealthBar().setDim(900, 140);
+        hero.getMoneyBar().setDim(900, 100);
 //        launchGame();
 
         return root;
@@ -499,6 +591,7 @@ public class AlienCreeps extends Application {
         new_item.setOnAction(() -> {
 //            gameScene.setRoot(createGameContent());
 //            stage.setScene(gameScene);
+            restart = false;
             stage.setScene(askWeaponScene);
             stage.show();
         });
@@ -511,54 +604,7 @@ public class AlienCreeps extends Application {
         exit_item.setOnAction(() -> System.exit(0));
         exit_item.setDim(390, 600);
 
-        MenuItem chat_item = new MenuItem("Chat");
-        chat_item.setOnAction(() -> {
-
-            /*Process theProcess = null;
-            BufferedReader inStream = null;
-
-
-
-            // call the Hello class
-            try
-            {///Users/Apple/Documents/TaraFiles/University/term 7/JAVA/intelGame/src/Server.java
-                theProcess = Runtime.getRuntime().exec("java -cp src src/Myserver.java");
-                System.out.println("CallServer.main() invoked");
-            }
-            catch(IOException e)
-            {
-                System.err.println("Error on Server exec() method");
-                e.printStackTrace();
-            }
-
-            try
-            {///Users/Apple/Documents/TaraFiles/University/term 7/JAVA/intelGame/src/Server.java
-                theProcess = Runtime.getRuntime().exec("java -cp src src/MyClient.java");
-                System.out.println("CallClient.main() invoked");
-            }
-            catch(IOException e)
-            {
-                System.err.println("Error on Client exec() method");
-                e.printStackTrace();
-            }*/
-
-
-
-                     new Myserver().start(new Stage());
-
-
-
-
-        });
-        chat_item.setDim(50, 300);
-
-
-
-
-
-
-
-        root.getChildren().addAll(background, new_item, load_item, exit_item,chat_item);
+        root.getChildren().addAll(background, new_item, load_item, exit_item);
 
         Canvas canvas = new Canvas(560, 200);
         root.getChildren().add(canvas);
@@ -802,7 +848,8 @@ public class AlienCreeps extends Application {
 
     public static void addElementToGameRoot(int index, Node ... node){
         for (int i = 0; i < node.length; i++){
-            ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
+            if (!((Group) gameScene.getRoot()).getChildren().contains(node[i]))
+                ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
         }
     }
 
@@ -811,11 +858,29 @@ public class AlienCreeps extends Application {
     }
 
     public void updateTime(int day,int hour,int sec){
-        
-           Font font = new Font(20);
-           timeText.setText(""+day+":"+hour+":"+sec);
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 40);
+        String daystring = String.valueOf(day);
+        String hourString = String.valueOf(hour);
+        String secondString = String.valueOf(sec);
+        if (day < 10){
+            daystring = "0" + day;
+        }
+
+        if (hour < 10){
+            hourString = "0" + hour;
+        }
+
+        if (sec < 10){
+            secondString = "0" + sec;
+        }
+
+           timeText.setText(""+daystring+":"+hourString+":"+secondString);
            timeText.setFont(font);
-           timeText.setFill(Color.rgb(171, 214, 29));
+           timeText.setFill(Color.rgb(50, 20, 15));
            
     }
     

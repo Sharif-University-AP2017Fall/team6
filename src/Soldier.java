@@ -108,17 +108,23 @@ public class Soldier extends Warrior {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if (AlienCreeps.restart){
+                break;
+            }
 
-            if (shouldShoot){
-            //    System.out.println("SOLDIER SHOULD SHOOT");
-                List<Alien> fuckthisshit =  shoot(toShoot);
-                if (fuckthisshit != null){
-                    if (!fuckthisshit.isEmpty()){
+            if (!AlienCreeps.ISPAUSED){
+                if (shouldShoot){
+                    //    System.out.println("SOLDIER SHOULD SHOOT");
+                    List<Alien> fuckthisshit =  shoot(toShoot);
+                    if (fuckthisshit != null){
+                        if (!fuckthisshit.isEmpty()){
 
-                        killed.addAll(shoot(toShoot));
+                            killed.addAll(shoot(toShoot));
+                        }
                     }
                 }
             }
+
         }
     }
 }

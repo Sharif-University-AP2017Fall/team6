@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /*
@@ -71,39 +72,44 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     private void setType(String a) {
         setLevel(1);
 
-        initialPrice = Weapon.getInitialPrice(a);
+        initialPrice = InitialWeapon.getPrice(a.toLowerCase());//Weapon.getInitialPrice(a);
         setPrice(initialPrice);
-        initialSpeedOfBullet = getInitialSpeedOfBullet(a);
+
+        initialSpeedOfBullet = InitialWeapon.getBulletSpeed(a.toLowerCase());
         setSpeedOfBullet(initialSpeedOfBullet);
-        initialPowerOfBullet = getInitialPowerOfBullet(a);
+
+        initialPowerOfBullet = InitialWeapon.getBulletPower(a.toLowerCase());
         setPowerOfBullet(initialPowerOfBullet);
-        initialPowerOfBulletAir = getInitialPowerOfBulletAir(a);
+
+        initialPowerOfBulletAir = InitialWeapon.getBulletPowerAir(a.toLowerCase());
         setPowerOfBulletAir(initialPowerOfBulletAir);
-        initialSpeedReduction = getInitialSpeedReduction(a);
+
+        initialSpeedReduction = InitialWeapon.getSpeedReduction(a.toLowerCase());
         setSpeedReduction(initialSpeedReduction);
-        initialRadius = getInitialRadius(a);
+
+        initialRadius = InitialWeapon.getRadius(a.toLowerCase());
         setRadius(initialRadius);
 
         switch (a.toLowerCase()) {
             case "machine gun":
                 setType(0);
-                setOnAirOnly(false);
+                setOnAirOnly(InitialWeapon.getIsOnAirOnly("machine gun"));
                 break;
             case "rocket":
                 setType(1);
-                setOnAirOnly(false);
+                setOnAirOnly(InitialWeapon.getIsOnAirOnly("rocket"));
                 break;
             case "laser":
                 setType(2);
-                setOnAirOnly(false);
+                setOnAirOnly(InitialWeapon.getIsOnAirOnly("laser"));
                 break;
             case "antiaircraft":
                 setType(3);
-                setOnAirOnly(true);
+                setOnAirOnly(InitialWeapon.getIsOnAirOnly("antiaircraft"));
                 break;
             case "freezer":
                 setType(4);
-                setOnAirOnly(false);
+                setOnAirOnly(InitialWeapon.getIsOnAirOnly("freezer"));
                 break;
             case "tesla":
                 setType(5);
@@ -260,8 +266,13 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (shouldShoot) {
-                killed.addAll(shoot(toShoot));
+            if (AlienCreeps.restart){
+                break;
+            }
+            if (!AlienCreeps.ISPAUSED){
+                if (shouldShoot) {
+                    killed.addAll(shoot(toShoot));
+                }
             }
         }
     }
@@ -462,3 +473,7 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
         return this.name.compareTo(otherWeapon.getName());
     }
 }
+
+
+
+

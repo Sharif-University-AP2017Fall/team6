@@ -326,26 +326,30 @@ public class Hero extends Warrior {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if(AlienCreeps.restart){
+                break;
+            }
 
-            if (shouldMove){
+            if (!AlienCreeps.ISPAUSED){
+                if (shouldMove){
 
-                Dimension moveFrom = super.dimension;
-                double deltaX = (moveTo.getX() - moveFrom.getX());
-                double deltaY = (moveTo.getY() - moveFrom.getY());
-                double slope = deltaY / deltaX;
+                    Dimension moveFrom = super.dimension;
+                    double deltaX = (moveTo.getX() - moveFrom.getX());
+                    double deltaY = (moveTo.getY() - moveFrom.getY());
+                    double slope = deltaY / deltaX;
 
-                int signX = Double.compare(deltaX, 0.0);//0;
-                if (signX != 0)
-                    signX = signX / Math.abs(signX);
+                    int signX = Double.compare(deltaX, 0.0);//0;
+                    if (signX != 0)
+                        signX = signX / Math.abs(signX);
                 /*if (deltaX > 0){
                     signX = 1;
                 }else if (deltaX < 0){
                     signX = -1;
                 }*/
 
-                int signY = Double.compare(deltaY, 0.0);
-                if (signY != 0)
-                    signY = signY / Math.abs(signY);
+                    int signY = Double.compare(deltaY, 0.0);
+                    if (signY != 0)
+                        signY = signY / Math.abs(signY);
                 /*if (deltaY > 0){
 
                     signY = 1;
@@ -353,59 +357,61 @@ public class Hero extends Warrior {
                     signY = -1;
                 }*/
 
-                if (signX == 0 && signY == 0){
-                    deltaX = 0;
-                    deltaY = 0;
-                }else if (signX == 0){
-                    deltaX = 0;
-                    deltaY = 10.0 * signY;
-                }else if (signY == 0){
-                    deltaY = 0;
-                    deltaX = 10.0 * signX;
-                }else{
-                    double dummy = 1.0 + slope * slope;
-                    dummy = 100.0 / dummy;
-                    dummy = Math.sqrt(dummy);
-                    dummy = Math.round(dummy * 10);
-                    deltaX = (dummy / 10.0) * signX;
-                    deltaY = deltaX * slope;
+                    if (signX == 0 && signY == 0){
+                        deltaX = 0;
+                        deltaY = 0;
+                    }else if (signX == 0){
+                        deltaX = 0;
+                        deltaY = 10.0 * signY;
+                    }else if (signY == 0){
+                        deltaY = 0;
+                        deltaX = 10.0 * signX;
+                    }else{
+                        double dummy = 1.0 + slope * slope;
+                        dummy = 100.0 / dummy;
+                        dummy = Math.sqrt(dummy);
+                        dummy = Math.round(dummy * 10);
+                        deltaX = (dummy / 10.0) * signX;
+                        deltaY = deltaX * slope;
+                    }
+
+                    Dimension changeDim = new Dimension(deltaX, deltaY);
+                    while (!super.dimension.equals(moveTo)){
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        synchronized (lock){
+                            double xRemain = (moveTo.getX() - super.dimension.getX());
+
+                            if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
+                                changeDim.setX(xRemain);
+                            }
+                            double yRemain = (moveTo.getY() - super.dimension.getY());
+                            if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
+                                changeDim.setY(yRemain);
+                            }
+                            Dimension.correctDim(changeDim);
+                            move(changeDim);
+                        }
+                    }
+                    //System.out.println("hero reached destination");
+                    setShouldMove(false);
                 }
 
-                Dimension changeDim = new Dimension(deltaX, deltaY);
-                while (!super.dimension.equals(moveTo)){
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    synchronized (lock){
-                        double xRemain = (moveTo.getX() - super.dimension.getX());
+                if (shouldShoot){
+                    // System.out.println("HERO SHOULD SHOOT");
+                    List<Alien> fuckthisshit =  shoot(toShoot);
+                    if (fuckthisshit != null){
+                        if (!fuckthisshit.isEmpty()){
 
-                        if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
-                            changeDim.setX(xRemain);
+                            killed.addAll(shoot(toShoot));
                         }
-                        double yRemain = (moveTo.getY() - super.dimension.getY());
-                        if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
-                            changeDim.setY(yRemain);
-                        }
-                        Dimension.correctDim(changeDim);
-                        move(changeDim);
                     }
                 }
-                //System.out.println("hero reached destination");
-                setShouldMove(false);
             }
 
-            if (shouldShoot){
-               // System.out.println("HERO SHOULD SHOOT");
-                List<Alien> fuckthisshit =  shoot(toShoot);
-                if (fuckthisshit != null){
-                    if (!fuckthisshit.isEmpty()){
-
-                        killed.addAll(shoot(toShoot));
-                    }
-                }
-            }
         }
     }
 
