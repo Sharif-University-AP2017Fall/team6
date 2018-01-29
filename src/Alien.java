@@ -61,6 +61,8 @@ public class Alien implements Movable, Comparable, Runnable {
 
     }
     
+    
+    /***** changing static Initial Alien  ******/
     static void changeInitialEnergy(String name,int changed){
         
         initialAlien.get(name).setInitialEnergy(changed);
@@ -95,6 +97,47 @@ public class Alien implements Movable, Comparable, Runnable {
     
     }
     
+    /***  Asking for initial fields of Alien  ***/
+    
+    static int getInitialEnergy(String name){
+        
+        return initialAlien.get(name).getInitialEnergy();
+    }
+    
+    static int getInitialSpeed(String name){
+        
+        return initialAlien.get(name).getInitialSpeed();
+    }
+    
+    static int getInitialShootingSpeed(String name){
+        
+        return initialAlien.get(name).getShootingSpeed();
+    
+    }
+    
+    static int getInitialStrength(String name){
+        
+        return initialAlien.get(name).getStrength();
+    
+    }
+    
+    static boolean getCanFly(String name ){
+        
+        return initialAlien.get(name).isCanFly();
+    
+    }
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    /*** کد های قبلی ****/
+     
     
     public static boolean addDeadAliens(Alien rip){
         if (!deadAliens.contains(rip)){
