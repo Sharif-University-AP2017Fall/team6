@@ -324,27 +324,30 @@ public class Hero extends Warrior {
         }
     }
 
+   
     @Override
-    public String toString() {
-        StringBuilder string = new StringBuilder();
-        string.append("*** Hero ***\n----------\n");
-        string.append("place: ").append(super.getDimension()).append("\tenergy left: ").append(super.getEnergy()).append("\n\n");
+        public String toString() {
+            StringBuilder string = new StringBuilder();
+            string.append("*** Hero ***\n----------\n");
+            string.append("place: ").append(super.getDimension()).append("\nenergy left: ")
+                    .append(super.getEnergy()).append("\n").append(achievement.numKilledByHero()).append("\n").append(achievement.toString());
 
-        string.append("*** Soldiers ***\n----------\n");
-        boolean hasSoldiers = false;
-        for (int i = 0; i < 3; i++) {
-            if (soldiers[i] != null) {
-                string.append("Soldier #" + (i + 1) + soldiers[i].toString());
-                hasSoldiers = true;
+            /*string.append("*** Soldiers ***\n----------\n");
+            boolean hasSoldiers = false;
+            for (int i = 0; i < 3; i++) {
+                if (soldiers[i] != null) {
+                    string.append("Soldier #" + (i + 1) + soldiers[i].toString());
+                    hasSoldiers = true;
+                }
             }
-        }
-        if (!hasSoldiers) {
-            string.append("No soldiers found");
-        }
+            if (!hasSoldiers) {
+                string.append("No soldiers found");
+            }
 
-        string.append("\n\n");
-        return string.toString();
-    }
+    */
+            string.append("\n\n");
+            return string.toString();
+        }
 
     /**** Hero changes its dimension and his alive soldiers also change dimensions. ****/
 
@@ -938,6 +941,16 @@ class Achievement {
             achievementView.setAchivement("Blood Sucker");
         }
     }
+    
+    public String numKilledByHero(){
+        int sum=0;
+        for (int i=0;i<numTypeAlien;i++)
+            sum=sum+numOfKilledByHero[i];
+        if (sum>1)
+            return ""+sum+" aliens killed by Hero";
+        else
+            return ""+sum+" alien killed by Hero";
+    }
 }
 
 
@@ -1003,6 +1016,7 @@ class AchievementView {
         
         return a;
     }
+    
 }
 
 

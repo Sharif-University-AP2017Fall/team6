@@ -313,7 +313,8 @@ public class AlienCreeps extends Application {
     static Scene popupTeslaDimScene  = new Scene(new Group(), 450, 275);
     static Scene popupPauseScene = new Scene(new Group(), 275, 300);
     static Scene popupWarningScene = new Scene(new Group(), 450, 275);
-
+    static Scene popupStatusScene = new Scene(new Group(), 275, 300);
+    
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
     static Stage popupEndGameStage = new Stage();
@@ -321,6 +322,7 @@ public class AlienCreeps extends Application {
     static Stage popupTeslaDimStage = new Stage();
     static Stage popupPauseStage = new Stage();
     static Stage popupWarningStage = new Stage();
+    static Stage popupStatusStage = new Stage();
     //static Stage statusStage = new Stage();
 
     @Override
@@ -357,6 +359,12 @@ public class AlienCreeps extends Application {
         popupPauseStage.initModality(Modality.APPLICATION_MODAL);
         popupPauseStage.setAlwaysOnTop(true);
         popupPauseStage.centerOnScreen();
+        
+        popupStatusScene.setRoot(createStatusSceneContent());
+        popupStatusStage.setScene(popupStatusScene);
+        popupStatusStage.initModality(Modality.APPLICATION_MODAL);
+        popupStatusStage.setAlwaysOnTop(true);
+        
 
         popupWarningStage.setScene(popupWarningScene);
         popupWarningStage.centerOnScreen();
@@ -367,6 +375,47 @@ public class AlienCreeps extends Application {
         stage.centerOnScreen();
     }
 
+    
+   private Parent createStatusSceneContent(){
+        Group root = new Group();
+
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/pause/bg.png").toExternalForm()));
+
+        MenuItem quit_ = new MenuItem(new Image(getClass()
+                .getResource("res/menu/pause/Continue.png").toExternalForm()), 220, 55);
+        quit_.setDim(30, 45);
+        quit_.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+
+                popupStatusStage.close();
+
+            }
+        });
+
+        ImageView textBg = new ImageView(new Image(getClass()
+                .getResource("res/menu/item/board3.png").toExternalForm()));
+        textBg.setFitWidth(250);
+        textBg.setFitHeight(310);
+        textBg.setX(0);
+        textBg.setY(80);
+
+
+        Text status=new Text(70,160, gameMap.getHero().toString());
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 20);
+        status.setFont(font);
+        status.setFill(Color.rgb(50, 20, 15));
+
+        root.getChildren().addAll(background, quit_,textBg,status);
+
+        return root;
+    }
+
+    
     private Parent createPauseSceneContent(){
         Group root = new Group();
 
@@ -402,8 +451,15 @@ public class AlienCreeps extends Application {
         MenuItem show_status = new MenuItem(new Image(getClass()
                 .getResource("res/menu/pause/Show Status.png").toExternalForm()), 220, 55);
         show_status.setDim(30, 205);
+ //
 
-
+        show_status.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupStatusStage.showAndWait();
+                //popupPauseStage.close();
+            }
+        });
 
         /*popupPauseScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -419,6 +475,7 @@ public class AlienCreeps extends Application {
 
         return root;
     }
+
 
     static void endGame(boolean gameOver) {
         System.out.println("setting endgame scene");
