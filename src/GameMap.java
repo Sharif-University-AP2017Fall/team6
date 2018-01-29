@@ -182,6 +182,8 @@ public class GameMap {
             return;
         }
 
+//        System.out.println(hero);
+
       //  System.out.println("NUM = " + Alien.getNUM());
         /*if (Alien.isSTART()) {
             System.out.println("NUM = " + Alien.getNUM());
@@ -1441,6 +1443,7 @@ public class GameMap {
     void updateAchievements(List<Alien> deadAliens, String killedBy) {
         Achievement achievement = hero.getAchievement();
         if (killedBy.equalsIgnoreCase("hero")) {
+           // System.out.println("updating hero achi");
             for (int i = 0; i < deadAliens.size(); i++) {
                 achievement.killedHero(deadAliens.get(i));
             }
@@ -1611,7 +1614,7 @@ public class GameMap {
                     
                 }
                 SuperNaturalHelp = true;
-                AlienCreeps.showPopupWarning("Super Natural Help", 85, 105);
+                AlienCreeps.showPopupWarning("Super Natural Help", 65, 105);
                 System.out.println("Super  Natural  Help :))");
             }
         }

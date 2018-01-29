@@ -168,6 +168,11 @@ public class Alien implements Movable, Comparable, Runnable {
         if (!deadAliens.contains(rip)){
             deadAliens.add(rip);
             reduceNum(1);
+            if (Alien.NUM == 0){
+                if (AlienCreeps.getCurrentHour() > 1){ //hour > 1
+                    AlienCreeps.endGame(false);
+                }
+            }
             return true;
         }
         return false;
@@ -312,8 +317,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 e.printStackTrace();
             }
             synchronized (lock2) {
-                bulletView.shoot(currentDim, warrior.getShootingPoint(), 1000 / maxBullet - 55, maxBullet);
                 if (warrior != null){
+                    bulletView.shoot(currentDim, warrior.getShootingPoint(), 1000 / maxBullet - 55, maxBullet);
                     if (energy > 0) {
                         warrior.reduceEnergy(strength);
                         //       System.out.println(name + " reduced hero's energy");
@@ -445,6 +450,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     static void reduceNum(int NUM) {
         Alien.NUM -= NUM;
+
        // System.out.println("NUM = " + Alien.NUM);
     }
 

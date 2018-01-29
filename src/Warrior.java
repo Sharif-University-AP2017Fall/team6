@@ -210,6 +210,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                                     /***** UPDATING HERO'S ACHIEVEMENTS***/
                                     AlienCreeps.gameMap.updateAchievements(dummy,
                                             this.getClass().getName().toLowerCase());
+                                    numKilled++;
                                     /***REDUCING NUMBER OF TOTAL ALIENS*/
 
                                     /****ADDING MONEY AND EXPERIENCE LEVEL TO HERO***/
@@ -384,9 +385,9 @@ class BulletView extends StackPane{
                 this
         );
         pt1.setCycleCount(cycle);
-        GameMap.parallelTransition.getChildren().addAll(pt1);
-        GameMap.parallelTransition.play();
-
+//        GameMap.parallelTransition.getChildren().addAll(pt1);
+  //      GameMap.parallelTransition.play();
+pt1.play();
         Timeline clearingTime = new Timeline(new KeyFrame(Duration.millis(cycle * duration + 20),
                 new EventHandler<ActionEvent>() {
                     @Override

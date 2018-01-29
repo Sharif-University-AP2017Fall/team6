@@ -71,8 +71,8 @@ public class Hero extends Warrior {
 
     }
     
-    static void setYaranePercent(int a) {
-        YaranePercent = (double)a / 100.0;
+    static void setYaranePercent(double a) {
+        YaranePercent = a;
 
     }
     
@@ -829,22 +829,22 @@ class Achievement {
         
         switch (alien.getName()) {
             
-            case "Albertonion":
+            case "albertonion":
                 numOfKilledByWeapon[0]++;
                 if (numOfKilledByWeapon[0] > 9)
                     achieved.replace("Restless Shooter", true);
                 break;
-            case "Algwasonion":
+            case "algwasonion":
                 numOfKilledByWeapon[1]++;
                 if (numOfKilledByWeapon[1] > 9)
                     achieved.replace("Brave Warrior", true);
                 break;
-            case "Activionion":
+            case "activionion":
                 numOfKilledByWeapon[2]++;
                 if (numOfKilledByHero[2] > 9)
                     achieved.replace("Butcher", true);
                 break;
-            case "Aironion":
+            case "aironion":
                 numOfKilledByWeapon[3]++;
                 if (numOfKilledByHero[3] > 9)
                     achieved.replace("Blood Sucker", true);
@@ -857,27 +857,28 @@ class Achievement {
     }
     
     void killedHero(Alien alien) {
+        System.out.println("alksjdhfcbaksdmhbfc ");
         
         //alien.getAlienView().dead();
         switch (alien.getName()) {
-            case "Albertonion":
+            case "albertonion":
                 numOfKilledByHero[0]++;
                 if (numOfKilledByHero[0] > 4)
                     achieved.replace("Great Hunter", true);
                 break;
-            case "Algwasonion":
+            case "algwasonion":
                 numOfKilledByHero[1]++;
                 if (numOfKilledByHero[1] > 4)
                     achieved.replace("Good Gene", true);
                 break;
-            case "Activionion":
+            case "activionion":
                 numOfKilledByHero[2]++;
                 if (numOfKilledByHero[2] > 4)
                     achieved.replace("Greek Goddess", true);
                 if (numOfKilledByHero[2] > 9)
                     achieved.replace("Eagle Eye", true);
                 break;
-            case "Aironion":
+            case "aironion":
                 numOfKilledByHero[3]++;
                 break;
         }
@@ -942,14 +943,16 @@ class Achievement {
         }
     }
     
-    public String numKilledByHero(){
-        int sum=0;
-        for (int i=0;i<numTypeAlien;i++)
-            sum=sum+numOfKilledByHero[i];
-        if (sum>1)
-            return ""+sum+" aliens killed by Hero";
+    public String numKilledByHero() {
+        int sum = 0;
+        for (int i = 0; i < numTypeAlien; i++){
+            System.out.println(numOfKilledByHero[i]);
+            sum = sum + numOfKilledByHero[i];
+        }
+        if (sum > 1)
+            return "" + sum + " aliens killed by Hero";
         else
-            return ""+sum+" alien killed by Hero";
+            return "" + sum + " alien killed by Hero";
     }
 }
 
