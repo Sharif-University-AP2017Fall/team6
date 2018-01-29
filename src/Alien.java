@@ -9,6 +9,8 @@ import javafx.scene.layout.StackPane;
 
 import java.util.ArrayList;
 
+import java.util.*;
+
 public class Alien implements Movable, Comparable, Runnable {
 
     /*** CLASS PARAMETERS ***/
@@ -44,6 +46,51 @@ public class Alien implements Movable, Comparable, Runnable {
     private AlienView alienView;
     private ProgressBar progressBar;
 
+    private static HashMap<String,InitialAlien> initialAlien= new HashMap<String,InitialAlien>();
+    
+    static{
+    
+    initialAlien.put("Albertonion", new InitialAlien("Albertonion"));
+    
+    initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
+    
+    initialAlien.put("Activionion", new InitialAlien("Activionion"));
+    
+    initialAlien.put("Aironion", new InitialAlien("Aironion"));
+    //initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
+
+    }
+    
+    static void changeInitialEnergy(String name,int changed){
+        
+        initialAlien.get(name).setInitialEnergy(changed);
+    }
+    
+    static void changeInitialSpeed(String name,int changed){
+        
+        initialAlien.get(name).setInitialSpeed(changed);
+    }
+    
+    static void changeInitialShootingSpeed(String name,int changed){
+        
+        initialAlien.get(name).setShootingSpeed(changed);
+    
+    }
+    
+    static void changeInitialStrength(String name,int changed){
+        
+        initialAlien.get(name).setStrength(changed);
+    
+    }
+    
+    static void changeCanFly(String name,boolean changed ){
+        
+        initialAlien.get(name).setCanFly(changed);
+    
+    }
+    
+    
+    
     public static boolean addDeadAliens(Alien rip){
         if (!deadAliens.contains(rip)){
             deadAliens.add(rip);
@@ -64,7 +111,17 @@ public class Alien implements Movable, Comparable, Runnable {
         NUM++;
         START = true;
         this.name = name;
-        switch (name) {
+        
+        this.energy =  initialAlien.get(name).getInitialEnergy();
+        this.initialEnergy = initialAlien.get(name).getInitialEnergy();
+        this.speed = initialAlien.get(name).getInitialSpeed(); //8
+        this.initialSpeed = initialAlien.get(name).getInitialSpeed(); //8
+        this.shootingSpeed = initialAlien.get(name).getShootingSpeed();
+        this.strength = initialAlien.get(name).getStrength();
+        this.type = initialAlien.get(name).getType();
+        this.canFly = initialAlien.get(name).isCanFly();
+        
+        /*switch (name) {
             case "Albertonion":
                 this.energy = 250;
                 this.initialEnergy = 250;
@@ -104,7 +161,11 @@ public class Alien implements Movable, Comparable, Runnable {
                 this.type = 3;
                 this.canFly = true;
                 break;
-        }
+        }*/
+        
+        
+        
+        
         this.shouldMove = false;
         this.shouldShoot = false;
     }
@@ -359,57 +420,54 @@ public class Alien implements Movable, Comparable, Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //todo try synchronized
-            if (!AlienCreeps.ISPAUSED){
-                if (shouldShoot) {
-                    shoot(toShoot);
-                }
-                if (shouldMove) {
-                    Dimension moveFrom = currentDim;
-                    double deltaX = (moveTo.getX() - moveFrom.getX()) / 10;
-                    double deltaY = (moveTo.getY() - moveFrom.getY()) / 10;
+            if (shouldShoot) {
+                shoot(toShoot);
+            }
+            if (shouldMove) {
+                Dimension moveFrom = currentDim;
+                double deltaX = (moveTo.getX() - moveFrom.getX()) / 10;
+                double deltaY = (moveTo.getY() - moveFrom.getY()) / 10;
 
-                    int signX = Double.compare(deltaX, 0.0);
-                    int signY = Double.compare(deltaY, 0.0);
+                int signX = Double.compare(deltaX, 0.0);
+                int signY = Double.compare(deltaY, 0.0);
 
-                    deltaX = (this.speed * GameMap.UNIT) / 10.0 * signX;
-                    deltaY = (this.speed * GameMap.UNIT) / 10.0 * signY;
-                    for (int i = 0; i < cycleNum; i++) {
-                        try {
-                            Thread.sleep(90); //250
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                deltaX = (this.speed * GameMap.UNIT) / 10.0 * signX;
+                deltaY = (this.speed * GameMap.UNIT) / 10.0 * signY;
+                for (int i = 0; i < cycleNum; i++) {
+                    try {
+                        Thread.sleep(90); //250
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    synchronized (lock1) {
+                        double xRemain = moveTo.getX() - currentDim.getX();
+                        if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
+                            deltaX = xRemain;
                         }
-                        synchronized (lock1) {
-                            double xRemain = moveTo.getX() - currentDim.getX();
-                            if (Double.compare(Math.abs(xRemain), Math.abs(deltaX)) < 0){
-                                deltaX = xRemain;
-                            }
 
-                            double yRemain = (moveTo.getY() - currentDim.getY());
-                            if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
-                                deltaY = yRemain;
-                            }
-
-                            Dimension newDim = new Dimension(currentDim.getX() + deltaX,
-                                    currentDim.getY() + deltaY);
-                            Dimension.correctDim(newDim);
-
-                            if (speed > 0) {
-                                move(newDim);
-                            }
+                        double yRemain = (moveTo.getY() - currentDim.getY());
+                        if (Double.compare(Math.abs(yRemain), Math.abs(deltaY)) < 0){
+                            deltaY = yRemain;
                         }
-                        if (!shouldMove || currentDim.equals(moveTo)) {
-                            this.cycleNumLeft--;
-                            break;
+
+                        Dimension newDim = new Dimension(currentDim.getX() + deltaX,
+                                currentDim.getY() + deltaY);
+                        Dimension.correctDim(newDim);
+
+                        if (speed > 0) {
+                            move(newDim);
                         }
                     }
-                    cycleNumLeft = 10;
-                    shouldMove = false;
+                    if (!shouldMove || currentDim.equals(moveTo)) {
+                        this.cycleNumLeft--;
+                        break;
+                    }
                 }
-                if(isDead()){
-                    return;
-                }
+                cycleNumLeft = 10;
+                shouldMove = false;
+            }
+            if(isDead()){
+                return;
             }
         }
     }
@@ -765,6 +823,114 @@ class ProgressBar extends StackPane{
 }
 
 
+
+
+class InitialAlien {
+
+    
+    private int initialEnergy;
+    private int initialSpeed;
+    private int shootingSpeed;
+    private int strength;
+    private int type;
+    private boolean canFly;
+
+    public int getInitialEnergy() {
+        return initialEnergy;
+    }
+
+    public void setInitialEnergy(int initialEnergy) {
+        this.initialEnergy = initialEnergy;
+    }
+
+    public int getInitialSpeed() {
+        return initialSpeed;
+    }
+
+    public void setInitialSpeed(int initialSpeed) {
+        this.initialSpeed = initialSpeed;
+    }
+
+    public int getShootingSpeed() {
+        return shootingSpeed;
+    }
+
+    public void setShootingSpeed(int shootingSpeed) {
+        this.shootingSpeed = shootingSpeed;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isCanFly() {
+        return canFly;
+    }
+
+    public void setCanFly(boolean canFly) {
+        this.canFly = canFly;
+    }
+    
+    
+    
+    InitialAlien(String name){
+    switch (name) {
+            case "Albertonion":
+                //this.energy = 250;
+                this.initialEnergy = 250;
+                //this.speed = 4; //8
+                this.initialSpeed = 4; //8
+                this.shootingSpeed = 5;
+                this.strength = 7;
+                this.type = 0;
+                this.canFly = false;
+                break;
+            case "Algwasonion":
+                //this.energy = 150;
+                this.initialEnergy = 150;
+                //this.speed = 3; //4
+                this.initialSpeed = 3; //4
+                this.shootingSpeed = 10;
+                this.strength = 25;
+                this.type = 1;
+                this.canFly = false;
+                break;
+            case "Activionion":
+                //this.energy = 400;
+                this.initialEnergy = 400;
+                this.initialSpeed = 1; //2
+                this.shootingSpeed = 2;
+                this.strength = 40;
+                this.type = 2;
+                this.canFly = false;
+                break;
+            case "Aironion":
+                //this.energy = 200;
+                this.initialEnergy = 200;
+                //this.speed = 2; //5
+                this.initialSpeed = 2; //5
+                this.shootingSpeed = 5;
+                this.strength = 20;
+                this.type = 3;
+                this.canFly = true;
+                break;
+        }
+    }
+
+
+}
 
 
 
