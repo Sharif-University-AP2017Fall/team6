@@ -47,16 +47,21 @@ public class Alien implements Movable, Comparable, Runnable {
     private ProgressBar progressBar;
 
     private static HashMap<String,InitialAlien> initialAlien= new HashMap<String,InitialAlien>();
+    private static ArrayList<String> initialAlienName = new ArrayList<>();
     
     static{
     
     initialAlien.put("Albertonion".toLowerCase(), new InitialAlien("Albertonion"));
+    initialAlienName.add("Albertonion".toLowerCase());
     
     initialAlien.put("Algwasonion".toLowerCase(), new InitialAlien("Algwasonion"));
+    initialAlienName.add("Algwasonion".toLowerCase());
     
     initialAlien.put("Activionion".toLowerCase(), new InitialAlien("Activionion"));
+    initialAlienName.add("Activionion".toLowerCase());
     
     initialAlien.put("Aironion".toLowerCase(), new InitialAlien("Aironion"));
+    initialAlienName.add("Aironion".toLowerCase());
     //initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
 
     }
@@ -68,6 +73,19 @@ public class Alien implements Movable, Comparable, Runnable {
     
     }
     
+    public static ArrayList<String> getInitialAlienName(){
+        return initialAlienName;
+        
+    }
+    
+    
+    static void addNewDefinedAlien(String name,InitialAlien Taze){
+        
+        initialAlien.put(name.toLowerCase(), Taze);
+        initialAlienName.add(name.toLowerCase());
+        
+        
+    }
     /***** changing static Initial Alien  ******/
     static void changeInitialEnergy(String name,int changed){
         
@@ -100,6 +118,7 @@ public class Alien implements Movable, Comparable, Runnable {
     static void changeDeactivate(String name ){
         
         initialAlien.remove(name.toLowerCase());
+        initialAlienName.remove(name.toLowerCase());
     
     }
     
@@ -845,6 +864,31 @@ class InitialAlien {
     private int type;
     private boolean canFly;
 
+    
+    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength,boolean canFly){
+        
+        
+        setInitialEnergy(initialEnergy);
+        setInitialSpeed(initialSpeed);
+        setShootingSpeed(shootingSpeed);
+        setStrength(strength);
+        setCanFly(canFly);
+    
+    
+    }
+    
+    InitialAlien(int initialEnergy,int initialSpeed,int shootingSpeed,int strength){
+        
+        
+        setInitialEnergy(initialEnergy);
+        setInitialSpeed(initialSpeed);
+        setShootingSpeed(shootingSpeed);
+        setStrength(strength);
+        setCanFly(false);
+    
+    
+    }
+    
     public int getInitialEnergy() {
         return initialEnergy;
     }
@@ -940,6 +984,7 @@ class InitialAlien {
     }
 
 
+    
 }
 
 

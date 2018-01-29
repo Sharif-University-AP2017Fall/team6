@@ -842,10 +842,16 @@ public class GameMap {
         if (Alien.getNUM() < Alien.getMAXNUM()) {
             if ((int) (Math.random() * probabilityInv) == 0) {
 
-                int whichAlien = (int) (Math.random() * 4);
+                
+                int size=Alien.getInitialAlienName().size();
+                
+                
+                int whichAlien = (int) (Math.random() * size);
                 String name = null;
                 Alien newAlien;
                 
+                
+                /*
                 switch (whichAlien) {
                     case 0:
                         name = "albertonion";
@@ -860,6 +866,11 @@ public class GameMap {
                         name = "aironion";
                         break;
                 }
+                */
+                
+                
+                name=Alien.getInitialAlienName().get(whichAlien);
+                
                 
                 /** changing ALIEN creation for Custom  **/
                 
