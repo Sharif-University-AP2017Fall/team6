@@ -89,6 +89,11 @@ public class Alien implements Movable, Comparable, Runnable {
     
     }
     
+    static void changeDeactivate(String name ){
+        
+        initialAlien.remove(name);
+    
+    }
     
     
     public static boolean addDeadAliens(Alien rip){
@@ -931,6 +936,65 @@ class InitialAlien {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
