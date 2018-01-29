@@ -45,6 +45,66 @@ public class Hero extends Warrior {
     private ProgressBar healthBar;
     private ProgressBar moneyBar;
     
+    /***** STATIC FOR CUSTOM ******/
+    
+    private static  int initialMoney=3000;
+    private static int CoinForEachYarane=10;
+    private static double YaranePercent=0.1;
+    private static String heroPic="5/";
+    
+    static void setHeroPic(String a){
+        
+        heroPic=a+"/";
+    
+    }
+    
+    
+    static void setInitialMoney(int a){
+        
+        initialMoney=a;
+    
+    }
+    
+    static void setCoinForEachYarane(int a){
+        
+        CoinForEachYarane=a;
+        
+    }
+    
+    static void setYaranePercent(double a){
+        YaranePercent=a;
+    
+    }
+    
+    
+    
+    static String getHeroPic(){
+        
+       return heroPic;
+    
+    }
+    
+    
+    static int getInitialMoney(){
+        
+        return initialMoney;
+    
+    }
+    
+    static int getCoinForEachYarane(){
+        
+        return CoinForEachYarane;
+        
+    }
+    
+    static double getYaranePercent(double a){
+        
+        return YaranePercent;
+    
+    }
+    
+    
+    
     @Override
     public BulletView getBulletView() {
         return this.bulletView;
@@ -60,7 +120,7 @@ public class Hero extends Warrior {
     }
 
     Hero(Dimension dimension) {
-        warriorView = new WarriorView("hero", "5/", new Dimension(400, 300));
+        warriorView = new WarriorView("hero", heroPic, new Dimension(400, 300));
         bulletView = new BulletView();
         healthBar = new ProgressBar("health");
         moneyBar = new ProgressBar("money");
@@ -82,7 +142,7 @@ public class Hero extends Warrior {
         achievement = new Achievement();
 
         setDimension(dimension);
-        setMoney(5000);
+        setMoney(initialMoney);
         setMaximumMoney(5000);
         setEnergy(300);
         setMaximumEnergy(300);
@@ -101,6 +161,12 @@ public class Hero extends Warrior {
         super.shouldShoot = false;
     }
 
+    
+    
+    
+    
+    
+    
     public StackPane[] getAchievementView(){
         
         return achievement.getAchievementView().getAchievementView();
@@ -219,11 +285,11 @@ public class Hero extends Warrior {
         if (numAlive == 0) {
             System.out.println("There are no soldiers to upgrade.");
         } else {
-            if (this.getMoney() >= numAlive * 10) {
-                this.reduceMoney(numAlive * 10);
+            if (this.getMoney() >= numAlive * CoinForEachYarane) {
+                this.reduceMoney(numAlive * CoinForEachYarane);
                 for (int i = 0; i < 3; i++) {
                     if (soldiers[i] != null) {
-                        soldiers[i].increaseRadius();
+                        soldiers[i].increaseRadius(YaranePercent);
                     }
                 }
                 return true;

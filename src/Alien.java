@@ -50,13 +50,13 @@ public class Alien implements Movable, Comparable, Runnable {
     
     static{
     
-    initialAlien.put("Albertonion", new InitialAlien("Albertonion"));
+    initialAlien.put("Albertonion".toLowerCase(), new InitialAlien("Albertonion"));
     
-    initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
+    initialAlien.put("Algwasonion".toLowerCase(), new InitialAlien("Algwasonion"));
     
-    initialAlien.put("Activionion", new InitialAlien("Activionion"));
+    initialAlien.put("Activionion".toLowerCase(), new InitialAlien("Activionion"));
     
-    initialAlien.put("Aironion", new InitialAlien("Aironion"));
+    initialAlien.put("Aironion".toLowerCase(), new InitialAlien("Aironion"));
     //initialAlien.put("Algwasonion", new InitialAlien("Algwasonion"));
 
     }
@@ -65,35 +65,35 @@ public class Alien implements Movable, Comparable, Runnable {
     /***** changing static Initial Alien  ******/
     static void changeInitialEnergy(String name,int changed){
         
-        initialAlien.get(name).setInitialEnergy(changed);
+        initialAlien.get(name.toLowerCase()).setInitialEnergy(changed);
     }
     
     static void changeInitialSpeed(String name,int changed){
         
-        initialAlien.get(name).setInitialSpeed(changed);
+        initialAlien.get(name.toLowerCase()).setInitialSpeed(changed);
     }
     
     static void changeInitialShootingSpeed(String name,int changed){
         
-        initialAlien.get(name).setShootingSpeed(changed);
+        initialAlien.get(name.toLowerCase()).setShootingSpeed(changed);
     
     }
     
     static void changeInitialStrength(String name,int changed){
         
-        initialAlien.get(name).setStrength(changed);
+        initialAlien.get(name.toLowerCase()).setStrength(changed);
     
     }
     
     static void changeCanFly(String name,boolean changed ){
         
-        initialAlien.get(name).setCanFly(changed);
+        initialAlien.get(name.toLowerCase()).setCanFly(changed);
     
     }
     
     static void changeDeactivate(String name ){
         
-        initialAlien.remove(name);
+        initialAlien.remove(name.toLowerCase());
     
     }
     
@@ -101,29 +101,29 @@ public class Alien implements Movable, Comparable, Runnable {
     
     static int getInitialEnergy(String name){
         
-        return initialAlien.get(name).getInitialEnergy();
+        return initialAlien.get(name.toLowerCase()).getInitialEnergy();
     }
     
     static int getInitialSpeed(String name){
         
-        return initialAlien.get(name).getInitialSpeed();
+        return initialAlien.get(name.toLowerCase()).getInitialSpeed();
     }
     
     static int getInitialShootingSpeed(String name){
         
-        return initialAlien.get(name).getShootingSpeed();
+        return initialAlien.get(name.toLowerCase()).getShootingSpeed();
     
     }
     
     static int getInitialStrength(String name){
         
-        return initialAlien.get(name).getStrength();
+        return initialAlien.get(name.toLowerCase()).getStrength();
     
     }
     
     static boolean getCanFly(String name ){
         
-        return initialAlien.get(name).isCanFly();
+        return initialAlien.get(name.toLowerCase()).isCanFly();
     
     }
     
@@ -934,8 +934,8 @@ class InitialAlien {
     
     
     InitialAlien(String name){
-    switch (name) {
-            case "Albertonion":
+    switch (name.toLowerCase()) {
+            case "albertonion":
                 //this.energy = 250;
                 this.initialEnergy = 250;
                 //this.speed = 4; //8
@@ -945,7 +945,7 @@ class InitialAlien {
                 this.type = 0;
                 this.canFly = false;
                 break;
-            case "Algwasonion":
+            case "algwasonion":
                 //this.energy = 150;
                 this.initialEnergy = 150;
                 //this.speed = 3; //4
@@ -955,7 +955,7 @@ class InitialAlien {
                 this.type = 1;
                 this.canFly = false;
                 break;
-            case "Activionion":
+            case "activionion":
                 //this.energy = 400;
                 this.initialEnergy = 400;
                 this.initialSpeed = 1; //2
@@ -964,7 +964,7 @@ class InitialAlien {
                 this.type = 2;
                 this.canFly = false;
                 break;
-            case "Aironion":
+            case "aironion":
                 //this.energy = 200;
                 this.initialEnergy = 200;
                 //this.speed = 2; //5

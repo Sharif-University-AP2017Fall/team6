@@ -20,8 +20,8 @@ public class Soldier extends Warrior {
     }
 
 
-    void increaseRadius() {
-        setRadius(getRadius() * 1.1);
+    void increaseRadius(double percent) {
+        setRadius(getRadius() * (1+percent));
     }
 
     void resetRadius() {
