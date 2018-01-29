@@ -226,8 +226,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
         setRadius(this.radius * 1.1);
     }
 
-    void reduceRadius() {
-        setRadius(this.radius * 0.85);
+    void reduceRadius(double a) {
+        setRadius(this.radius * a);
     }
 
     void resetRadius() {
