@@ -8,6 +8,8 @@ import javafx.scene.layout.StackPane;
 
 import java.awt.font.TextHitInfo;
 import java.util.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public class GameMap {
     static double XBOUND = 895;
@@ -1075,6 +1077,11 @@ public class GameMap {
         return false;
     }
 
+    
+    private Media sound=new Media(getClass().getResource("res/sound/tesla2.wav").toExternalForm());
+    private MediaPlayer player=new MediaPlayer(sound);
+    
+    
     void useTesla(Dimension dimension) {
         if (Weapon.NUM_USED_TESLA < 2) {
             if (!Weapon.TESLA_IN_USE) {
@@ -1095,6 +1102,7 @@ public class GameMap {
                 });*/
 
                 tesla = Weapon.WeaponFactory(dimension, "Tesla", 0);
+                player.play();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -1127,6 +1135,9 @@ public class GameMap {
                 for (int i = 0; i < routes.size(); i++) {
                     this.removeAliensFromRoute(routes.get(i), aliensToKill);
                 }
+                
+                player=new MediaPlayer(sound);
+                
             } else {
                 System.out.println("You must wait " + Weapon.SECONDS_LEFT_TO_USE_TESLA + " more seconds.");
             }
