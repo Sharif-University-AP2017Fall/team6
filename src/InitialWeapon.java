@@ -96,27 +96,27 @@ public class InitialWeapon{
         isOnAirOnly.replace(name, state);
     }
 
-    public static void getRadius(String name, double r) {
+    public static void setRadius(String name, double r) {
         radius.replace(name, r);
     }
 
-    public static void getBulletSpeed(String name, int speed) {
+    public static void setBulletSpeed(String name, int speed) {
         bulletSpeed.replace(name, speed);
     }
 
-    public static void getBulletPower(String name, int power) {
+    public static void setBulletPower(String name, int power) {
         bulletPower.replace(name, power);
     }
 
-    public static void getBulletPowerAir(String name, int power) {
+    public static void setBulletPowerAir(String name, int power) {
         bulletPowerAir.replace(name, power);
     }
 
-    public static void getSpeedReduction(String name, int amount) {
+    public static void setSpeedReduction(String name, int amount) {
         speedReduction.replace(name, amount);
     }
 
-    public static void getPrice(String name, int p) {
+    public static void setPrice(String name, int p) {
         price.replace(name, p);
     }
 

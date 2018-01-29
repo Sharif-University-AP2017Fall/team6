@@ -301,25 +301,28 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
 
     static Weapon WeaponFactory(Dimension dimension, String type, int locationNum) {
         type = type.toLowerCase();
-        switch (type) {
-            case "tesla":
-                NUM_USED_TESLA++;
-                SECONDS_LEFT_TO_USE_TESLA = 10;
-                TESLA_IN_USE = true;
-                return new WeaponAll(dimension, type, locationNum);
-            case "machine gun":
-                return new WeaponNearest(dimension, type, locationNum);
-            case "rocket":
-                return new WeaponAll(dimension, type, locationNum);
-            case "laser":
-                return new WeaponNearest(dimension, type, locationNum);
-            case "antiaircraft":
-                return new WeaponNearest(dimension, type, locationNum);
-            case "freezer":
-                return new WeaponAll(dimension, type, locationNum);
-            default:
-                System.out.println(type + " not Found");
-                break;
+        if (InitialWeapon.weaponNames.contains(type)) {
+
+            switch (type) {
+                case "tesla":
+                    NUM_USED_TESLA++;
+                    SECONDS_LEFT_TO_USE_TESLA = 10;
+                    TESLA_IN_USE = true;
+                    return new WeaponAll(dimension, type, locationNum);
+                case "machine gun":
+                    return new WeaponNearest(dimension, type, locationNum);
+                case "rocket":
+                    return new WeaponAll(dimension, type, locationNum);
+                case "laser":
+                    return new WeaponNearest(dimension, type, locationNum);
+                case "antiaircraft":
+                    return new WeaponNearest(dimension, type, locationNum);
+                case "freezer":
+                    return new WeaponAll(dimension, type, locationNum);
+                default:
+                    System.out.println(type + " not Found");
+                    break;
+            }
         }
         return null;
     }

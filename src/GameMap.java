@@ -676,23 +676,26 @@ public class GameMap {
                 }
             } else {
                 Weapon bought = this.hero.buyWeapon(weaponName, dimension, whichPlace);
-                Thread weaponLifeCycle = new Thread(bought);
-                weaponLifeCycle.start();
-                
-                Platform.runLater(() -> AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                        bought.getWeaponView()));
 
-                if (bought instanceof WeaponNearest){
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                                    ((WeaponNearest) bought).getBulletView());
-                        }
-                    });
+                if (bought != null){
+                    Thread weaponLifeCycle = new Thread(bought);
+                    weaponLifeCycle.start();
+
+                    Platform.runLater(() -> AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                            bought.getWeaponView()));
+
+                    if (bought instanceof WeaponNearest){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                                        ((WeaponNearest) bought).getBulletView());
+                            }
+                        });
+                    }
+
+                    specifiedLocations.put(dimension, bought);
                 }
-                
-                specifiedLocations.put(dimension, bought);
             }
         } else {
             System.out.println("There is already a weapon in this location.");

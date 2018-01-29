@@ -1,6 +1,8 @@
 import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.effect.DropShadow;
@@ -67,6 +69,27 @@ public class MenuItem extends StackPane{
         setOnMouseExited(e -> onDeselect());
     }
 
+    public MenuItem(Image view,int w,int h, String text){
+        setAlignment(Pos.CENTER);
+
+        normal = new ImageView(view);
+        normal.setFitWidth(w);
+        normal.setFitHeight(h);
+        msg = new Text(text);
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+        msg.setFont(font);
+        msg.setFill(Color.rgb(57, 34, 18));
+
+        getChildren().addAll(normal, msg);
+
+        setOnMouseEntered(e -> onSelect());
+
+        setOnMouseExited(e -> onDeselect());
+    }
+
     public MenuItem(Image view, String text){
         setAlignment(Pos.CENTER);
         msg = new Text(text);
@@ -107,8 +130,14 @@ public class MenuItem extends StackPane{
             player.play();
             action.run();
             /*Timeline act = new Timeline(new KeyFrame(Duration.millis(100),
-                    event1 -> action.run()));
-            act.setCycleCount(1);
+                    new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent event) {
+                            action.run();
+                            player.play();
+                        }
+                    }));*/
+            /*act.setCycleCount(1);
             act.play();*/
         });
     }

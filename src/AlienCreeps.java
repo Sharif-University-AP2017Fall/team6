@@ -1,9 +1,11 @@
 //import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.sun.org.apache.xml.internal.security.Init;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -11,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
@@ -18,6 +22,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -597,14 +603,20 @@ public class AlienCreeps extends Application {
         });
         new_item.setDim(390, 300);
 
-        MenuItem load_item = new MenuItem("LoadGame");
-        load_item.setDim(300, 450);
+        MenuItem custom_item = new MenuItem("Custom");
+        custom_item.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                customizeGame();
+            }
+        });
+        custom_item.setDim(300, 450);
 
         MenuItem exit_item = new MenuItem("Exit");
         exit_item.setOnAction(() -> System.exit(0));
         exit_item.setDim(390, 600);
 
-        root.getChildren().addAll(background, new_item, load_item, exit_item);
+        root.getChildren().addAll(background, new_item, custom_item, exit_item);
 
         Canvas canvas = new Canvas(560, 200);
         root.getChildren().add(canvas);
@@ -845,6 +857,277 @@ public class AlienCreeps extends Application {
         return root;
     }
 
+    static Scene customizeWeaponScene = new Scene(new Group(), 800, 500);
+    static Scene customizeAliensScene = new Scene(new Group(), 600, 500);
+    static Scene customizeHeroScene = new Scene(new Group(), 600, 500);
+
+    /*static Stage customizeWeaponStage = new Stage();
+    static Stage customizeAliensStage = new Stage();
+    static Stage customizeHeroStage = new Stage();*/
+
+
+    public void customizeGame(){
+        customizeWeaponScene.setRoot(createCustomizeWeaponContent());
+        //customizeWeaponStage.setScene(customizeWeaponScene);
+
+        customizeAliensScene.setRoot(createCustomizeAliensContent());
+        //customizeAliensStage.setScene(customizeAliensScene);
+
+        customizeHeroScene.setRoot(createCustomizeHeroContent());
+        //customizeHeroStage.setScene(customizeHeroScene);
+
+        //customizeWeaponStage.show();
+        stage.setScene(customizeWeaponScene);
+        stage.show();
+    }
+
+    private Parent createCustomizeWeaponContent(){
+        Group root = new Group();
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/custom/bg.png").toExternalForm()));
+        background.setFitWidth(800);
+        Image view = new Image(getClass()
+                .getResource("res/menu/custom/option.png").toExternalForm());
+        ArrayList<MenuItem> accepts = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            accepts.add(new MenuItem(view, 90, 40, "Accept"));
+            accepts.get(i).relocate(240 + i * 105, 380);
+        }
+
+        ArrayList<MenuItem> deletes = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            deletes.add(new MenuItem(view, 90, 40, "Delete"));
+            deletes.get(i).relocate(240 + i * 105, 430);
+        }
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        ArrayList<Text> fields = new ArrayList<>();
+        fields.add(new Text("Price: "));
+        fields.add(new Text("Radius: "));
+        fields.add(new Text("Bullet\nSpeed: "));
+        fields.add(new Text("Bullet\nPower: "));
+        fields.add(new Text("Speed\nReduction: "));
+
+        for (int i = 0; i < fields.size(); i++){
+            fields.get(i).setFont(font);
+         //   fields.get(i).relocate(110, i * 60 + 30);
+        }
+
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(fields);
+        vBox.setPadding(new Insets(15));
+        //vBox1.setPadding(new Insets(5));
+        vBox.setSpacing(10);
+        vBox.setTranslateX(35);
+        vBox.setTranslateY(0);
+        vBox.setLayoutY(5);
+
+        ArrayList<TextField> machinegun = new ArrayList<>();
+        ArrayList<TextField> laser = new ArrayList<>();
+        ArrayList<TextField> freezer = new ArrayList<>();
+        ArrayList<TextField> anti = new ArrayList<>();
+        ArrayList<TextField> rocket = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++){
+            machinegun.add(new TextField());
+            machinegun.get(i).setPrefWidth(50);
+
+            laser.add(new TextField());
+            laser.get(i).setPrefWidth(50);
+
+            freezer.add(new TextField());
+            freezer.get(i).setPrefWidth(50);
+
+            anti.add(new TextField());
+            anti.get(i).setPrefWidth(50);
+
+            rocket.add(new TextField());
+            rocket.get(i).setPrefWidth(50);
+        }
+
+
+        VBox vBox1 = new VBox();
+        vBox1.setSpacing(40);
+        vBox1.setPadding(new Insets(15));
+        vBox1.setTranslateX(35 + 135);
+        vBox1.getChildren().addAll(machinegun);
+
+        VBox vBox2 = new VBox();
+        vBox2.setPadding(new Insets(15));
+        vBox2.setSpacing(40);
+        vBox2.setTranslateX(35 + 2 * 135);
+        vBox2.getChildren().addAll(rocket);
+
+        VBox vBox3 = new VBox();
+        vBox3.setPadding(new Insets(15));
+        vBox3.setSpacing(40);
+        vBox3.setTranslateX(35 + 3 * 135);
+        vBox3.getChildren().addAll(freezer);
+
+        VBox vBox4 = new VBox();
+        vBox4.setSpacing(40);
+        vBox4.setPadding(new Insets(15));
+        vBox4.setTranslateX(35 + 4 * 135);
+        vBox4.getChildren().addAll(laser);
+
+        VBox vBox5 = new VBox();
+        vBox5.setSpacing(40);
+        vBox5.setPadding(new Insets(15));
+        vBox5.setTranslateX(35 + 5 * 135);
+        vBox5.getChildren().addAll(anti);
+
+        root.getChildren().add(background);
+        root.getChildren().addAll(accepts);
+        root.getChildren().addAll(deletes);
+        root.getChildren().addAll(vBox, vBox1, vBox2, vBox3, vBox4, vBox5);
+
+        machinegun.get(0).setText(String.valueOf(InitialWeapon.getPrice("machine gun")));
+        machinegun.get(1).setText(String.valueOf(InitialWeapon.getRadius("machine gun")));
+        machinegun.get(2).setText(String.valueOf(InitialWeapon.getBulletSpeed("machine gun")));
+        machinegun.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("machine gun")));
+        machinegun.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("machine gun")));
+
+        accepts.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("machine gun", Integer.parseInt(machinegun.get(0).getText()));
+                InitialWeapon.setRadius("machine gun", Double.parseDouble(machinegun.get(1).getText()));
+                InitialWeapon.setBulletSpeed("machine gun", Integer.parseInt(machinegun.get(2).getText()));
+                InitialWeapon.setBulletPower("machine gun", Integer.parseInt(machinegun.get(3).getText()));
+                InitialWeapon.setSpeedReduction("machine gun", Integer.parseInt(machinegun.get(4).getText()));
+            }
+        });
+
+
+        rocket.get(0).setText(String.valueOf(InitialWeapon.getPrice("rocket")));
+        rocket.get(1).setText(String.valueOf(InitialWeapon.getRadius("rocket")));
+        rocket.get(2).setText(String.valueOf(InitialWeapon.getBulletSpeed("rocket")));
+        rocket.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("rocket")));
+        rocket.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("rocket")));
+
+        accepts.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("rocket", Integer.parseInt(machinegun.get(0).getText()));
+                InitialWeapon.setRadius("rocket", Double.parseDouble(machinegun.get(1).getText()));
+                InitialWeapon.setBulletSpeed("rocket", Integer.parseInt(machinegun.get(2).getText()));
+                InitialWeapon.setBulletPower("rocket", Integer.parseInt(machinegun.get(3).getText()));
+                InitialWeapon.setSpeedReduction("rocket", Integer.parseInt(machinegun.get(4).getText()));
+            }
+        });
+
+        freezer.get(0).setText(String.valueOf(InitialWeapon.getPrice("freezer")));
+        freezer.get(1).setText(String.valueOf(InitialWeapon.getRadius("freezer")));
+        freezer.get(2).setText(String.valueOf(InitialWeapon.getBulletSpeed("freezer")));
+        freezer.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("freezer")));
+        freezer.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("freezer")));
+
+        accepts.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("freezer", Integer.parseInt(machinegun.get(0).getText()));
+                InitialWeapon.setRadius("freezer", Double.parseDouble(machinegun.get(1).getText()));
+                InitialWeapon.setBulletSpeed("freezer", Integer.parseInt(machinegun.get(2).getText()));
+                InitialWeapon.setBulletPower("freezer", Integer.parseInt(machinegun.get(3).getText()));
+                InitialWeapon.setSpeedReduction("freezer", Integer.parseInt(machinegun.get(4).getText()));
+            }
+        });
+
+        laser.get(0).setText(String.valueOf(InitialWeapon.getPrice("laser")));
+        laser.get(1).setText(String.valueOf(InitialWeapon.getRadius("laser")));
+        laser.get(2).setText(String.valueOf(InitialWeapon.getBulletSpeed("laser")));
+        laser.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("laser")));
+        laser.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("laser")));
+
+        accepts.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("laser", Integer.parseInt(machinegun.get(0).getText()));
+                InitialWeapon.setRadius("laser", Double.parseDouble(machinegun.get(1).getText()));
+                InitialWeapon.setBulletSpeed("laser", Integer.parseInt(machinegun.get(2).getText()));
+                InitialWeapon.setBulletPower("laser", Integer.parseInt(machinegun.get(3).getText()));
+                InitialWeapon.setSpeedReduction("laser", Integer.parseInt(machinegun.get(4).getText()));
+            }
+        });
+
+        anti.get(0).setText(String.valueOf(InitialWeapon.getPrice("antiaircraft")));
+        anti.get(1).setText(String.valueOf(InitialWeapon.getRadius("antiaircraft")));
+        anti.get(2).setText(String.valueOf(InitialWeapon.getBulletSpeed("antiaircraft")));
+        anti.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("antiaircraft")));
+        anti.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("antiaircraft")));
+
+        accepts.get(4).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("antiaircraft", Integer.parseInt(machinegun.get(0).getText()));
+                InitialWeapon.setRadius("antiaircraft", Double.parseDouble(machinegun.get(1).getText()));
+                InitialWeapon.setBulletSpeed("antiaircraft", Integer.parseInt(machinegun.get(2).getText()));
+                InitialWeapon.setBulletPower("antiaircraft", Integer.parseInt(machinegun.get(3).getText()));
+                InitialWeapon.setSpeedReduction("antiaircraft", Integer.parseInt(machinegun.get(4).getText()));
+
+                //stage.setScene(customizeAliensScene);
+                stage.setScene(askWeaponScene);
+            }
+        });
+
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("machine gun");
+            }
+        });
+
+        deletes.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("rocket");
+            }
+        });
+
+        deletes.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("freezer");
+            }
+        });
+
+        deletes.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("laser");
+            }
+        });
+
+        deletes.get(4).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("antiaircraft");
+                stage.setScene(askWeaponScene);
+            }
+        });
+
+
+
+        return root;
+    }
+
+    private Parent createCustomizeAliensContent(){
+        Group root = new Group();
+
+        return root;
+    }
+
+    private Parent createCustomizeHeroContent(){
+        Group root = new Group();
+
+        return root;
+    }
+
+
+
 
     public static void addElementToGameRoot(int index, Node ... node){
         for (int i = 0; i < node.length; i++){
@@ -883,7 +1166,6 @@ public class AlienCreeps extends Application {
            timeText.setFill(Color.rgb(50, 20, 15));
            
     }
-    
     
 }
 
