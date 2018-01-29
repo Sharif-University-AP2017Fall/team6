@@ -120,9 +120,9 @@ public class AlienCreeps extends Application {
                         }
                         if (CURRENT_SECOND < 60) { //9
                             CURRENT_SECOND++;
-                            //     gameMap.plague();
+                                 gameMap.plague();
                         } else if (CURRENT_HOUR < 23) { //23
-                            //      gameMap.superNaturalHelp();
+                                  gameMap.superNaturalHelp();
                             //      gameMap.naturalDisaster();
                             CURRENT_HOUR++;
                             CURRENT_SECOND = 0;

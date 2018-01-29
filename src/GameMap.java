@@ -1543,9 +1543,9 @@ public class GameMap {
         }
     }
 
-    void superNaturalHelp() {
+     void superNaturalHelp() {
         if (!SuperNaturalHelp) {
-            int prob = (int) (Math.random() * 3);
+            int prob = (int) (Math.random() * 10);
 
             if (prob == 2) {
                 List<Alien> aliensToKill = new ArrayList<>();
@@ -1557,31 +1557,63 @@ public class GameMap {
                 updateAchievements(aliensToKill, "hero");
                 for (int i = 0; i < routes.size(); i++) {
                     this.removeAliensFromRoute(routes.get(i), aliensToKill);
-
+                    
+                }
+                for (int i = 0; i < aliensToKill.size(); i++) {
+                    
+                    aliensToKill.get(i).setEnergy(-10);
+                    aliensToKill.get(i).isDead();
+                    
                 }
                 SuperNaturalHelp = true;
-                System.out.println("Super  Natural  Help :)))))");
+                AlienCreeps.showPopupWarning("Super Natural Help", 85, 105);
+                System.out.println("Super  Natural  Help :))");
             }
         }
     }
 
     void plague() {
-        int prob = (int) (Math.random() * 10);
+        int prob = (int) (Math.random() * 60);
 
-        if (prob == 2) {
-            Soldier[] soldiers = hero.getSoldiers();
-            soldiers[0] = null;
-            soldiers[1] = null;
-            soldiers[2] = null;
-            hero.setSoldiers(soldiers);
-            if (barrack != null){
-                barrack.requestSoldier(hero.getResurrectionTime());
-                barrack.requestSoldier(hero.getResurrectionTime());
-                barrack.requestSoldier(hero.getResurrectionTime());
+        int numAlive = 0;
+        for (int i = 0; i < 3; i++) {
+            if (hero.getSoldiers()[i] != null) {
+                numAlive++;
             }
+        }
+        
+        if (prob == 1 && numAlive!=0 ) {
+            Soldier[] soldiers = hero.getSoldiers();
+
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+
+                        for (int i = 0; i < 3; i++){
+                                if (soldiers[i]!=null){
+                                    AlienCreeps.removeElementFromGameRoot(soldiers[i].getWarriorView());
+                                    AlienCreeps.removeElementFromGameRoot(soldiers[i].getHealthBar());
+                                    AlienCreeps.removeElementFromGameRoot(soldiers[i].getBulletView());
+                                    soldiers[i]=null;
+                                    if (barrack != null){
+                                        barrack.requestSoldier(hero.getResurrectionTime());
+                                    }
+                                }
+                            }
+
+                }
+            });
+
+
+            
+            hero.setSoldiers(soldiers);
+
+            AlienCreeps.showPopupWarning("PLAGUE epidemic", 85, 105);
             System.out.println("Unfortunately your Soldiers died as a result of a plague epidemic :(");
+            
         }
     }
+
 
     void burrowMoney(int amount){
         this.hasBurrowed = true;

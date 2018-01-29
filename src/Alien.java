@@ -437,6 +437,11 @@ public class Alien implements Movable, Comparable, Runnable {
     static int getMAXNUM() {
         return MAXNUM;
     }
+    
+    
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
 
     static void reduceNum(int NUM) {
         Alien.NUM -= NUM;
