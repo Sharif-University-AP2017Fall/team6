@@ -813,7 +813,7 @@ class Achievement {
         achieved.put("Blood Sucker", false);
         
         achievementView=new AchievementView();
-        
+        updateAchivementView();
     }
 
     public AchievementView getAchievementView(){
@@ -884,8 +884,8 @@ class Achievement {
     }
 
     int getNumOfKilledByHero() {
-        
-        
+
+        updateAchivementView();
         int num = 0;
         for (int i = 0; i < numOfKilledByHero.length; i++) {
             num += numOfKilledByHero[i];
@@ -1017,8 +1017,9 @@ class MedalView extends StackPane {
         int a = 0, b = 0;
 
         if (i <= 4) {
-            a = 6;
+            a = 35;
         } else {
+            i=i-4;
             b = 7;
         }
 
@@ -1038,8 +1039,8 @@ class MedalView extends StackPane {
 
         getChildren().add(item);
 
-        setTranslateX(504 + 30 * i + b);
-        setTranslateY(9 - a);
+        setTranslateX(10+GameMap.XBOUND + 35 * i-20);
+        setTranslateY(GameMap.YBOUND/4 - a+ 35);
 
     }
 
@@ -1054,22 +1055,6 @@ class MedalView extends StackPane {
         item.setVisible(false);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
