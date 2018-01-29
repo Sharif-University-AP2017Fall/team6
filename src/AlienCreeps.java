@@ -1,4 +1,5 @@
 //import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
+import com.sun.javafx.font.freetype.HBGlyphLayout;
 import com.sun.org.apache.xml.internal.security.Init;
 import javafx.animation.*;
 import javafx.application.Application;
@@ -6,6 +7,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -858,7 +860,7 @@ public class AlienCreeps extends Application {
     }
 
     static Scene customizeWeaponScene = new Scene(new Group(), 800, 500);
-    static Scene customizeAliensScene = new Scene(new Group(), 600, 500);
+    static Scene customizeAliensScene = new Scene(new Group(), 800, 500);
     static Scene customizeHeroScene = new Scene(new Group(), 600, 500);
 
     /*static Stage customizeWeaponStage = new Stage();
@@ -881,13 +883,14 @@ public class AlienCreeps extends Application {
         stage.show();
     }
 
-    private Parent createCustomizeWeaponContent(){
+    private Parent createCustomizeWeaponContent() {
         Group root = new Group();
         ImageView background = new ImageView(new Image(getClass()
                 .getResource("res/menu/custom/bg.png").toExternalForm()));
         background.setFitWidth(800);
         Image view = new Image(getClass()
                 .getResource("res/menu/custom/option.png").toExternalForm());
+
         ArrayList<MenuItem> accepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             accepts.add(new MenuItem(view, 90, 40, "Accept"));
@@ -899,6 +902,7 @@ public class AlienCreeps extends Application {
             deletes.add(new MenuItem(view, 90, 40, "Delete"));
             deletes.get(i).relocate(240 + i * 105, 430);
         }
+
         Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
@@ -948,7 +952,6 @@ public class AlienCreeps extends Application {
             rocket.get(i).setPrefWidth(50);
         }
 
-
         VBox vBox1 = new VBox();
         vBox1.setSpacing(40);
         vBox1.setPadding(new Insets(15));
@@ -972,6 +975,7 @@ public class AlienCreeps extends Application {
         vBox4.setPadding(new Insets(15));
         vBox4.setTranslateX(35 + 4 * 135);
         vBox4.getChildren().addAll(laser);
+
 
         VBox vBox5 = new VBox();
         vBox5.setSpacing(40);
@@ -1069,7 +1073,7 @@ public class AlienCreeps extends Application {
                 InitialWeapon.setSpeedReduction("antiaircraft", Integer.parseInt(machinegun.get(4).getText()));
 
                 //stage.setScene(customizeAliensScene);
-                stage.setScene(askWeaponScene);
+                stage.setScene(customizeAliensScene);
             }
         });
 
@@ -1105,7 +1109,7 @@ public class AlienCreeps extends Application {
             @Override
             public void run() {
                 InitialWeapon.removeWeapon("antiaircraft");
-                stage.setScene(askWeaponScene);
+                stage.setScene(customizeAliensScene);
             }
         });
 
@@ -1117,6 +1121,196 @@ public class AlienCreeps extends Application {
     private Parent createCustomizeAliensContent(){
         Group root = new Group();
 
+        ImageView background = new ImageView(new Image(getClass()
+                .getResource("res/menu/custom/bg.png").toExternalForm()));
+        background.setFitWidth(800);
+        Image view = new Image(getClass()
+                .getResource("res/menu/custom/option.png").toExternalForm());
+
+        HBox acceptHbox = new HBox();
+        acceptHbox.setSpacing(10);
+        ArrayList<MenuItem> accepts = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            accepts.add(new MenuItem(view, 90, 40, "Accept"));
+        }
+        acceptHbox.relocate(80, 380);
+        acceptHbox.getChildren().addAll(accepts);
+        //acceptHbox.setAlignment(Pos.BOTTOM_RIGHT);
+
+        HBox deleteHbox = new HBox();
+        deleteHbox.setSpacing(10);
+        deleteHbox.setPadding(new Insets(10));
+        deleteHbox.relocate(80, 430);
+        //deleteHbox.setTranslateY(500);
+        ArrayList<MenuItem> deletes = new ArrayList<>();
+        for (int i = 0; i < 4; i++){
+            deletes.add(new MenuItem(view, 90, 40, "Delete"));
+        }
+        deleteHbox.getChildren().addAll(deletes);
+        //deleteHbox.setAlignment(Pos.BASELINE_RIGHT);
+
+
+        Font font = Font.loadFont(MenuItem.
+                class.
+                getResource("res/Font/Pieces_of_Eight.ttf").
+                toExternalForm(), 35);
+
+        ArrayList<Text> fields = new ArrayList<>();
+        fields.add(new Text("Energy: "));
+        fields.add(new Text("Speed: "));
+        fields.add(new Text("Bullet\nSpeed: "));
+        fields.add(new Text("Bullet\nPower: "));
+        //fields.add(new Text("Radius: "));
+
+        for (int i = 0; i < fields.size(); i++){
+            fields.get(i).setFont(font);
+            //   fields.get(i).relocate(110, i * 60 + 30);
+        }
+
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(fields);
+        vBox.setPadding(new Insets(15));
+        //vBox1.setPadding(new Insets(5));
+        vBox.setSpacing(10);
+        vBox.setTranslateX(35);
+        vBox.setTranslateY(0);
+        vBox.setLayoutY(5);
+
+        ArrayList<TextField> albertonion = new ArrayList<>();
+        ArrayList<TextField> aironion = new ArrayList<>();
+        ArrayList<TextField> algwasonion = new ArrayList<>();
+        ArrayList<TextField> activionion = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++){
+            albertonion.add(new TextField());
+            albertonion.get(i).setPrefWidth(50);
+
+            aironion.add(new TextField());
+            aironion.get(i).setPrefWidth(50);
+
+            algwasonion.add(new TextField());
+            algwasonion.get(i).setPrefWidth(50);
+
+            activionion.add(new TextField());
+            activionion.get(i).setPrefWidth(50);
+        }
+
+        VBox vBox1 = new VBox();
+        vBox1.setSpacing(40);
+        vBox1.setPadding(new Insets(15));
+        vBox1.setTranslateX(35 + 135);
+        vBox1.getChildren().addAll(albertonion);
+
+        VBox vBox2 = new VBox();
+        vBox2.setPadding(new Insets(15));
+        vBox2.setSpacing(40);
+        vBox2.setTranslateX(35 + 2 * 135);
+        vBox2.getChildren().addAll(aironion);
+
+        VBox vBox3 = new VBox();
+        vBox3.setPadding(new Insets(15));
+        vBox3.setSpacing(40);
+        vBox3.setTranslateX(35 + 3 * 135);
+        vBox3.getChildren().addAll(algwasonion);
+
+        VBox vBox4 = new VBox();
+        vBox4.setSpacing(40);
+        vBox4.setPadding(new Insets(15));
+        vBox4.setTranslateX(35 + 4 * 135);
+        vBox4.getChildren().addAll(activionion);
+
+        albertonion.get(0).setText(String.valueOf(Alien.getInitialEnergy("albertonion")));
+        albertonion.get(1).setText(String.valueOf(Alien.getInitialSpeed("albertonion")));
+        albertonion.get(2).setText(String.valueOf(Alien.getInitialShootingSpeed("albertonion")));
+        albertonion.get(3).setText(String.valueOf(Alien.getInitialStrength("albertonion")));
+
+        aironion.get(0).setText(String.valueOf(Alien.getInitialEnergy("aironion")));
+        aironion.get(1).setText(String.valueOf(Alien.getInitialSpeed("aironion")));
+        aironion.get(2).setText(String.valueOf(Alien.getInitialShootingSpeed("aironion")));
+        aironion.get(3).setText(String.valueOf(Alien.getInitialStrength("aironion")));
+
+        algwasonion.get(0).setText(String.valueOf(Alien.getInitialEnergy("algwasonion")));
+        algwasonion.get(1).setText(String.valueOf(Alien.getInitialSpeed("algwasonion")));
+        algwasonion.get(2).setText(String.valueOf(Alien.getInitialShootingSpeed("algwasonion")));
+        algwasonion.get(3).setText(String.valueOf(Alien.getInitialStrength("algwasonion")));
+
+        activionion.get(0).setText(String.valueOf(Alien.getInitialEnergy("activionion")));
+        activionion.get(1).setText(String.valueOf(Alien.getInitialSpeed("activionion")));
+        activionion.get(2).setText(String.valueOf(Alien.getInitialShootingSpeed("activionion")));
+        activionion.get(3).setText(String.valueOf(Alien.getInitialStrength("activionion")));
+
+        accepts.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("albertonion", Integer.parseInt(albertonion.get(0).getText()));
+                Alien.changeInitialSpeed("albertonion", Integer.parseInt(albertonion.get(1).getText()));
+                Alien.changeInitialShootingSpeed("albertonion", Integer.parseInt(albertonion.get(2).getText()));
+                Alien.changeInitialStrength("albertonion", Integer.parseInt(albertonion.get(3).getText()));
+            }
+        });
+
+        accepts.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("aironion", Integer.parseInt(aironion.get(0).getText()));
+                Alien.changeInitialSpeed("aironion", Integer.parseInt(aironion.get(1).getText()));
+                Alien.changeInitialShootingSpeed("aironion", Integer.parseInt(aironion.get(2).getText()));
+                Alien.changeInitialStrength("aironion", Integer.parseInt(aironion.get(3).getText()));
+            }
+        });
+
+        accepts.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("algwasonion", Integer.parseInt(algwasonion.get(0).getText()));
+                Alien.changeInitialSpeed("algwasonion", Integer.parseInt(algwasonion.get(1).getText()));
+                Alien.changeInitialShootingSpeed("algwasonion", Integer.parseInt(algwasonion.get(2).getText()));
+                Alien.changeInitialStrength("algwasonion", Integer.parseInt(algwasonion.get(3).getText()));
+            }
+        });
+
+        accepts.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("activionion", Integer.parseInt(activionion.get(0).getText()));
+                Alien.changeInitialSpeed("activionion", Integer.parseInt(activionion.get(1).getText()));
+                Alien.changeInitialShootingSpeed("activionion", Integer.parseInt(activionion.get(2).getText()));
+                Alien.changeInitialStrength("activionion", Integer.parseInt(activionion.get(3).getText()));
+
+                stage.setScene(customizeHeroScene);
+            }
+        });
+
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("albertonion");
+            }
+        });
+
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("aironion");
+            }
+        });
+
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("algwasonion");
+            }
+        });
+
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("activionion");
+                stage.setScene(customizeHeroScene);
+            }
+        });
+
+        root.getChildren().addAll(background, acceptHbox, deleteHbox, vBox, vBox1, vBox2, vBox3, vBox4);
         return root;
     }
 
