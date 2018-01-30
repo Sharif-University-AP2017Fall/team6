@@ -198,7 +198,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                                 min.setToShoot(null);
                                 deadAliens.add(min);
                                 aliens.remove(min);
-                            //    System.out.println(this.getClass().getName() + " killed " + min.getName());
+                            //    System.out.println(this.getClass().getName() + " weaponKilled " + min.getName());
 
                                 /*****/
                                 toShoot.remove(min);
@@ -236,7 +236,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
 
                                 numKilled++;
                                 if (aliens.isEmpty()) {
-                                    //               System.out.println("hero killed all and finished shooting");
+                                    //               System.out.println("hero weaponKilled all and finished shooting");
                                     try {
                                         Thread.sleep(10);
                                     } catch (InterruptedException e) {
@@ -249,7 +249,7 @@ public abstract class Warrior implements Movable, Shooter, Runnable {
                                 } else {
                                     min = findClosest(aliens);
                                 }
-                                //System.out.println("killed " + min.getName());
+                                //System.out.println("weaponKilled " + min.getName());
                             }
                         } else {
                             //      System.out.println("hero's bullet won't reach " + min.getName());

@@ -10,16 +10,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 
-import java.net.PortUnreachableException;
-import java.security.interfaces.DSAPublicKey;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javafx.scene.effect.Glow;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 //import org.omg.CORBA.PRIVATE_MEMBER;
 
 /**
@@ -37,6 +32,9 @@ public class Hero extends Warrior {
     private int money;
     private int maximumMoney;
     private Achievement achievement;
+
+    private int velocity;
+    static int runningTime;
     
     private boolean shouldMove;
     private Dimension moveTo;
@@ -47,7 +45,7 @@ public class Hero extends Warrior {
     
     /***** STATIC FOR CUSTOM ******/
     
-    private static  int initialMoney = 3000;
+    private static  int initialMoney = 3000; //3000
     private static int CoinForEachYarane = 10;
     private static double YaranePercent = 0.1;
     private static String heroPic = "5/";
@@ -130,6 +128,8 @@ public class Hero extends Warrior {
         moneyBar = new ProgressBar("money");
         moneyBar.initBar();
         healthBar.initBar();
+
+        this.velocity = 1;
 
         /*Platform.runLater(new Runnable() {
             @Override
@@ -263,6 +263,9 @@ public class Hero extends Warrior {
     }
 
     Weapon buyWeapon(String nameOfWeapon, Dimension dimension, int locationNum) {
+        if (!InitialWeapon.weaponNames.contains(nameOfWeapon)){
+            return null;
+        }
         if (this.getMoney() >= InitialWeapon.getPrice(nameOfWeapon)) {
             Weapon bought = Weapon.WeaponFactory(dimension, nameOfWeapon, locationNum);
 
@@ -310,7 +313,7 @@ public class Hero extends Warrior {
     void showStatus() {
         System.out.println("place: " + super.getDimension() +
                 "\tenergy left: " + super.getEnergy() +
-                "\tnumber of aliens killed: " + achievement.getNumOfKilledByHero());
+                "\tnumber of aliens weaponKilled: " + achievement.getNumOfKilledByHero());
     }
 
     void showKnightStatus() {
@@ -353,6 +356,10 @@ public class Hero extends Warrior {
 
     @Override
     public void move(Dimension changeDimension){
+        if (AlienCreeps.pressedSpace && runningTime <= 0){
+            shouldMove = false;
+            return;
+        }
 
         double deltaX = changeDimension.getX();
         double deltaY = changeDimension.getY();
@@ -388,8 +395,9 @@ public class Hero extends Warrior {
                 soldiers[i].correctDim();
             }
         }
-
-
+        if (runningTime > 0){
+            runningTime--;
+        }
     }
 
     private Object lock = new Object();
@@ -469,7 +477,11 @@ public class Hero extends Warrior {
                                 changeDim.setY(yRemain);
                             }
                             Dimension.correctDim(changeDim);
-                            move(changeDim);
+                            if (shouldMove){
+                                move(changeDim);
+                            } else{
+                                break;
+                            }
                         }
                     }
                     //System.out.println("hero reached destination");
@@ -514,18 +526,24 @@ public class Hero extends Warrior {
     public boolean setShouldMove(KeyEvent event){
         KeyCode direction = event.getCode();
         Dimension changeDim = null;
+        if (AlienCreeps.pressedSpace){
+             velocity = 2;
+        } else{
+            runningTime = 0;
+            velocity = 1;
+        }
         switch (direction){
             case DOWN:
-                changeDim = new Dimension(0, 10);
+                changeDim = new Dimension(0, 10 * velocity);
                 break;
             case UP:
-                changeDim = new Dimension(0, -10);
+                changeDim = new Dimension(0, -10 * velocity);
                 break;
             case LEFT:
-                changeDim = new Dimension(-10, 0);
+                changeDim = new Dimension(-10 * velocity, 0);
                 break;
             case RIGHT:
-                changeDim = new Dimension(10, 0);
+                changeDim = new Dimension(10 * velocity, 0);
                 break;
         }
         return setShouldMove(changeDim);
@@ -542,6 +560,10 @@ public class Hero extends Warrior {
     public void setMaximumMoney(int maximumMoney) {
         this.maximumMoney = maximumMoney;
     }
+
+    public int getMaximumMoney() {
+        return maximumMoney;
+    }
 }
 
 class WarriorView extends StackPane{
@@ -557,7 +579,7 @@ class WarriorView extends StackPane{
     
     
     public WarriorView(String name, String number, Dimension dim) {
-       // System.out.println("setting view for " + name);
+       // System.out.println("setting view for " + weaponName);
         this.move_down = new ImageView[3];
         this.move_up = new ImageView[3];
         this.move_right = new ImageView[3];
@@ -950,9 +972,9 @@ class Achievement {
             sum = sum + numOfKilledByHero[i];
         }
         if (sum > 1)
-            return "" + sum + " aliens killed by Hero";
+            return "" + sum + " aliens weaponKilled by Hero";
         else
-            return "" + sum + " alien killed by Hero";
+            return "" + sum + " alien weaponKilled by Hero";
     }
 }
 
@@ -1049,7 +1071,7 @@ class MedalView extends StackPane {
 
         Glow glow = new Glow();
 
-        //setting level of the glow effect 
+        //setting weaponLevel of the glow effect
         glow.setLevel(0.8);
 
         item.setEffect(glow);

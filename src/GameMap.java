@@ -1,13 +1,15 @@
 
 import javafx.animation.ParallelTransition;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
-import java.awt.font.TextHitInfo;
 import java.util.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,7 +21,7 @@ public class GameMap {
     static double XBOUND = 895;
     static double YBOUND = 700;
 
-    static int UNIT = 15;
+    static int UNIT = 10;
 
     private List<Route> routes = new ArrayList<>();
     private List<Wormhole> wormholes = new ArrayList<>();
@@ -46,21 +48,102 @@ public class GameMap {
 
     static ParallelTransition parallelTransition = new ParallelTransition();
 
-    Text numFlag=new Text(GameMap.XBOUND+70,GameMap.YBOUND-80,"0");
-    
+    Text numFlag=new Text(GameMap.XBOUND+50,GameMap.YBOUND-90,"0");
+    ImageView[] reached = new ImageView[5];
+    Text weaponName = new Text(XBOUND + 20, YBOUND - 300, "");
+    Text weaponPrice = new Text(XBOUND + 20, YBOUND - 250, "");
+    Text weaponLevel = new Text(XBOUND + 20, YBOUND - 200, "");
+    Text weaponKilled = new Text(XBOUND + 20, YBOUND - 150, "");
+    ImageView bank_VIEW = new ImageView(new Image(getClass()
+                .getResource("res/bank/bank.png").toExternalForm()));
+
+    public void initBank(){
+        //bank_VIEW =
+
+        bank_VIEW.relocate(905, 185);
+        bank_VIEW.setFitHeight(50);
+        bank_VIEW.setFitWidth(50);
+
+        bank_VIEW.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                burrowMoney(hero.getMaximumMoney() - hero.getMoney());
+            }
+        });
+
+        bank_VIEW.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                burrowMoney(hero.getMaximumMoney() - hero.getMoney());
+            }
+        });
+
+        bank_VIEW.setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                bank_VIEW.setEffect(new Glow(10));
+            }
+        });
+
+        bank_VIEW.setOnMouseExited(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                bank_VIEW.setEffect(new Glow(0));
+            }
+        });
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        bank_VIEW);
+            }
+        });
+
+    }
+
+    public void initalWeaponStatus(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        weaponName);
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        weaponPrice);
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        weaponLevel);
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        weaponKilled);
+            }
+        });
+
+    }
     
     public void initialNumFlag(){
         Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
-                toExternalForm(), 15);
+                toExternalForm(), 25);
         numFlag.setFont(font);
-        numFlag.setFill(Color.rgb(50, 20, 15));
+
+        for (int i = 0; i < 5; i++){
+            reached[i] = new ImageView();
+        }
+
+        reached[0].relocate(XBOUND + 70, YBOUND - 100 - 10);
+        reached[1].relocate(XBOUND + 110, YBOUND - 100 - 10);
+        reached[2].relocate(XBOUND + 40, YBOUND - 70 - 10);
+        reached[3].relocate(XBOUND + 80, YBOUND - 70 - 10);
+        reached[4].relocate(XBOUND + 120, YBOUND - 70 - 10);
+
+        numFlag.setFill(Color.rgb(133, 171, 37));
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
                         numFlag);
+                AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
+                        reached);
             }
         });
     
@@ -181,18 +264,6 @@ public class GameMap {
             AlienCreeps.endGame(true);
             return;
         }
-
-//        System.out.println(hero);
-
-      //  System.out.println("NUM = " + Alien.getNUM());
-        /*if (Alien.isSTART()) {
-            System.out.println("NUM = " + Alien.getNUM());
-            if (Alien.getNUM() <= 0 && AlienCreeps.getCurrentHour() > 2) {
-                System.out.println("YOU WON");
-                //AlienCreeps.endGame(false);
-                return;
-            }
-        }*/
     }
 
     /*** TEXT TIME  ***/
@@ -315,123 +386,14 @@ public class GameMap {
         specifiedNumbers.put(13, dimension);
         specifiedLocations.put(dimension, null);
 
-       /* dimension = new Dimension(175, 445);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(14, dimension);
 
-        dimension = new Dimension(210, 455);
-        specifiedNumbers.put(15, dimension);
-        specifiedLocations.put(dimension, null);
-
-        dimension = new Dimension(260, 445);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(16, dimension);
-
-        dimension = new Dimension(350, 402);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(17, dimension);
-
-        dimension = new Dimension(400, 348);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(18, dimension);
-
-        dimension = new Dimension(500, 352);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(19, dimension);
-
-        dimension = new Dimension(522, 375);
-        specifiedNumbers.put(20, dimension);
-        specifiedLocations.put(dimension, null);
-
-        dimension = new Dimension(550, 402);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(21, dimension);
-
-        dimension = new Dimension(500, 248);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(22, dimension);
-
-        dimension = new Dimension(550, 202);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(23, dimension);
-
-        dimension = new Dimension(600, 148);
-        specifiedNumbers.put(24, dimension);
-        specifiedLocations.put(dimension, null);
-
-        dimension = new Dimension(680, 212);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(25, dimension);
-
-        dimension = new Dimension(710, 240);
-        specifiedNumbers.put(26, dimension);
-        specifiedLocations.put(dimension, null);
-
-        dimension = new Dimension(750, 265);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(27, dimension);
-
-        dimension = new Dimension(680, 398);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(28, dimension);
-
-        dimension = new Dimension(710, 360);
-        specifiedNumbers.put(29, dimension);
-        specifiedLocations.put(dimension, null);
-
-        dimension = new Dimension(720, 325);
-        specifiedLocations.put(dimension, null);
-        specifiedNumbers.put(30, dimension);
-*/
         List<Dimension> wormholeDims = Dimension.randomDimension(6);
         wormholes.add(new Wormhole(1, wormholeDims.get(0)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(0).getWormholeView());
-            }
-        });*/
-
         wormholes.add(new Wormhole(0, wormholeDims.get(1)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(1).getWormholeView());
-            }
-        });*/
-
         wormholes.add(new Wormhole(3, wormholeDims.get(2)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(2).getWormholeView());
-            }
-        });*/
-
         wormholes.add(new Wormhole(2, wormholeDims.get(3)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(3).getWormholeView());
-            }
-        });*/
-
         wormholes.add(new Wormhole(5, wormholeDims.get(4)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(4).getWormholeView());
-            }
-        });*/
-
         wormholes.add(new Wormhole(4, wormholeDims.get(5)));
-        /*Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                AlienCreeps.addElementToGameRoot(wormholes.get(5).getWormholeView());
-            }
-        });*/
-
     }
 
     public void setHero(Hero hero) {
@@ -453,17 +415,26 @@ public class GameMap {
                 if (!bank.payBack(this.hero)) {
                     for (Dimension dimension : specifiedLocations.keySet()) {
                         if (!(specifiedLocations.get(dimension) instanceof Barrack)){
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlienCreeps.removeElementFromGameRoot(((Weapon) specifiedLocations.get(dimension)).getWeaponView());
+                                }
+                            });
                             specifiedLocations.replace(dimension, null);
                         }
                     }
+                    AlienCreeps.showPopupWarning("Failed to\npay bank", 40, 50);
                     System.out.println("You have failed to pay the bank back. All weapons have been destroyed.");
                 }
                 hasBurrowed = false;
             }else{
-                if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0)
-                    System.out.println("You have " +
-                            (bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) +
-                            " day(s) left to pay the bank back.");
+                if (AlienCreeps.getCurrentHour() == 0 && AlienCreeps.getCurrentSecond() == 0){
+                    System.out.println((bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) +
+                            " day(s) left\nto pay bank.");
+                    AlienCreeps.showPopupWarning((bank.getDueDate() - AlienCreeps.getCurrentDay() + 1) +
+                            " day(s) left\nto pay bank.", 40, 50);
+                }
             }
         }
 
@@ -665,6 +636,26 @@ public class GameMap {
                 weapons.get(i).getWeaponView().setUnfocus();
                 if (i + 1 < weapons.size()){
                     weapons.get(i + 1).getWeaponView().setFocus();
+
+                    weaponName.setText("Name: " + weapons.get(i + 1).getName());
+                    weaponPrice.setText("Price: " + weapons.get(i + 1).getPrice());
+                    weaponLevel.setText("Level: " + weapons.get(i + 1).getLevel());
+                    weaponKilled.setText("Num Killed: " + weapons.get(i + 1).getNumKilled());
+
+                    Font font = Font.loadFont(MenuItem.
+                            class.
+                            getResource("res/Font/Pieces_of_Eight.ttf").
+                            toExternalForm(), 25);
+
+                    weaponName.setFont(font);
+                    weaponPrice.setFont(font);
+                    weaponLevel.setFont(font);
+                    weaponKilled.setFont(font);
+                    weaponName.setFill(Color.rgb(133, 171, 37));
+                    weaponPrice.setFill(Color.rgb(133, 171, 37));
+                    weaponLevel.setFill(Color.rgb(133, 171, 37));
+                    weaponKilled.setFill(Color.rgb(133, 171, 37));
+
                 }else{
                     weapons.get(0).getWeaponView().setFocus();
                 }
@@ -673,6 +664,24 @@ public class GameMap {
         }
         if (!weapons.isEmpty()){
             weapons.get(0).getWeaponView().setFocus();
+            weaponName.setText("Name: " + weapons.get(0).getName());
+            weaponPrice.setText("Price: " + weapons.get(0).getPrice());
+            weaponLevel.setText("Level: " + weapons.get(0).getLevel());
+            weaponKilled.setText("Num Killed: " + weapons.get(0).getNumKilled());
+
+            Font font = Font.loadFont(MenuItem.
+                    class.
+                    getResource("res/Font/Pieces_of_Eight.ttf").
+                    toExternalForm(), 30);
+
+            weaponName.setFont(font);
+            weaponPrice.setFont(font);
+            weaponLevel.setFont(font);
+            weaponKilled.setFont(font);
+            weaponName.setFill(Color.rgb(133, 171, 37));
+            weaponPrice.setFill(Color.rgb(133, 171, 37));
+            weaponLevel.setFill(Color.rgb(133, 171, 37));
+            weaponKilled.setFill(Color.rgb(133, 171, 37));
         }
     }
 
@@ -707,6 +716,11 @@ public class GameMap {
                 });
             }
         }
+
+        weaponName.setText("");
+        weaponKilled.setText("");
+        weaponLevel.setText("");
+        weaponPrice.setText("");
     }
 
     void stopWalking(){
@@ -864,14 +878,14 @@ public class GameMap {
                         //System.out.println(hero.payBack());
                     }
                 } else {
-                    System.out.println("Incorrect name");
+                    System.out.println("Incorrect weaponName");
                 }
             } else {
                 if (weaponName.equalsIgnoreCase("Barrack")) {
                     AlienCreeps.showPopupWarning("Invalid weapon", 75, 105);
                   //  System.out.println("Can't upgrade barrack.");
                 } else {
-                    System.out.println("Incorrect name");
+                    System.out.println("Incorrect weaponName");
                 }
             }
         } else {
@@ -895,16 +909,16 @@ public class GameMap {
                 /*
                 switch (whichAlien) {
                     case 0:
-                        name = "albertonion";
+                        weaponName = "albertonion";
                         break;
                     case 1:
-                        name = "algwasonion";
+                        weaponName = "algwasonion";
                         break;
                     case 2:
-                        name = "activionion";
+                        weaponName = "activionion";
                         break;
                     case 3:
-                        name = "aironion";
+                        weaponName = "aironion";
                         break;
                 }
                 */
@@ -928,7 +942,7 @@ public class GameMap {
                                     newAlien.bulletView);
                         }
                     });
-                //    System.out.println(name + " entered!");
+                //    System.out.println(weaponName + " entered!");
                     Thread alienLifeCycle = new Thread(newAlien);
                     alienLifeCycles.add(alienLifeCycle);
                     alienLifeCycle.start();
@@ -967,14 +981,17 @@ public class GameMap {
     public int getNumReachedFlag() {
         int num = 0;
         ArrayList<String> names = new ArrayList<>();
-        for (Alien alien : reachedFlag) {
-            if (alien != null) {
+
+        for (int i = 0; i < 5; i++){
+            Alien alien = reachedFlag[i];
+            if (alien != null){
+                reached[i].setImage(alien.getAlienView().getMove_down()[1].getImage());
+                reached[i].setFitWidth(25);
+                reached[i].setFitHeight(25);
+                //alien.getAlienView().getMove_down()[0]
                 num++;
-                //names.add(alien.getName());
             }
         }
-        //System.out.println(num + " aliens have reached flag.");
-        //names.forEach(System.out::println);
         return num;
     }
     
@@ -983,6 +1000,7 @@ public class GameMap {
         for (int i = 0; i < 5; i++) {
             if (reachedFlag[i] == null) {
                 reachedFlag[i] = alien;
+                updateNumFlag();
                 System.out.println("-------------");
                 System.out.println(alien.getName() + " reached flag.");
                 System.out.println((i + 1) + " aliens have reached flag");
@@ -1614,7 +1632,7 @@ public class GameMap {
                     
                 }
                 SuperNaturalHelp = true;
-                AlienCreeps.showPopupWarning("Super Natural Help", 65, 105);
+                AlienCreeps.showPopupWarning("Super Natural Help", 45, 105);
                 System.out.println("Super  Natural  Help :))");
             }
         }
@@ -1656,7 +1674,7 @@ public class GameMap {
             
             hero.setSoldiers(soldiers);
 
-            AlienCreeps.showPopupWarning("PLAGUE epidemic", 85, 105);
+            AlienCreeps.showPopupWarning("PLAGUE", 85, 105);
             System.out.println("Unfortunately your Soldiers died as a result of a plague epidemic :(");
             
         }

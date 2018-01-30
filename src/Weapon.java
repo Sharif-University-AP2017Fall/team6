@@ -466,14 +466,14 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
     @Override
     public String toString() {
         if (this.locationNum > 0) {
-            return "name: " + this.name + "" +
+            return "weaponName: " + this.name + "" +
                     "\tplace: " + this.dimension + "" +
                     "\tlocation number: " + this.locationNum + "" +
-                    "\tlevel: " + this.level;
+                    "\tweaponLevel: " + this.level;
         }
-        return "name: " + this.name + "" +
+        return "weaponName: " + this.name + "" +
                 "\tplace: " + this.dimension + "" +
-                "\tlevel: " + this.level;
+                "\tweaponLevel: " + this.level;
     }
 
     @Override
@@ -481,6 +481,8 @@ public abstract class Weapon implements Mappable, Shooter, Comparable, Runnable 
         Weapon otherWeapon = ((Weapon) o);
         return this.name.compareTo(otherWeapon.getName());
     }
+
+    public abstract int getNumKilled();
 }
 
 

@@ -43,6 +43,7 @@ public class WeaponNearest extends Weapon {
 
     WeaponNearestView weaponView;
     private BulletView bulletView;
+    private int numKilled;
     
     WeaponNearest(Dimension dimension, String type, int locationNum) {
 
@@ -112,7 +113,7 @@ public class WeaponNearest extends Weapon {
                         if (min.isDead()) {
 
 
-                         //   System.out.println(getName() + " killed " + min.getName());
+                         //   System.out.println(getName() + " weaponKilled " + min.getName());
                             //  System.out.println(min.getName() + " died.");
                             deadAliens.add(min);
                             canShoot.remove(min);
@@ -120,6 +121,7 @@ public class WeaponNearest extends Weapon {
                             /*********/
                             super.toShoot.remove(min);
                             if (Alien.addDeadAliens(min)) {
+                                numKilled++;
                                 if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
                                     AlienCreeps.gameMap.reduceAllWeaponsPrice();
                                 }
@@ -175,6 +177,11 @@ public class WeaponNearest extends Weapon {
         
     }
 
+    @Override
+    public int getNumKilled() {
+        return numKilled;
+    }
+
     private Alien findClosest(List<Alien> aliens) {
         
         Alien min = aliens.get(0);
@@ -224,7 +231,7 @@ class WeaponNearestView extends WeaponView {
      
      public WeaponNearestView(String name, Dimension dim_) {
 
-        // System.out.println("setting view for " + name);
+        // System.out.println("setting view for " + weaponName);
          this.pic = new ImageView[8];
          index = 5;
          dim = dim_;

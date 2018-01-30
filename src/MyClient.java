@@ -149,7 +149,7 @@ public class MyClient extends Application {
       /*  String address2="res/menu/item/Exit.png";
        Glow glow = new Glow();
 
-        //setting level of the glow effect 
+        //setting weaponLevel of the glow effect
        glow.setLevel(0.9);
        
        sendButton=new ImageView(new Image(getClass()

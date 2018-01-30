@@ -34,6 +34,7 @@ public class WeaponAll extends Weapon {
     private Dimension dim;
     private WeaponAllView weaponView;
     private String name;
+    private int numKilled;
     WeaponAll(Dimension dimension, String type, int locationNum) {
 
         super(dimension, type, locationNum);
@@ -87,7 +88,7 @@ public class WeaponAll extends Weapon {
                         });
                     }
 
-                    ai.reduceSpeed(this.getSpeedReduction() / 100);
+                    ai.reduceSpeed(this.getSpeedReduction() / 100.0);
 
                     if (ai.isCanFly()) {
 
@@ -100,12 +101,13 @@ public class WeaponAll extends Weapon {
                     }
                     if (ai.isDead()) {
 
-                        System.out.println(getName() + " killed " + ai.getName());
+                        System.out.println(getName() + " weaponKilled " + ai.getName());
                         deadAliens.add(ai);
 
                         /******/
                         super.toShoot.remove(ai);
                         if (Alien.addDeadAliens(ai)) {
+                            numKilled++;
                             if (AlienCreeps.gameMap.getHero().addExperienceLevel(5)) {
                                 AlienCreeps.gameMap.reduceAllWeaponsPrice();
                             }
@@ -131,7 +133,7 @@ public class WeaponAll extends Weapon {
                 i = -1;
             }
             if (canShoot.size() == deadAliens.size()) { 
-                //killed all aliens
+                //weaponKilled all aliens
                 break;
             }
         }
@@ -156,6 +158,11 @@ public class WeaponAll extends Weapon {
         return deadAliens;
         
     }
+
+    @Override
+    public int getNumKilled() {
+        return numKilled;
+    }
 }
 
 
@@ -176,7 +183,7 @@ class WeaponAllView extends WeaponView {
 
          isFocus = false;
          
-         //System.out.println("setting view for " + name);
+         //System.out.println("setting view for " + weaponName);
          
          dim=dim_;
          

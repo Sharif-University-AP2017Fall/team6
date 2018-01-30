@@ -1,7 +1,4 @@
 //import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import com.sun.corba.se.impl.orb.ParserTable;
-import com.sun.javafx.font.freetype.HBGlyphLayout;
-import com.sun.org.apache.xml.internal.security.Init;
 import javafx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -16,17 +13,14 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -36,20 +30,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.omg.PortableServer.POA;
-import sun.jvm.hotspot.runtime.posix.POSIXSignals;
 
-import javax.naming.TimeLimitExceededException;
-import java.lang.management.RuntimeMXBean;
-import java.security.Key;
-import java.sql.Time;
-import java.text.ParsePosition;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-import java.util.concurrent.TimeoutException;
-import java.util.zip.GZIPOutputStream;
 
 public class AlienCreeps extends Application {
     static boolean START = false;
@@ -67,8 +51,11 @@ public class AlienCreeps extends Application {
     static AlienCreeps game = new AlienCreeps();
     private Text timeText = new Text(935,60,"");
 
+    static MediaPlayer bg_sound;
+
     Runnable mainRunnable;
     static boolean restart;
+    static boolean pressedSpace = false;
 
     public static void main(String[] args) {
         launch(args);
@@ -105,6 +92,15 @@ public class AlienCreeps extends Application {
                 Thread heroLifeCycle = new Thread(hero);
                 heroLifeCycle.start();
 
+                gameMap.initialNumFlag();
+                gameMap.initalWeaponStatus();
+                gameMap.initBank();
+
+                Media sound=new Media(getClass().getResource("res/sound/videoplayback.mp3").toExternalForm());
+                bg_sound=new MediaPlayer(sound);
+                bg_sound.play();
+                bg_sound.setCycleCount(5);
+
 
                 while (true){
                     try {
@@ -118,13 +114,13 @@ public class AlienCreeps extends Application {
                     }
                     if (START && !ISPAUSED){
                         if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
-                            gameMap.initialNumFlag();
+
                             //      gameMap.randomWeather();
                         }
                         if (CURRENT_SECOND < 60) { //9
                             CURRENT_SECOND++;
                                  gameMap.plague();
-                                 gameMap.updateNumFlag();
+                              //   gameMap.updateNumFlag();
                                  status.setText(gameMap.getHero().toString());
                         } else if (CURRENT_HOUR < 23) { //23
                                   gameMap.superNaturalHelp();
@@ -157,7 +153,9 @@ public class AlienCreeps extends Application {
 
                     /*synchronized (lock){
                         if (gameMap.nextSecond()) {
-                            endGame(true);
+
+
+                         me(true);
                             System.out.println("GAME OVER");
                             gameEnded = true;
                             gameTime.stop();
@@ -172,7 +170,6 @@ public class AlienCreeps extends Application {
     }
 
     private void launchGame() {
-        System.out.println("launching game");
 
         mainRunnable = makeMainRunnable();
         gameTime = new Thread(mainRunnable);
@@ -285,9 +282,22 @@ public class AlienCreeps extends Application {
                 gameMap.upgradeSoldier();
             } else if (event.getCode() == KeyCode.BACK_SPACE){
                 ISPAUSED = true;
+                bg_sound.setMute(true);
                 popupPauseStage.showAndWait();
+            } else if (event.getCode() == KeyCode.SPACE){
+                pressedSpace = true;
+                Hero.runningTime = 20;
             }else{
                 gameMap.moveHero(event);
+            }
+        });
+
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE){
+                    pressedSpace = false;
+                }
             }
         });
     //    gameInput = new Thread(r3);
@@ -431,7 +441,7 @@ public class AlienCreeps extends Application {
         quit_to_main_menu.setOnAction(new Runnable() {
             @Override
             public void run() {
-
+                bg_sound.stop();
                 resetGame();
                 //game = new AlienCreeps();
                 popupPauseStage.close();
@@ -446,6 +456,7 @@ public class AlienCreeps extends Application {
         continue_.setOnAction(new Runnable() {
             @Override
             public void run() {
+                bg_sound.setMute(false);
                 ISPAUSED = false;
                 popupPauseStage.close();
             }
@@ -481,6 +492,7 @@ public class AlienCreeps extends Application {
 
 
     static void endGame(boolean gameOver) {
+        bg_sound.stop();
         ISPAUSED = true;
         System.out.println("setting endgame scene");
 
@@ -1021,12 +1033,35 @@ public class AlienCreeps extends Application {
             accepts.add(new MenuItem(view, 90, 40, "Accept"));
             accepts.get(i).relocate(190 + i * 120, 380);
         }
+        Tooltip machinegun_ta = new Tooltip("update Machine Gun\nor keep default.");
+        Tooltip laser_ta = new Tooltip("update Laser\nor keep default.");
+        Tooltip freezer_ta = new Tooltip("update Freezer\nor keep default.");
+        Tooltip anti_ta = new Tooltip("update Antiaircraft\nor keep default.");
+        Tooltip rocket_ta = new Tooltip("update Rocket\nor keep default.");
+        Tooltip.install(accepts.get(0), machinegun_ta);
+        Tooltip.install(accepts.get(1), laser_ta);
+        Tooltip.install(accepts.get(2), freezer_ta);
+        Tooltip.install(accepts.get(3), anti_ta);
+        Tooltip.install(accepts.get(4), rocket_ta);
+
 
         ArrayList<MenuItem> deletes = new ArrayList<>();
         for (int i = 0; i < 5; i++){
             deletes.add(new MenuItem(view, 90, 40, "Delete"));
             deletes.get(i).relocate(190 + i * 120, 430);
         }
+
+        Tooltip machinegun_t = new Tooltip("select to delete Machine Gun");
+        Tooltip laser_t = new Tooltip("select to delete Laser");
+        Tooltip freezer_t = new Tooltip("select to delete Freezer");
+        Tooltip anti_t = new Tooltip("select to delete Antiaircraft");
+        Tooltip rocket_t = new Tooltip("select to delete Rocket");
+        Tooltip.install(deletes.get(0), machinegun_t);
+        Tooltip.install(deletes.get(1), laser_t);
+        Tooltip.install(deletes.get(2), freezer_t);
+        Tooltip.install(deletes.get(3), anti_t);
+        Tooltip.install(deletes.get(4), rocket_t);
+
 
         ArrayList<ImageView> names = new ArrayList<>();
         names.add(new ImageView(new Image(getClass()
@@ -1396,11 +1431,30 @@ public class AlienCreeps extends Application {
             accepts.get(i).relocate(190 + i * 120, 310);
         }
 
+        Tooltip albertonion_ta = new Tooltip("update Albertonion\nor keep default.");
+        Tooltip aironion_ta = new Tooltip("update Aironion\nor keep default.");
+        Tooltip algwasonion_ta = new Tooltip("update Algwasonion\nor keep default.");
+        Tooltip activinion_ta = new Tooltip("update Activinion\nor keep default.");
+        Tooltip.install(accepts.get(0), albertonion_ta);
+        Tooltip.install(accepts.get(1), aironion_ta);
+        Tooltip.install(accepts.get(2), algwasonion_ta);
+        Tooltip.install(accepts.get(3), activinion_ta);
+
+
         ArrayList<MenuItem> deletes = new ArrayList<>();
         for (int i = 0; i < 4; i++){
             deletes.add(new MenuItem(view, 90, 40, "Delete"));
             deletes.get(i).relocate(190 + i * 120, 360);
         }
+
+        Tooltip albertonion_t = new Tooltip("select to delete Albertonion");
+        Tooltip aironion_t = new Tooltip("select to delete Aironion");
+        Tooltip algwasonion_t = new Tooltip("select to delete Algwasonion");
+        Tooltip activionion_t = new Tooltip("select to delete Activinion");
+        Tooltip.install(deletes.get(0), albertonion_t);
+        Tooltip.install(deletes.get(1), aironion_t);
+        Tooltip.install(deletes.get(2), algwasonion_t);
+        Tooltip.install(deletes.get(3), activionion_t);
 
         ArrayList<ImageView> names = new ArrayList<>();
         names.add(new ImageView(new Image(getClass()
@@ -2139,7 +2193,7 @@ public class AlienCreeps extends Application {
 
 
         TextField moneyChoice = new TextField();
-        Label moneyChoice_l = new Label(String.valueOf(hero.getInitialMoney()));
+        Label moneyChoice_l = new Label(String.valueOf(Hero.getInitialMoney()));
         moneyChoice_l.setFont(font);
         moneyChoice.setOpacity(0.0);
         moneyChoice.setOnKeyPressed(new TextEventHandler(moneyChoice_l));
@@ -2150,7 +2204,7 @@ public class AlienCreeps extends Application {
         /*moneyChoice_i.relocate(190, 430);*/
 
         TextField soldierCoinChoice = new TextField();
-        Label soldierCoinChoice_l = new Label(String.valueOf(String.valueOf(hero.getCoinForEachYarane())));
+        Label soldierCoinChoice_l = new Label(String.valueOf(String.valueOf(Hero.getCoinForEachYarane())));
         soldierCoinChoice_l.setFont(font);
         soldierCoinChoice.setOpacity(0.0);
         soldierCoinChoice.setOnKeyPressed(new TextEventHandler(soldierCoinChoice_l));
@@ -2161,7 +2215,7 @@ public class AlienCreeps extends Application {
         /*soldierCoinChoice_i.relocate(190 + 1 * 120, 430);*/
 
         TextField coinEffectChoice = new TextField();
-        Label coinEffectChoice_l = new Label(String.valueOf(String.valueOf(hero.getYaranePercent())));
+        Label coinEffectChoice_l = new Label(String.valueOf(String.valueOf(Hero.getYaranePercent())));
         coinEffectChoice_l.setFont(font);
         coinEffectChoice.setOpacity(0.0);
         coinEffectChoice.setOnKeyPressed(new TextEventHandler(coinEffectChoice_l));
@@ -2215,8 +2269,6 @@ public class AlienCreeps extends Application {
         buttons.getChildren().addAll(money_btn, coin_btn, effect_btn);
         buttons.setSpacing(150);
         buttons.relocate(135, 190);
-
-
 
         /***** ANIMATION ****/
 

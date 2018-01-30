@@ -24,7 +24,7 @@ public class Alien implements Movable, Comparable, Runnable {
     private Dimension currentDim;
     private int energy;
     private int initialEnergy;
-    private int speed;
+    private double speed;
     private int initialSpeed;
     private int shootingSpeed;
     private int strength;
@@ -211,8 +211,10 @@ public class Alien implements Movable, Comparable, Runnable {
     /***** METHODS ****/
 
     void reduceSpeed(double reductionPercentage) {
-        int reduceAmount = (int) (this.speed * reductionPercentage);
+        double reduceAmount = (this.speed * reductionPercentage);
+        System.out.println("reducnig. prev Speed = " + this.speed);
         this.speed -= reduceAmount;
+        System.out.println("new speed = " + this.speed);
     }
 
     private Object lock3 = new Object();
@@ -244,7 +246,7 @@ public class Alien implements Movable, Comparable, Runnable {
         }
         synchronized (lock4) {
             /*System.out.println("••••••••••••");
-            System.out.println(this.name);
+            System.out.println(this.weaponName);
             System.out.println("••••••••••••");
             System.out.println("current energy : " + this.energy);
             System.out.println("reduction amount : " + amount);
@@ -287,7 +289,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public void move(Dimension dimension) {
-    //    System.out.println(name);
+    //    System.out.println(weaponName);
 //        System.out.println(System.currentTimeMillis());
 
         Dimension.correctDim(dimension);
@@ -303,7 +305,7 @@ public class Alien implements Movable, Comparable, Runnable {
 
     @Override
     public String toString() {
-        return "name: " + name + "\tplace: " + currentDim + "\tenergy left: " + energy;
+        return "weaponName: " + name + "\tplace: " + currentDim + "\tenergy left: " + energy;
     }
 
     private Object lock2 = new Object();
@@ -321,7 +323,7 @@ public class Alien implements Movable, Comparable, Runnable {
                     bulletView.shoot(currentDim, warrior.getShootingPoint(), 1000 / maxBullet - 55, maxBullet);
                     if (energy > 0) {
                         warrior.reduceEnergy(strength);
-                        //       System.out.println(name + " reduced hero's energy");
+                        //       System.out.println(weaponName + " reduced hero's energy");
                     } else {
                         setShoot(false);
                         setToShoot(null);
@@ -335,9 +337,9 @@ public class Alien implements Movable, Comparable, Runnable {
                     }
                 }
             }
-     //            System.out.println(name + " has " + (maxBullet - i) + " bullets left");
+     //            System.out.println(weaponName + " has " + (maxBullet - i) + " bullets left");
         }
-    //     System.out.println(name + " finished shooting");
+    //     System.out.println(weaponName + " finished shooting");
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
@@ -362,7 +364,7 @@ public class Alien implements Movable, Comparable, Runnable {
         return name;
     }
 
-    int getSpeed() {
+    double getSpeed() {
         return speed;
     }
 
@@ -414,7 +416,7 @@ public class Alien implements Movable, Comparable, Runnable {
         }*/
       //  synchronized (lock7){
             if (speed > 0) {
-               // System.out.println(name + " SHOULD MOVE TO " + moveTo);
+               // System.out.println(weaponName + " SHOULD MOVE TO " + moveTo);
                 this.shouldMove = true;
                 this.moveTo = moveTo;
             }
@@ -471,6 +473,8 @@ public class Alien implements Movable, Comparable, Runnable {
                 Dimension moveFrom = currentDim;
                 double deltaX = (moveTo.getX() - moveFrom.getX()) / 10;
                 double deltaY = (moveTo.getY() - moveFrom.getY()) / 10;
+         //       deltaX *= (speed / 2.5);
+           //     deltaY *= (speed / 2.5);
 
                 int signX = Double.compare(deltaX, 0.0);
                 int signY = Double.compare(deltaY, 0.0);
@@ -558,7 +562,7 @@ public class Alien implements Movable, Comparable, Runnable {
      private boolean isFocus;
 
      public AlienView(String name, String alienName){//}, Dimension dim) {
-     //    System.out.println("setting view for " + name);
+     //    System.out.println("setting view for " + weaponName);
 
          isFocus = false;
 
@@ -810,6 +814,10 @@ public class Alien implements Movable, Comparable, Runnable {
              }
          });
      }
+
+     public ImageView[] getMove_down() {
+         return move_down;
+     }
  }
 
 class ProgressBar extends StackPane{
@@ -865,6 +873,8 @@ class ProgressBar extends StackPane{
     public void initBar(){
         progress[8].setVisible(true);
     }
+
+
 
 }
 
@@ -972,7 +982,7 @@ class InitialAlien {
                 //this.energy = 250;
                 this.initialEnergy = 250;
                 //this.speed = 4; //8
-                this.initialSpeed = 4; //8
+                this.initialSpeed = 5; //8
                 this.shootingSpeed = 5;
                 this.strength = 7;
                 this.type = 0;
@@ -991,7 +1001,7 @@ class InitialAlien {
             case "activionion":
                 //this.energy = 400;
                 this.initialEnergy = 400;
-                this.initialSpeed = 1; //2
+                this.initialSpeed = 2; //2
                 this.shootingSpeed = 2;
                 this.strength = 40;
                 this.type = 2;
@@ -1001,7 +1011,7 @@ class InitialAlien {
                 //this.energy = 200;
                 this.initialEnergy = 200;
                 //this.speed = 2; //5
-                this.initialSpeed = 2; //5
+                this.initialSpeed = 4; //5
                 this.shootingSpeed = 5;
                 this.strength = 20;
                 this.type = 3;
