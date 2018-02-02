@@ -1,11 +1,5 @@
-import java.io.File;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,9 +9,8 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
-public class MenuItem extends StackPane{
+public class MyMenuItem extends StackPane{
     private ImageView normal;
     private Text msg;
     private Glow glow;
@@ -26,7 +19,7 @@ public class MenuItem extends StackPane{
     Media sound=new Media(getClass().getResource("res/sound/click.wav").toExternalForm());
     MediaPlayer player=new MediaPlayer(sound);
     
-    public MenuItem(String type){
+    public MyMenuItem(String type){
         setAlignment(Pos.CENTER);
 
         normal = new ImageView(new Image(getClass()
@@ -41,7 +34,7 @@ public class MenuItem extends StackPane{
         setOnMouseExited(e -> onDeselect());
     }
 
-    public MenuItem(Image view){
+    public MyMenuItem(Image view){
         setAlignment(Pos.CENTER);
 
         normal = new ImageView(view);
@@ -55,7 +48,7 @@ public class MenuItem extends StackPane{
         setOnMouseExited(e -> onDeselect());
     }
     
-    public MenuItem(Image view,int w,int h){
+    public MyMenuItem(Image view, int w, int h){
         setAlignment(Pos.CENTER);
 
         normal = new ImageView(view);
@@ -69,14 +62,14 @@ public class MenuItem extends StackPane{
         setOnMouseExited(e -> onDeselect());
     }
 
-    public MenuItem(Image view,int w,int h, String text){
+    public MyMenuItem(Image view, int w, int h, String text){
         setAlignment(Pos.CENTER);
 
         normal = new ImageView(view);
         normal.setFitWidth(w);
         normal.setFitHeight(h);
         msg = new Text(text);
-        Font font = Font.loadFont(MenuItem.
+        Font font = Font.loadFont(MyMenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 35);
@@ -90,10 +83,10 @@ public class MenuItem extends StackPane{
         setOnMouseExited(e -> onDeselect());
     }
 
-    public MenuItem(Image view, String text){
+    public MyMenuItem(Image view, String text){
         setAlignment(Pos.CENTER);
         msg = new Text(text);
-        Font font = Font.loadFont(MenuItem.
+        Font font = Font.loadFont(MyMenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 35);
