@@ -16,7 +16,7 @@ public class MyMenuItem extends StackPane{
     private Glow glow;
 
     
-    Media sound=new Media(getClass().getResource("res/sound/click.wav").toExternalForm());
+    Media sound=new Media(getClass().getResource("res/sound/Gasp.wav").toExternalForm()); // TODO: CLICK
     MediaPlayer player=new MediaPlayer(sound);
     
     public MyMenuItem(String type){
