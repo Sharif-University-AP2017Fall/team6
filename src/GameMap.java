@@ -91,14 +91,14 @@ public class GameMap {
                 bank_VIEW.setEffect(new Glow(0));
             }
         });
-/*
+
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 AlienCreeps.addElementToGameRoot(AlienCreeps.gameScene.getRoot().getChildrenUnmodifiable().size(),
-                bank_VIEW);
+                        bank_VIEW);
             }
-        });*/
+        });
 
     }
 
@@ -120,7 +120,7 @@ public class GameMap {
     }
     
     public void initialNumFlag(){
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 25);
@@ -642,7 +642,7 @@ public class GameMap {
                     weaponLevel.setText("Level: " + weapons.get(i + 1).getLevel());
                     weaponKilled.setText("Num Killed: " + weapons.get(i + 1).getNumKilled());
 
-                    Font font = Font.loadFont(MyMenuItem.
+                    Font font = Font.loadFont(MenuItem.
                             class.
                             getResource("res/Font/Pieces_of_Eight.ttf").
                             toExternalForm(), 25);
@@ -669,7 +669,7 @@ public class GameMap {
             weaponLevel.setText("Level: " + weapons.get(0).getLevel());
             weaponKilled.setText("Num Killed: " + weapons.get(0).getNumKilled());
 
-            Font font = Font.loadFont(MyMenuItem.
+            Font font = Font.loadFont(MenuItem.
                     class.
                     getResource("res/Font/Pieces_of_Eight.ttf").
                     toExternalForm(), 30);
@@ -1605,8 +1605,6 @@ public class GameMap {
             int prob2 = (int) Math.random() * weapon.size();
             if (!weapon.isEmpty())
                 weapon.get(prob2).naturalDisasterWeapon();
-
-            AlienCreeps.showPopupWarning("Natural Disaster.", 45, 105);
 
         }
     }

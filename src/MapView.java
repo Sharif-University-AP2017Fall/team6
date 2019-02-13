@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 
 import java.io.*;
 
+import javafx.scene.image.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -62,7 +63,7 @@ public class MapView {
     private void heroStatus(){
         gc.drawImage(new Image("res/menu/item/name.png"), 1060, 100, 27, 140);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 30);
@@ -85,7 +86,7 @@ public class MapView {
     private void knightStatus(){
         gc.drawImage(new Image("res/menu/item/name.png"), 1060, 100 + 130, 27, 120);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 30);
@@ -108,7 +109,7 @@ public class MapView {
     private void weaponStatus(){
         gc.drawImage(new Image("res/menu/item/name.png"), 1060, 350, 27, 575 - 350);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 30);
@@ -135,7 +136,7 @@ public class MapView {
         gc.drawImage(new Image("res/bg/flag/flag_2.png"),GameMap.XBOUND+20,GameMap.YBOUND-100+20 - 10, 20, 20);
      //   gc.drawImage(new Image("res/menu/item/board3.png"),GameMap.XBOUND+30,GameMap.YBOUND-105, 120, 60);
         
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 30);

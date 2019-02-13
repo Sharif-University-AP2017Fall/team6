@@ -49,7 +49,7 @@ public class AlienCreeps extends Application {
     private Hero hero = new Hero(new Dimension(400, 300));
     static GameMap gameMap = new GameMap();//hero);
     static AlienCreeps game = new AlienCreeps();
-    private Text timeText = new Text(935, 60, "");
+    private Text timeText = new Text(935,60,"");
 
     static MediaPlayer bg_sound;
 
@@ -63,7 +63,7 @@ public class AlienCreeps extends Application {
 
     private String requestWeapon;
 
-    private void resetGame() {
+    private void resetGame(){
         restart = true;
         hero = new Hero(new Dimension(400, 300));
         START = false;
@@ -81,7 +81,7 @@ public class AlienCreeps extends Application {
         stage.setScene(menuScene);
     }
 
-    private Runnable makeMainRunnable() {
+    private Runnable makeMainRunnable(){
         return new Runnable() {
             private final Object lock = new Object();
 
@@ -96,41 +96,73 @@ public class AlienCreeps extends Application {
                 gameMap.initalWeaponStatus();
                 gameMap.initBank();
 
-                Media sound = new Media(getClass().getResource("res/sound/videoplayback.mp3").toExternalForm());
-                bg_sound = new MediaPlayer(sound);
+                Media sound=new Media(getClass().getResource("res/sound/videoplayback.mp3").toExternalForm());
+                bg_sound=new MediaPlayer(sound);
                 bg_sound.play();
-                bg_sound.setCycleCount(MediaPlayer.INDEFINITE);
-                bg_sound.setVolume(0.25);
+                bg_sound.setCycleCount(5);
 
 
-                while (true) {
+                while (true){
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (restart) {
+                    if (restart){
                         System.out.println("quitting main runnable");
                         break;
                     }
-                    if (START && !ISPAUSED) {
-                        if (CURRENT_SECOND < 59) { //9
+                    if (START && !ISPAUSED){
+                        if (CURRENT_SECOND == 0 && CURRENT_HOUR == 0 && CURRENT_DAY == 0) {
+
+                            //      gameMap.randomWeather();
+                        }
+                        if (CURRENT_SECOND < 60) { //9
                             CURRENT_SECOND++;
-                            gameMap.plague();
-                            status.setText(gameMap.getHero().toString());
+                                 gameMap.plague();
+                              //   gameMap.updateNumFlag();
+                                 status.setText(gameMap.getHero().toString());
                         } else if (CURRENT_HOUR < 23) { //23
-                            gameMap.superNaturalHelp();
-                            gameMap.naturalDisaster();
+                                  gameMap.superNaturalHelp();
+                            //      gameMap.naturalDisaster();
                             CURRENT_HOUR++;
                             CURRENT_SECOND = 0;
                         } else {
                             gameMap.setCanUpgradeSoldiers();
+                            //      gameMap.randomWeather();
                             CURRENT_DAY++;
                             CURRENT_HOUR = 0;
                             CURRENT_SECOND = 0;
                         }
-                        updateTime(CURRENT_DAY, CURRENT_HOUR, CURRENT_SECOND);
+                        updateTime(CURRENT_DAY,CURRENT_HOUR,CURRENT_SECOND);
+
+                    /*System.out.println("------------------------");
+                    System.out.println("Current second = " + CURRENT_SECOND);
+                    System.out.println("Current hour = "  + CURRENT_HOUR);
+                    System.out.println("Current day = " + CURRENT_DAY);*/
                         gameMap.nextSecond();
+                        if (gameEnded){
+                            System.out.println("GAME ENDED");
+                            //System.exit(0);
+                        /*try {
+                            stop();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }*/
+                        }
+
+                    /*synchronized (lock){
+                        if (gameMap.nextSecond()) {
+
+
+                         me(true);
+                            System.out.println("GAME OVER");
+                            gameEnded = true;
+                            gameTime.stop();
+                            System.exit(0);
+                            return;
+                        }
+                    }*/
                     }
                 }
             }
@@ -143,41 +175,133 @@ public class AlienCreeps extends Application {
         gameTime = new Thread(mainRunnable);
         gameTime.start();
 
-        gameScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.M) { //OKAY
+        /*Runnable r2 = () -> {
+            while (true) {
+                String input = scanner.nextLine();
+                String info[] = input.split(" ");
+                if (input.matches("put [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
+                    String weaponName = info[1];
+                    int locationNum;
+                    if (!info[2].equals("in")) {
+                        weaponName += " " + info[2];
+                        locationNum = Integer.parseInt(info[5]);
+                    } else {
+                        locationNum = Integer.parseInt(info[4]);
+                    }
+                    gameMap.putWeaponInPlace(weaponName, locationNum);
+                } else if (input.matches("upgrade [\\w]*[\\s]*[\\w]* in place [\\d]+")) {
+                    String weaponName = info[1];
+                    int locationNum;
+                    if (!info[2].equals("in")) {
+                        weaponName += " " + info[2];
+                        locationNum = Integer.parseInt(info[5]);
+                    } else {
+                        locationNum = Integer.parseInt(info[4]);
+                    }
+                    gameMap.upgradeWeaponInPlace(weaponName, locationNum);
+                } else if (input.matches("show details")) {
+                    gameMap.showRemainingAliens();
+                    System.out.println(hero);
+                    System.out.println("*** Weapons ***");
+                    System.out.println("----------");
+                    gameMap.getWeapons().forEach(System.out::println);
+                    System.out.print("\n\n");
+                    gameMap.showReachedFlag();
+                } else if (input.matches("move hero for \\(-*[\\d]+,[\\s]*-*[\\d]+\\)")) {
+                    String dimInfo[] = input.substring(15, input.length() - 1).split(",[\\s]*");
+                    Dimension change = new Dimension(Integer.parseInt(dimInfo[0]),
+                            Integer.parseInt(dimInfo[1]));
+                    gameMap.moveHero(change);
+                } else if (input.matches("tesla in \\([\\d]+,[\\s]*[\\d]+\\)")) {
+                    String dimInfo[] = input.substring(10, input.length() - 1).split(",[\\s]*");
+                    Dimension dimension = new Dimension(Integer.parseInt(dimInfo[0]),
+                            Integer.parseInt(dimInfo[1]));
+                    gameMap.useTesla(dimension);
+                } else if (input.matches("hero status")) {
+                    hero.showStatus();
+                } else if (input.matches("knights status")) {
+                    hero.showKnightStatus();
+                } else if (input.matches("weapons status")) {
+                    gameMap.getWeapons().forEach(System.out::println);
+                } else if (input.matches("status [\\w]*[\\s]*[\\w]* weapon")) {
+                    String weaponName = info[1];
+                    if (!info[2].equals("weapon")) {
+                        weaponName += " " + info[2];
+                    }
+                    List<Weapon> weapons = gameMap.getWeapons();
+                    if (!weapons.isEmpty()) {
+                        gameMap.getWeapons(weaponName).forEach(System.out::println);
+                    } else {
+                        System.out.println("No " + weaponName + " found");
+                    }
+                } else if (input.matches("show achievements")) {
+                    System.out.println(hero.getAchievement());
+                } else if (input.matches("upgrade soldiers")) {
+                    gameMap.upgradeSoldier();
+                } else if (input.matches("show achievements")) {
+                    System.out.print(hero.getAchievement().toString());
+                } else if (input.matches("show money")) {
+                    System.out.println(hero.getMoney());
+                } else if (input.matches("burrow [\\d]+ from intergalactic bank")) {
+                    gameMap.burrowMoney(Integer.parseInt(info[1]));
+                } else if (input.matches("pay the intergalactic bank back")) {
+                    gameMap.payBack();
+                } else if (input.matches("show map")) {
+                    System.out.println(gameMap);
+                } else if (input.matches("show available locations")) {
+                    gameMap.showAvailableLocations();
+                } else {
+                    System.out.println("invalid command");
+                }
+                if (gameEnded){
+                    gameInput.stop();
+                    return;
+                }
+            }
+        };
+        gameInput = new Thread(r2);
+        gameInput.start();*/
+
+        /*Runnable r3 = () -> */gameScene.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.M){ //OKAY
                 popupHeroDimStage.showAndWait();
-            } else if (event.getCode() == KeyCode.B) {
+            } else if (event.getCode() == KeyCode.B){
                 stage.setScene(askWeaponScene);
                 stage.show();
-            } else if (event.getCode() == KeyCode.TAB) {
+            } else if (event.getCode() == KeyCode.TAB){
                 gameMap.focusWeapons();
-            } else if (event.getCode() == KeyCode.SHIFT) {
+            } else if (event.getCode() == KeyCode.SHIFT){
                 gameMap.focusAliens();
-            } else if (event.getCode() == KeyCode.W) {
+            } else if (event.getCode() == KeyCode.W){ /****testing the warnings****/
                 gameMap.upgradeWeapon();
-            } else if (event.getCode() == KeyCode.T) {
+            } else if (event.getCode() == KeyCode.T){
                 popupTeslaDimStage.showAndWait();
-            } else if (event.getCode() == KeyCode.ESCAPE) {
+            } else if(event.getCode() == KeyCode.ESCAPE){
                 gameMap.unFocusAll();
-            } else if (event.getCode() == KeyCode.S) {
+            } else if (event.getCode() == KeyCode.S){
                 gameMap.upgradeSoldier();
-            } else if (event.getCode() == KeyCode.BACK_SPACE) {
+            } else if (event.getCode() == KeyCode.BACK_SPACE){
                 ISPAUSED = true;
                 bg_sound.setMute(true);
                 popupPauseStage.showAndWait();
-            } else if (event.getCode() == KeyCode.SPACE) {
+            } else if (event.getCode() == KeyCode.SPACE){
                 pressedSpace = true;
                 Hero.runningTime = 20;
-            } else {
+            }else{
                 gameMap.moveHero(event);
             }
         });
 
-        gameScene.setOnKeyReleased(event -> {
-            if (event.getCode() == KeyCode.SPACE) {
-                pressedSpace = false;
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.SPACE){
+                    pressedSpace = false;
+                }
             }
         });
+    //    gameInput = new Thread(r3);
+      //  gameInput.start();
     }
 
     static int getCurrentSecond() {
@@ -193,17 +317,17 @@ public class AlienCreeps extends Application {
     }
 
 
-    static Scene menuScene = new Scene(new Group(), 540, 1000);
+    static Scene menuScene = new Scene(new Group(),540, 1000);
     static Scene gameScene = new Scene(new Group(), GameMap.XBOUND + 200, GameMap.YBOUND);
     static Scene popupHeroDimScene = new Scene(new Group(), 450, 275);
     static Scene askWeaponScene = new Scene(new Group(), 500, 500);
     static Scene popupEndGameScene = new Scene(new Group(), 400, 250);
     static Scene popupLocationNumScene = new Scene(new Group(), 300, 600);
-    static Scene popupTeslaDimScene = new Scene(new Group(), 450, 275);
+    static Scene popupTeslaDimScene  = new Scene(new Group(), 450, 275);
     static Scene popupPauseScene = new Scene(new Group(), 275, 300);
     static Scene popupWarningScene = new Scene(new Group(), 450, 275);
     static Scene popupStatusScene = new Scene(new Group(), 275, 300);
-
+    
     static Stage stage;
     static Stage popupHeroDimStage = new Stage();
     static Stage popupEndGameStage = new Stage();
@@ -212,6 +336,7 @@ public class AlienCreeps extends Application {
     static Stage popupPauseStage = new Stage();
     static Stage popupWarningStage = new Stage();
     static Stage popupStatusStage = new Stage();
+    //static Stage statusStage = new Stage();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -247,12 +372,12 @@ public class AlienCreeps extends Application {
         popupPauseStage.initModality(Modality.APPLICATION_MODAL);
         popupPauseStage.setAlwaysOnTop(true);
         popupPauseStage.centerOnScreen();
-
+        
         popupStatusScene.setRoot(createStatusSceneContent());
         popupStatusStage.setScene(popupStatusScene);
         popupStatusStage.initModality(Modality.APPLICATION_MODAL);
         popupStatusStage.setAlwaysOnTop(true);
-
+        
 
         popupWarningStage.setScene(popupWarningScene);
         popupWarningStage.centerOnScreen();
@@ -264,17 +389,23 @@ public class AlienCreeps extends Application {
     }
 
     Text status;
-
-    private Parent createStatusSceneContent() {
+   private Parent createStatusSceneContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
                 .getResource("res/menu/pause/bg.png").toExternalForm()));
 
-        MyMenuItem quit_ = new MyMenuItem(new Image(getClass()
+        MenuItem quit_ = new MenuItem(new Image(getClass()
                 .getResource("res/menu/pause/Continue.png").toExternalForm()), 220, 55);
         quit_.setDim(30, 45);
-        quit_.setOnAction(() -> popupStatusStage.close());
+        quit_.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+
+                popupStatusStage.close();
+
+            }
+        });
 
         ImageView textBg = new ImageView(new Image(getClass()
                 .getResource("res/menu/item/board3.png").toExternalForm()));
@@ -284,55 +415,75 @@ public class AlienCreeps extends Application {
         textBg.setY(80);
 
 
-        status = new Text(70, 160, gameMap.getHero().toString());
-        Font font = Font.loadFont(MyMenuItem.
+        status=new Text(70,160, gameMap.getHero().toString());
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 20);
         status.setFont(font);
         status.setFill(Color.rgb(50, 20, 15));
 
-        root.getChildren().addAll(background, quit_, textBg, status);
+        root.getChildren().addAll(background, quit_,textBg,status);
 
         return root;
     }
 
-
-    private Parent createPauseSceneContent() {
+    
+    private Parent createPauseSceneContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
                 .getResource("res/menu/pause/bg.png").toExternalForm()));
 
-        MyMenuItem quit_to_main_menu = new MyMenuItem(new Image(getClass()
+        MenuItem quit_to_main_menu = new MenuItem(new Image(getClass()
                 .getResource("res/menu/pause/Quit to main menu.png").toExternalForm()), 220, 55);
         quit_to_main_menu.setDim(30, 45);
-        quit_to_main_menu.setOnAction(() -> {
-            bg_sound.stop();
-            resetGame();
-            popupPauseStage.close();
+        quit_to_main_menu.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                bg_sound.stop();
+                resetGame();
+                //game = new AlienCreeps();
+                popupPauseStage.close();
 
+            }
         });
 
 
-        MyMenuItem continue_ = new MyMenuItem(new Image(getClass()
+        MenuItem continue_ = new MenuItem(new Image(getClass()
                 .getResource("res/menu/pause/Continue.png").toExternalForm()), 220, 55);
         continue_.setDim(30, 125);
-        continue_.setOnAction(() -> {
-            bg_sound.setMute(false);
-            ISPAUSED = false;
-            popupPauseStage.close();
+        continue_.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                bg_sound.setMute(false);
+                ISPAUSED = false;
+                popupPauseStage.close();
+            }
         });
 
-        MyMenuItem show_status = new MyMenuItem(new Image(getClass()
+        MenuItem show_status = new MenuItem(new Image(getClass()
                 .getResource("res/menu/pause/Show Status.png").toExternalForm()), 220, 55);
         show_status.setDim(30, 205);
-        //
+ //
 
-        show_status.setOnAction(() -> {
-            popupStatusStage.showAndWait();
-            //popupPauseStage.close();
+        show_status.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                popupStatusStage.showAndWait();
+                //popupPauseStage.close();
+            }
         });
+
+        /*popupPauseScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if (event.getCode() == KeyCode.ENTER){
+                    ISPAUSED = false;
+                    popupPauseStage.close();
+                }
+            }
+        });*/
 
         root.getChildren().addAll(background, quit_to_main_menu, continue_, show_status);
 
@@ -345,9 +496,9 @@ public class AlienCreeps extends Application {
         ISPAUSED = true;
         System.out.println("setting endgame scene");
 
-        gameEnded = true;
+         gameEnded = true;
 
-        gameMap.stopWalking();
+         gameMap.stopWalking();
 
         boolean finalGameOver = gameOver;
         Platform.runLater(() -> {
@@ -355,9 +506,12 @@ public class AlienCreeps extends Application {
             popupEndGameStage.show();
         });
 
-        Timeline end = new Timeline(new KeyFrame(Duration.millis(4000), event -> {
-            Platform.exit();
-            System.exit(0);
+        Timeline end = new Timeline(new KeyFrame(Duration.millis(4000), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Platform.exit();
+                System.exit(0);
+            }
         }));
         end.setCycleCount(1);
         end.play();
@@ -365,7 +519,8 @@ public class AlienCreeps extends Application {
     }
 
 
-    private Parent createGameContent() {
+
+    private Parent createGameContent(){
         Group root = new Group();
         Canvas canvas = new Canvas(GameMap.XBOUND + 300, GameMap.YBOUND);
         root.getChildren().add(canvas);
@@ -381,11 +536,12 @@ public class AlienCreeps extends Application {
         root.getChildren().add(hero.getMoneyBar());
         hero.getHealthBar().setDim(900, 140);
         hero.getMoneyBar().setDim(900, 100);
+//        launchGame();
 
         return root;
     }
 
-    private Parent createAskWeaponContent() {
+    private Parent createAskWeaponContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -397,7 +553,7 @@ public class AlienCreeps extends Application {
         GaussianBlur blur = new GaussianBlur(2);
         background.setEffect(blur);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 70);
@@ -411,7 +567,7 @@ public class AlienCreeps extends Application {
 
         Image barrack_btn = new Image(getClass()
                 .getResource(address + "Barrack.png").toExternalForm());
-        MyMenuItem barrack = new MyMenuItem(barrack_btn);
+        MenuItem barrack = new MenuItem(barrack_btn);
         barrack.setDim(50, 220);
         ImageView barrack_view = new ImageView(new Image(getClass()
                 .getResource(address + "Barrack_view.png").toExternalForm()));
@@ -423,7 +579,7 @@ public class AlienCreeps extends Application {
 
         Image rocket_btn = new Image(getClass()
                 .getResource(address + "Rocket.png").toExternalForm());
-        MyMenuItem rocket = new MyMenuItem(rocket_btn);
+        MenuItem rocket = new MenuItem(rocket_btn);
         rocket.setDim(190, 220);
         ImageView rocket_view = new ImageView(new Image(getClass()
                 .getResource(address + "Rocket_view.png").toExternalForm()));
@@ -436,7 +592,7 @@ public class AlienCreeps extends Application {
 
         Image freezer_btn = new Image(getClass()
                 .getResource(address + "Freezer.png").toExternalForm());
-        MyMenuItem freezer = new MyMenuItem(freezer_btn);
+        MenuItem freezer = new MenuItem(freezer_btn);
         freezer.setDim(340, 220);
         ImageView freezer_view = new ImageView(new Image(getClass()
                 .getResource(address + "Freezer_view.png").toExternalForm()));
@@ -448,7 +604,7 @@ public class AlienCreeps extends Application {
 
         Image antiaircraft_btn = new Image(getClass()
                 .getResource(address + "Antiaircraft.png").toExternalForm());
-        MyMenuItem antiaircraft = new MyMenuItem(antiaircraft_btn);
+        MenuItem antiaircraft = new MenuItem(antiaircraft_btn);
         antiaircraft.setDim(50, 420);
         ImageView antiaircraft_view = new ImageView(new Image(getClass()
                 .getResource(address + "Antiaircraft_view.png").toExternalForm()));
@@ -460,7 +616,7 @@ public class AlienCreeps extends Application {
 
         Image machine_gun_btn = new Image(getClass()
                 .getResource(address + "Machine Gun.png").toExternalForm());
-        MyMenuItem machine_gun = new MyMenuItem(machine_gun_btn);
+        MenuItem machine_gun = new MenuItem(machine_gun_btn);
         machine_gun.setDim(190, 420);
         ImageView machine_gun_view = new ImageView(new Image(getClass()
                 .getResource(address + "Machine Gun_view.png").toExternalForm()));
@@ -476,7 +632,7 @@ public class AlienCreeps extends Application {
 
         Image laser_btn = new Image(getClass()
                 .getResource(address + "Laser.png").toExternalForm());
-        MyMenuItem laser = new MyMenuItem(laser_btn);
+        MenuItem laser = new MenuItem(laser_btn);
         laser.setDim(340, 420);
         ImageView laser_view = new ImageView(new Image(getClass()
                 .getResource(address + "Laser_view.png").toExternalForm()));
@@ -485,6 +641,7 @@ public class AlienCreeps extends Application {
             requestWeapon = "laser";
             popupLocationNUmStage.show();
         });
+
 
 
         root.getChildren().addAll(background, title,
@@ -496,12 +653,11 @@ public class AlienCreeps extends Application {
                 laser, laser_view);
 
         askWeaponScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() == KeyCode.ENTER){
                 stage.setScene(gameScene);
                 stage.centerOnScreen();
-                if (!START) {
+                if (!START){
                     START = true;
-                    System.out.println("LAUNCH");
                     launchGame();
                 }
             }
@@ -510,16 +666,8 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createMenuContent() {
+    private Parent createMenuContent(){
         Group root = new Group();
-
-
-        Media sound = new Media(getClass().getResource("res/sound/Alien Sound Effect [HD].mp3").toExternalForm());
-        MediaPlayer menu_sound = new MediaPlayer(sound);
-        menu_sound.play();
-        menu_sound.setCycleCount(MediaPlayer.INDEFINITE);
-        menu_sound.setStartTime(Duration.millis(1800));
-        menu_sound.setStopTime(Duration.seconds(15));
 
         ImageView background = new ImageView(new Image(getClass()
                 .getResource("res/menu/bg/background.jpg").toExternalForm()));
@@ -530,25 +678,25 @@ public class AlienCreeps extends Application {
         background.setFitWidth(540);
         background.setFitHeight(810);
 
-        MyMenuItem new_item = new MyMenuItem("NewGame");
+        MenuItem new_item = new MenuItem("NewGame");
         new_item.setOnAction(() -> {
-            menu_sound.stop();
             restart = false;
             stage.setScene(askWeaponScene);
             stage.show();
         });
         new_item.setDim(390, 300);
 
-        MyMenuItem custom_item = new MyMenuItem("Custom");
-        custom_item.setOnAction(() -> {
-
-            menu_sound.stop();
-            customizeGame();
+        MenuItem custom_item = new MenuItem("Custom");
+        custom_item.setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                customizeGame();
+            }
         });
         custom_item.setPrefHeight(175);
         custom_item.setDim(290, 450);
 
-        MyMenuItem exit_item = new MyMenuItem("Exit");
+        MenuItem exit_item = new MenuItem("Exit");
         exit_item.setOnAction(() -> System.exit(0));
         exit_item.setDim(390, 600);
 
@@ -567,24 +715,23 @@ public class AlienCreeps extends Application {
                     double xDim = 50;
                     double deltaX = 50;
                     String address = "res/menu/spaceship/images/spaceship_";
-
                     @Override
                     public void handle(ActionEvent event) {
-                        for (int i = 0; i < 10; i++) {
+                        for (int i = 0; i < 10;i ++){
                             graphicsContext.clearRect(i * 50, 170, 48, 48);
                             graphicsContext.clearRect(i * 50, 15, 48, 48);
                         }
                         graphicsContext.drawImage(new Image(address + imgNumber + ".png"), xDim, 170);
                         graphicsContext.drawImage(new Image(address + imgNumber + ".png"), 500 - xDim, 15);
                         xDim += deltaX;
-                        if (xDim == 450) {
+                        if (xDim == 450){
                             deltaX *= -1;
                         }
-                        if (xDim == 50) {
+                        if (xDim == 50){
                             deltaX *= -1;
                         }
                         imgNumber++;
-                        if (imgNumber == 25) {
+                        if (imgNumber == 25){
                             imgNumber = 1;
                         }
                     }
@@ -596,7 +743,7 @@ public class AlienCreeps extends Application {
     }
 
 
-    private Parent createLocationNumContent() {
+    private Parent createLocationNumContent(){
         Group root = new Group();
         ImageView background = new ImageView(new Image(getClass()
                 .getResource("res/menu/ask_location/bg.png").toExternalForm()));
@@ -605,13 +752,21 @@ public class AlienCreeps extends Application {
         background.setFitWidth(300);
 
 
-        ArrayList<MyMenuItem> items = new ArrayList<>();
-        for (int i = 0; i < 13; i++) {
-            items.add(new MyMenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
+        ArrayList<MenuItem> items = new ArrayList<>();
+        for (int i = 0; i < 13; i++){
+            items.add(new MenuItem(new Image("res/menu/ask_location/option.png"), String.valueOf(i + 1)));
             int finalI = i;
-            items.get(i).setOnAction(() -> {
-                popupLocationNUmStage.close();
-                Platform.runLater(() -> gameMap.putWeaponInPlace(requestWeapon, finalI + 1));
+            items.get(i).setOnAction(new Runnable() {
+                @Override
+                public void run() {
+                    popupLocationNUmStage.close();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            gameMap.putWeaponInPlace(requestWeapon, finalI + 1);
+                        }
+                    });
+                }
             });
         }
         items.get(0).setDim(62, 172);
@@ -628,7 +783,7 @@ public class AlienCreeps extends Application {
         items.get(11).setDim(190, 472);
         items.get(12).setDim(126, 524);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 40);
@@ -639,7 +794,7 @@ public class AlienCreeps extends Application {
         command.relocate(24, 25);
 
         popupLocationNumScene.setOnKeyPressed(event -> {
-            if (event.getCode() == KeyCode.ENTER) {
+            if (event.getCode() == KeyCode.ENTER){
                 popupLocationNUmStage.close();
             }
         });
@@ -649,25 +804,25 @@ public class AlienCreeps extends Application {
 
     }
 
-    Parent createEndGameContent(boolean gameOver) {
+    Parent createEndGameContent(boolean gameOver){
         Group root = new Group();
-        Font font1 = Font.loadFont(MyMenuItem.
+        Font font1 = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 40);
-        Font font2 = Font.loadFont(MyMenuItem.
+        Font font2 = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 25);
-        Font font3 = Font.loadFont(MyMenuItem.
+        Font font3 = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 35);
 
         String address = "res/menu";
-        if (gameOver) {
+        if (gameOver){
             address += "/Lose";
-        } else {
+        }else {
             address += "/Win";
         }
 
@@ -684,9 +839,9 @@ public class AlienCreeps extends Application {
         msg2.setFont(font2);
         msg3.setFont(font3);
 
-        if (gameOver) {
-            Media sound = new Media(getClass().getResource("res/sound/gameover.mp3").toExternalForm());
-            MediaPlayer player = new MediaPlayer(sound);
+        if (gameOver){
+            Media sound=new Media(getClass().getResource("res/sound/gameover.mp3").toExternalForm());
+            MediaPlayer player=new MediaPlayer(sound);
             player.play();
             msg1.setText("GAME OVER");
             msg2.setText("The aliens have taken over the planet.");
@@ -698,9 +853,9 @@ public class AlienCreeps extends Application {
             msg2.relocate(40, 100);
             msg3.relocate(50, 180);
 
-        } else {
-            Media sound = new Media(getClass().getResource("res/sound/win.mp3").toExternalForm());
-            MediaPlayer player = new MediaPlayer(sound);
+        } else{
+            Media sound=new Media(getClass().getResource("res/sound/win.mp3").toExternalForm());
+            MediaPlayer player=new MediaPlayer(sound);
             player.play();
             msg1.setText("CONGRATULATIONS! YOU WON!");
             msg2.setText("You have saved the planet!");
@@ -718,7 +873,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createPopupAskDimContent(boolean forHero) {
+    private Parent createPopupAskDimContent(boolean forHero){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -726,7 +881,7 @@ public class AlienCreeps extends Application {
         background.setFitWidth(450);
         background.setFitHeight(275);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 40);
@@ -735,9 +890,9 @@ public class AlienCreeps extends Application {
         question.setFont(font);
         question.setFill(Color.rgb(132, 171, 37));
         question.relocate(55, 30);
-        if (forHero) {
+        if (forHero){
             question.setText("Enter hero's destination");
-        } else {
+        } else{
             question.setText("Enter Tesla's dimension");
         }
 
@@ -757,11 +912,11 @@ public class AlienCreeps extends Application {
         y.opacityProperty().set(0.0);
         y.setOnKeyPressed(new TextEventHandler(lbly));
 
-        if (forHero) {
+        if (forHero){
             popupHeroDimScene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    if (!Objects.equals(lblx.getText(), "") && !Objects.equals(lbly.getText(), "")) {
-                        Dimension change = new Dimension(Integer.parseInt(lblx.getText()) - hero.getDimension().getX(),
+                if (event.getCode() == KeyCode.ENTER){
+                    if (!Objects.equals(lblx.getText(), "") && !Objects.equals(lbly.getText(), "")){
+                        Dimension change = new Dimension(Integer.parseInt(lblx.getText())- hero.getDimension().getX(),
                                 Integer.parseInt(lbly.getText()) - hero.getDimension().getY());
                         hero.setShouldMove(change);
                     }
@@ -775,8 +930,8 @@ public class AlienCreeps extends Application {
             });
         } else {
             popupTeslaDimScene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.ENTER) {
-                    if (!Objects.equals(lblx.getText(), "") && !Objects.equals(lbly.getText(), "")) {
+                if (event.getCode() == KeyCode.ENTER){
+                    if (!Objects.equals(lblx.getText(), "") && !Objects.equals(lbly.getText(), "")){
                         gameMap.useTesla(new Dimension(Integer.parseInt(lblx.getText()),
                                 Integer.parseInt(lbly.getText())));
                     }
@@ -796,7 +951,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    static void showPopupWarning(String msg, double x, double y) {
+    static void showPopupWarning(String msg, double x, double y){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -818,7 +973,7 @@ public class AlienCreeps extends Application {
 
     }
 
-    private Parent createPopupWarningContent(String msg, double x, double y) {
+    private Parent createPopupWarningContent(String msg, double x, double y){
 
         Group root = new Group();
 
@@ -827,7 +982,7 @@ public class AlienCreeps extends Application {
         background.setFitWidth(450);
         background.setFitHeight(275);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 55);
@@ -836,7 +991,7 @@ public class AlienCreeps extends Application {
         warning.setFill(Color.rgb(190, 185, 40));
         warning.relocate(x, y);
 
-        root.getChildren().addAll(background, warning);
+        root.getChildren().addAll(background,  warning);
 
         return root;
 
@@ -849,7 +1004,7 @@ public class AlienCreeps extends Application {
     static Scene newAliensScene = new Scene(new Group(), 800, 500);
 
 
-    public void customizeGame() {
+    public void customizeGame(){
         customizeWeaponScene.setRoot(createCustomizeWeaponContent()); //OKAY
 
         customizeAliensScene.setRoot(createCustomizeAliensContent()); //OKAY
@@ -873,9 +1028,9 @@ public class AlienCreeps extends Application {
                 .getResource("res/menu/custom/option.png").toExternalForm());
 
 
-        ArrayList<MyMenuItem> accepts = new ArrayList<>();
+        ArrayList<MenuItem> accepts = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            accepts.add(new MyMenuItem(view, 90, 40, "Accept"));
+            accepts.add(new MenuItem(view, 90, 40, "Accept"));
             accepts.get(i).relocate(190 + i * 120, 380);
         }
         Tooltip machinegun_ta = new Tooltip("update Machine Gun\nor keep default.");
@@ -890,9 +1045,9 @@ public class AlienCreeps extends Application {
         Tooltip.install(accepts.get(4), rocket_ta);
 
 
-        ArrayList<MyMenuItem> deletes = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            deletes.add(new MyMenuItem(view, 90, 40, "Delete"));
+        ArrayList<MenuItem> deletes = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            deletes.add(new MenuItem(view, 90, 40, "Delete"));
             deletes.get(i).relocate(190 + i * 120, 430);
         }
 
@@ -920,13 +1075,13 @@ public class AlienCreeps extends Application {
         names.add(new ImageView(new Image(getClass()
                 .getResource("res/menu/custom/weapons/names/Rocket.png").toExternalForm())));
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++){
             names.get(i).relocate(190 + i * 120, 490);
             names.get(i).setFitHeight(40);
             names.get(i).setFitWidth(90);
         }
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 32);
@@ -972,7 +1127,7 @@ public class AlienCreeps extends Application {
         ArrayList<Label> rocket_l = new ArrayList<>();
         ArrayList<ImageView> rocket_i = new ArrayList<>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++){
             machinegun.add(new TextField());
             machinegun_l.add(new Label(""));
             machinegun_l.get(i).setFont(font);
@@ -1033,7 +1188,7 @@ public class AlienCreeps extends Application {
         VBox vBox1_l = new VBox();
         vBox1_l.setSpacing(40);
         vBox1_l.setPadding(new Insets(15));
-        vBox1_l.setTranslateX(50 + 120 + 30);
+        vBox1_l.setTranslateX(50 + 120  + 30);
         vBox1_l.getChildren().addAll(machinegun_l);
         //vBox1_l.setAlignment(Pos.CENTER);
 
@@ -1054,7 +1209,7 @@ public class AlienCreeps extends Application {
         VBox vBox2_l = new VBox();
         vBox2_l.setPadding(new Insets(15));
         vBox2_l.setSpacing(40);
-        vBox2_l.setTranslateX(50 + 2 * 120 + 30);
+        vBox2_l.setTranslateX(50 + 2 * 120  + 30);
         vBox2_l.getChildren().addAll(rocket_l);
 
         VBox vBox2_i = new VBox();
@@ -1073,7 +1228,7 @@ public class AlienCreeps extends Application {
         VBox vBox3_l = new VBox();
         vBox3_l.setPadding(new Insets(15));
         vBox3_l.setSpacing(40);
-        vBox3_l.setTranslateX(50 + 3 * 120 + 30);
+        vBox3_l.setTranslateX(50 + 3 * 120  + 30);
         vBox3_l.getChildren().addAll(freezer_l);
 
         VBox vBox3_i = new VBox();
@@ -1092,7 +1247,7 @@ public class AlienCreeps extends Application {
         VBox vBox4_l = new VBox();
         vBox4_l.setSpacing(40);
         vBox4_l.setPadding(new Insets(15));
-        vBox4_l.setTranslateX(50 + 4 * 120 + 30);
+        vBox4_l.setTranslateX(50 + 4 * 120  + 30);
         vBox4_l.getChildren().addAll(laser_l);
 
         VBox vBox4_i = new VBox();
@@ -1100,6 +1255,7 @@ public class AlienCreeps extends Application {
         vBox4_i.setPadding(new Insets(15));
         vBox4_i.setTranslateX(70 + 4 * 120);
         vBox4_i.getChildren().addAll(laser_i);
+
 
 
         VBox vBox5 = new VBox();
@@ -1135,12 +1291,15 @@ public class AlienCreeps extends Application {
         machinegun_l.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("machine gun")));
         machinegun_l.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("machine gun")));
 
-        accepts.get(0).setOnAction(() -> {
-            InitialWeapon.setPrice("machine gun", Integer.parseInt(machinegun_l.get(0).getText()));
-            InitialWeapon.setRadius("machine gun", Double.parseDouble(machinegun_l.get(1).getText()));
-            InitialWeapon.setBulletSpeed("machine gun", Integer.parseInt(machinegun_l.get(2).getText()));
-            InitialWeapon.setBulletPower("machine gun", Integer.parseInt(machinegun_l.get(3).getText()));
-            InitialWeapon.setSpeedReduction("machine gun", Integer.parseInt(machinegun_l.get(4).getText()));
+        accepts.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("machine gun", Integer.parseInt(machinegun_l.get(0).getText()));
+                InitialWeapon.setRadius("machine gun", Double.parseDouble(machinegun_l.get(1).getText()));
+                InitialWeapon.setBulletSpeed("machine gun", Integer.parseInt(machinegun_l.get(2).getText()));
+                InitialWeapon.setBulletPower("machine gun", Integer.parseInt(machinegun_l.get(3).getText()));
+                InitialWeapon.setSpeedReduction("machine gun", Integer.parseInt(machinegun_l.get(4).getText()));
+            }
         });
 
 
@@ -1150,12 +1309,15 @@ public class AlienCreeps extends Application {
         rocket_l.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("rocket")));
         rocket_l.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("rocket")));
 
-        accepts.get(1).setOnAction(() -> {
-            InitialWeapon.setPrice("rocket", Integer.parseInt(rocket_l.get(0).getText()));
-            InitialWeapon.setRadius("rocket", Double.parseDouble(rocket_l.get(1).getText()));
-            InitialWeapon.setBulletSpeed("rocket", Integer.parseInt(rocket_l.get(2).getText()));
-            InitialWeapon.setBulletPower("rocket", Integer.parseInt(rocket_l.get(3).getText()));
-            InitialWeapon.setSpeedReduction("rocket", Integer.parseInt(rocket_l.get(4).getText()));
+        accepts.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("rocket", Integer.parseInt(rocket_l.get(0).getText()));
+                InitialWeapon.setRadius("rocket", Double.parseDouble(rocket_l.get(1).getText()));
+                InitialWeapon.setBulletSpeed("rocket", Integer.parseInt(rocket_l.get(2).getText()));
+                InitialWeapon.setBulletPower("rocket", Integer.parseInt(rocket_l.get(3).getText()));
+                InitialWeapon.setSpeedReduction("rocket", Integer.parseInt(rocket_l.get(4).getText()));
+            }
         });
 
         freezer_l.get(0).setText(String.valueOf(InitialWeapon.getPrice("freezer")));
@@ -1164,12 +1326,15 @@ public class AlienCreeps extends Application {
         freezer_l.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("freezer")));
         freezer_l.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("freezer")));
 
-        accepts.get(2).setOnAction(() -> {
-            InitialWeapon.setPrice("freezer", Integer.parseInt(freezer_l.get(0).getText()));
-            InitialWeapon.setRadius("freezer", Double.parseDouble(freezer_l.get(1).getText()));
-            InitialWeapon.setBulletSpeed("freezer", Integer.parseInt(freezer_l.get(2).getText()));
-            InitialWeapon.setBulletPower("freezer", Integer.parseInt(freezer_l.get(3).getText()));
-            InitialWeapon.setSpeedReduction("freezer", Integer.parseInt(freezer_l.get(4).getText()));
+        accepts.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("freezer", Integer.parseInt(freezer_l.get(0).getText()));
+                InitialWeapon.setRadius("freezer", Double.parseDouble(freezer_l.get(1).getText()));
+                InitialWeapon.setBulletSpeed("freezer", Integer.parseInt(freezer_l.get(2).getText()));
+                InitialWeapon.setBulletPower("freezer", Integer.parseInt(freezer_l.get(3).getText()));
+                InitialWeapon.setSpeedReduction("freezer", Integer.parseInt(freezer_l.get(4).getText()));
+            }
         });
 
         laser_l.get(0).setText(String.valueOf(InitialWeapon.getPrice("laser")));
@@ -1178,12 +1343,15 @@ public class AlienCreeps extends Application {
         laser_l.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("laser")));
         laser_l.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("laser")));
 
-        accepts.get(3).setOnAction(() -> {
-            InitialWeapon.setPrice("laser", Integer.parseInt(laser_l.get(0).getText()));
-            InitialWeapon.setRadius("laser", Double.parseDouble(laser_l.get(1).getText()));
-            InitialWeapon.setBulletSpeed("laser", Integer.parseInt(laser_l.get(2).getText()));
-            InitialWeapon.setBulletPower("laser", Integer.parseInt(laser_l.get(3).getText()));
-            InitialWeapon.setSpeedReduction("laser", Integer.parseInt(laser_l.get(4).getText()));
+        accepts.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("laser", Integer.parseInt(laser_l.get(0).getText()));
+                InitialWeapon.setRadius("laser", Double.parseDouble(laser_l.get(1).getText()));
+                InitialWeapon.setBulletSpeed("laser", Integer.parseInt(laser_l.get(2).getText()));
+                InitialWeapon.setBulletPower("laser", Integer.parseInt(laser_l.get(3).getText()));
+                InitialWeapon.setSpeedReduction("laser", Integer.parseInt(laser_l.get(4).getText()));
+            }
         });
 
         anti_l.get(0).setText(String.valueOf(InitialWeapon.getPrice("antiaircraft")));
@@ -1192,28 +1360,56 @@ public class AlienCreeps extends Application {
         anti_l.get(3).setText(String.valueOf(InitialWeapon.getBulletPower("antiaircraft")));
         anti_l.get(4).setText(String.valueOf(InitialWeapon.getSpeedReduction("antiaircraft")));
 
-        accepts.get(4).setOnAction(() -> {
-            InitialWeapon.setPrice("antiaircraft", Integer.parseInt(anti_l.get(0).getText()));
-            InitialWeapon.setRadius("antiaircraft", Double.parseDouble(anti_l.get(1).getText()));
-            InitialWeapon.setBulletSpeed("antiaircraft", Integer.parseInt(anti_l.get(2).getText()));
-            InitialWeapon.setBulletPower("antiaircraft", Integer.parseInt(anti_l.get(3).getText()));
-            InitialWeapon.setSpeedReduction("antiaircraft", Integer.parseInt(anti_l.get(4).getText()));
+        accepts.get(4).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.setPrice("antiaircraft", Integer.parseInt(anti_l.get(0).getText()));
+                InitialWeapon.setRadius("antiaircraft", Double.parseDouble(anti_l.get(1).getText()));
+                InitialWeapon.setBulletSpeed("antiaircraft", Integer.parseInt(anti_l.get(2).getText()));
+                InitialWeapon.setBulletPower("antiaircraft", Integer.parseInt(anti_l.get(3).getText()));
+                InitialWeapon.setSpeedReduction("antiaircraft", Integer.parseInt(anti_l.get(4).getText()));
 
-            stage.setScene(customizeAliensScene);
+                //stage.setScene(customizeAliensScene);
+                stage.setScene(customizeAliensScene);
+            }
         });
 
-        deletes.get(0).setOnAction(() -> InitialWeapon.removeWeapon("machine gun"));
-
-        deletes.get(1).setOnAction(() -> InitialWeapon.removeWeapon("rocket"));
-
-        deletes.get(2).setOnAction(() -> InitialWeapon.removeWeapon("freezer"));
-
-        deletes.get(3).setOnAction(() -> InitialWeapon.removeWeapon("laser"));
-
-        deletes.get(4).setOnAction(() -> {
-            InitialWeapon.removeWeapon("antiaircraft");
-            stage.setScene(customizeAliensScene);
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("machine gun");
+            }
         });
+
+        deletes.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("rocket");
+            }
+        });
+
+        deletes.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("freezer");
+            }
+        });
+
+        deletes.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("laser");
+            }
+        });
+
+        deletes.get(4).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                InitialWeapon.removeWeapon("antiaircraft");
+                stage.setScene(customizeAliensScene);
+            }
+        });
+
 
 
         return root;
@@ -1229,9 +1425,9 @@ public class AlienCreeps extends Application {
         Image view = new Image(getClass()
                 .getResource("res/menu/custom/option.png").toExternalForm());
 
-        ArrayList<MyMenuItem> accepts = new ArrayList<>();
+        ArrayList<MenuItem> accepts = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            accepts.add(new MyMenuItem(view, 90, 40, "Accept"));
+            accepts.add(new MenuItem(view, 90, 40, "Accept"));
             accepts.get(i).relocate(190 + i * 120, 310);
         }
 
@@ -1245,9 +1441,9 @@ public class AlienCreeps extends Application {
         Tooltip.install(accepts.get(3), activinion_ta);
 
 
-        ArrayList<MyMenuItem> deletes = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            deletes.add(new MyMenuItem(view, 90, 40, "Delete"));
+        ArrayList<MenuItem> deletes = new ArrayList<>();
+        for (int i = 0; i < 4; i++){
+            deletes.add(new MenuItem(view, 90, 40, "Delete"));
             deletes.get(i).relocate(190 + i * 120, 360);
         }
 
@@ -1270,7 +1466,7 @@ public class AlienCreeps extends Application {
         names.add(new ImageView(new Image(getClass()
                 .getResource("res/menu/custom/aliens/names/Activinion.png").toExternalForm())));
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++){
             names.get(i).relocate(190 + i * 120, 420);
             names.get(i).setFitHeight(40);
             names.get(i).setFitWidth(90);
@@ -1293,7 +1489,7 @@ public class AlienCreeps extends Application {
         vBox.setTranslateY(0);
         vBox.setLayoutY(5);
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 32);
@@ -1315,7 +1511,7 @@ public class AlienCreeps extends Application {
         ArrayList<Label> activionion_l = new ArrayList<>();
         ArrayList<ImageView> activionion_i = new ArrayList<>();
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++){
             albertonion.add(new TextField());
             albertonion_l.add(new Label(""));
             albertonion_l.get(i).setFont(font);
@@ -1366,7 +1562,7 @@ public class AlienCreeps extends Application {
         VBox vBox1_l = new VBox();
         vBox1_l.setSpacing(40);
         vBox1_l.setPadding(new Insets(15));
-        vBox1_l.setTranslateX(50 + 120 + 30);
+        vBox1_l.setTranslateX(50 + 120  + 30);
         vBox1_l.getChildren().addAll(albertonion_l);
 
         VBox vBox1_i = new VBox();
@@ -1374,6 +1570,7 @@ public class AlienCreeps extends Application {
         vBox1_i.setPadding(new Insets(15));
         vBox1_i.setTranslateX(70 + 120);
         vBox1_i.getChildren().addAll(albertonion_i);
+
 
 
         VBox vBox3 = new VBox();
@@ -1385,7 +1582,7 @@ public class AlienCreeps extends Application {
         VBox vBox3_l = new VBox();
         vBox3_l.setPadding(new Insets(15));
         vBox3_l.setSpacing(40);
-        vBox3_l.setTranslateX(50 + 2 * 120 + 30);
+        vBox3_l.setTranslateX(50 + 2 * 120  + 30);
         vBox3_l.getChildren().addAll(algwasonion_l);
 
         VBox vBox3_i = new VBox();
@@ -1404,7 +1601,7 @@ public class AlienCreeps extends Application {
         VBox vBox4_l = new VBox();
         vBox4_l.setSpacing(40);
         vBox4_l.setPadding(new Insets(15));
-        vBox4_l.setTranslateX(50 + 3 * 120 + 30);
+        vBox4_l.setTranslateX(50 + 3 * 120  + 30);
         vBox4_l.getChildren().addAll(aironion_l);
 
         VBox vBox4_i = new VBox();
@@ -1412,6 +1609,7 @@ public class AlienCreeps extends Application {
         vBox4_i.setPadding(new Insets(15));
         vBox4_i.setTranslateX(70 + 3 * 120);
         vBox4_i.getChildren().addAll(aironion_i);
+
 
 
         VBox vBox5 = new VBox();
@@ -1438,7 +1636,7 @@ public class AlienCreeps extends Application {
         root.getChildren().addAll(names);
         root.getChildren().addAll(vBox, vBox1_i, vBox4_i, vBox3_i, vBox5_i);
         root.getChildren().addAll(vBox1, vBox4, vBox3, vBox5);
-        root.getChildren().addAll(vBox1_l, vBox4_l, vBox3_l, vBox5_l);
+        root.getChildren().addAll(vBox1_l, vBox4_l,vBox3_l, vBox5_l);
 
 
         albertonion_l.get(0).setText(String.valueOf(Alien.getInitialEnergy("albertonion")));
@@ -1461,51 +1659,81 @@ public class AlienCreeps extends Application {
         activionion_l.get(2).setText(String.valueOf(Alien.getInitialShootingSpeed("activionion")));
         activionion_l.get(3).setText(String.valueOf(Alien.getInitialStrength("activionion")));
 
-        accepts.get(0).setOnAction(() -> {
-            Alien.changeInitialEnergy("albertonion", Integer.parseInt(albertonion_l.get(0).getText()));
-            Alien.changeInitialSpeed("albertonion", Integer.parseInt(albertonion_l.get(1).getText()));
-            Alien.changeInitialShootingSpeed("albertonion", Integer.parseInt(albertonion_l.get(2).getText()));
-            Alien.changeInitialStrength("albertonion", Integer.parseInt(albertonion_l.get(3).getText()));
+        accepts.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("albertonion", Integer.parseInt(albertonion_l.get(0).getText()));
+                Alien.changeInitialSpeed("albertonion", Integer.parseInt(albertonion_l.get(1).getText()));
+                Alien.changeInitialShootingSpeed("albertonion", Integer.parseInt(albertonion_l.get(2).getText()));
+                Alien.changeInitialStrength("albertonion", Integer.parseInt(albertonion_l.get(3).getText()));
+            }
         });
 
-        accepts.get(1).setOnAction(() -> {
-            Alien.changeInitialEnergy("aironion", Integer.parseInt(aironion_l.get(0).getText()));
-            Alien.changeInitialSpeed("aironion", Integer.parseInt(aironion_l.get(1).getText()));
-            Alien.changeInitialShootingSpeed("aironion", Integer.parseInt(aironion_l.get(2).getText()));
-            Alien.changeInitialStrength("aironion", Integer.parseInt(aironion_l.get(3).getText()));
+        accepts.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("aironion", Integer.parseInt(aironion_l.get(0).getText()));
+                Alien.changeInitialSpeed("aironion", Integer.parseInt(aironion_l.get(1).getText()));
+                Alien.changeInitialShootingSpeed("aironion", Integer.parseInt(aironion_l.get(2).getText()));
+                Alien.changeInitialStrength("aironion", Integer.parseInt(aironion_l.get(3).getText()));
+            }
         });
 
-        accepts.get(2).setOnAction(() -> {
-            Alien.changeInitialEnergy("algwasonion", Integer.parseInt(algwasonion_l.get(0).getText()));
-            Alien.changeInitialSpeed("algwasonion", Integer.parseInt(algwasonion_l.get(1).getText()));
-            Alien.changeInitialShootingSpeed("algwasonion", Integer.parseInt(algwasonion_l.get(2).getText()));
-            Alien.changeInitialStrength("algwasonion", Integer.parseInt(algwasonion_l.get(3).getText()));
+        accepts.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("algwasonion", Integer.parseInt(algwasonion_l.get(0).getText()));
+                Alien.changeInitialSpeed("algwasonion", Integer.parseInt(algwasonion_l.get(1).getText()));
+                Alien.changeInitialShootingSpeed("algwasonion", Integer.parseInt(algwasonion_l.get(2).getText()));
+                Alien.changeInitialStrength("algwasonion", Integer.parseInt(algwasonion_l.get(3).getText()));
+            }
         });
 
-        accepts.get(3).setOnAction(() -> {
-            Alien.changeInitialEnergy("activionion", Integer.parseInt(activionion_l.get(0).getText()));
-            Alien.changeInitialSpeed("activionion", Integer.parseInt(activionion_l.get(1).getText()));
-            Alien.changeInitialShootingSpeed("activionion", Integer.parseInt(activionion_l.get(2).getText()));
-            Alien.changeInitialStrength("activionion", Integer.parseInt(activionion_l.get(3).getText()));
+        accepts.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeInitialEnergy("activionion", Integer.parseInt(activionion_l.get(0).getText()));
+                Alien.changeInitialSpeed("activionion", Integer.parseInt(activionion_l.get(1).getText()));
+                Alien.changeInitialShootingSpeed("activionion", Integer.parseInt(activionion_l.get(2).getText()));
+                Alien.changeInitialStrength("activionion", Integer.parseInt(activionion_l.get(3).getText()));
 
-            stage.setScene(customizeHeroScene);
+                stage.setScene(customizeHeroScene);
+            }
         });
 
-        deletes.get(0).setOnAction(() -> Alien.changeDeactivate("albertonion"));
+        deletes.get(0).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("albertonion");
+            }
+        });
 
-        deletes.get(1).setOnAction(() -> Alien.changeDeactivate("aironion"));
+        deletes.get(1).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("aironion");
+            }
+        });
 
-        deletes.get(2).setOnAction(() -> Alien.changeDeactivate("algwasonion"));
+        deletes.get(2).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("algwasonion");
+            }
+        });
 
-        deletes.get(3).setOnAction(() -> {
-            Alien.changeDeactivate("activionion");
-            stage.setScene(customizeHeroScene);
+        deletes.get(3).setOnAction(new Runnable() {
+            @Override
+            public void run() {
+                Alien.changeDeactivate("activionion");
+                stage.setScene(customizeHeroScene);
+            }
         });
 
         return root;
     }
 
-    private Parent createNewAliensContent() {
+    private Parent createNewAliensContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -1514,7 +1742,7 @@ public class AlienCreeps extends Application {
         Image view = new Image(getClass()
                 .getResource("res/menu/custom/option.png").toExternalForm());
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 35);
@@ -1533,7 +1761,7 @@ public class AlienCreeps extends Application {
                 .getResource("res/menu/custom/aliens/CanFly.png").toExternalForm())));
         fields.add(new ImageView(new Image(getClass()
                 .getResource("res/menu/custom/aliens/Name.png").toExternalForm())));
-        for (int i = 0; i < fields.size(); i++) {
+        for (int i = 0; i < fields.size(); i++){
             fields.get(i).setFitWidth(120);
         }
 
@@ -1546,7 +1774,7 @@ public class AlienCreeps extends Application {
         ArrayList<TextField> newAlien = new ArrayList<>();
         ArrayList<Label> newAlien_l = new ArrayList<>();
         ArrayList<ImageView> newAlien_i = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 6; i++){
             newAlien_i.add(new ImageView(new Image(getClass()
                     .getResource("res/menu/custom/input.png").toExternalForm())));
             newAlien_i.get(i).setFitWidth(110);
@@ -1576,11 +1804,11 @@ public class AlienCreeps extends Application {
         hBox1_l.setAlignment(Pos.CENTER);
         hBox1_l.relocate(75, 125);
 
-        MyMenuItem choose_view4 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view8 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view15 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view22 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view12 = new MyMenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view4 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view8 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view15 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view22 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view12 = new MenuItem(view, 90, 40, "Choose");
         HBox choose_btns = new HBox();
         choose_btns.setSpacing(5);
         choose_btns.getChildren().addAll(choose_view4, choose_view8, choose_view15, choose_view22, choose_view12);
@@ -1669,13 +1897,13 @@ public class AlienCreeps extends Application {
             }
         });
 
-        MyMenuItem create = new MyMenuItem(view, 100, 100, "Create!");
+        MenuItem create = new MenuItem(view, 100, 100, "Create!");
         create.relocate(625, 200);
         create.setOnAction(new Runnable() {
             @Override
             public void run() {
-                if (!filename[0].equals("")) {
-                    if (newAlien.get(4).getText().equalsIgnoreCase("F")) {
+                if (!filename[0].equals("")){
+                    if (newAlien.get(4).getText().equalsIgnoreCase("F")){
                         InitialAlien mine = new InitialAlien(Integer.parseInt(newAlien.get(0).getText()),
                                 Integer.parseInt(newAlien.get(1).getText()),
                                 Integer.parseInt(newAlien.get(2).getText()),
@@ -1692,7 +1920,7 @@ public class AlienCreeps extends Application {
                                 filename[0]);
                         Alien.addNewDefinedAlien(newAlien.get(5).getText(), mine);
                     }
-                    for (int i = 0; i < newAlien_l.size(); i++) {
+                    for (int i = 0; i < newAlien_l.size(); i++){
                         newAlien_l.get(i).setText("");
                         //System.out.println("alskdjfcn");
                     }
@@ -1701,7 +1929,7 @@ public class AlienCreeps extends Application {
                 }
             }
         });
-        MyMenuItem Done = new MyMenuItem(view, 100, 100, "Done!");
+        MenuItem Done = new MenuItem(view, 100, 100, "Done!");
         Done.relocate(625, 320);
         Done.setOnAction(new Runnable() {
             @Override
@@ -1710,7 +1938,7 @@ public class AlienCreeps extends Application {
             }
         });
 
-        /***** Animation  ****/
+            /***** Animation  ****/
 
         String address = "res/aliens/movement/";
 
@@ -1848,7 +2076,7 @@ public class AlienCreeps extends Application {
         sprite.setFont(font);
         sprite.relocate(150, 250);*/
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 12; i++){
             view4[i].setFitWidth(50);
             view4[i].setFitHeight(50);
             view4[i].setVisible(false);
@@ -1885,15 +2113,15 @@ public class AlienCreeps extends Application {
                     @Override
                     public void handle(ActionEvent event) {
                         boolean flag = false;
-                        for (int i = 0; i < 12; i++) {
-                            if (view15[i].isVisible()) {
+                        for (int i = 0; i < 12; i++){
+                            if (view15[i].isVisible()){
                                 flag = true;
                                 view4[i].setVisible(false);
                                 view15[i].setVisible(false);
                                 view8[i].setVisible(false);
                                 view22[i].setVisible(false);
                                 view12[i].setVisible(false);
-                                if (i + 1 < 12) {
+                                if (i + 1 < 12){
                                     view4[i + 1].setVisible(true);
                                     view15[i + 1].setVisible(true);
                                     view8[i + 1].setVisible(true);
@@ -1909,7 +2137,7 @@ public class AlienCreeps extends Application {
                                 break;
                             }
                         }
-                        if (!flag) {
+                        if (!flag){
                             view4[0].setVisible(true);
                             view15[0].setVisible(true);
                             view8[0].setVisible(true);
@@ -1922,6 +2150,8 @@ public class AlienCreeps extends Application {
         view_heros.play();
 
 
+
+
         root.getChildren().addAll(background, create, Done, hBox, hBox1_i, hBox1, hBox1_l, choose_btns);
         root.getChildren().addAll(view4);
         root.getChildren().addAll(view8);
@@ -1932,7 +2162,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createCustomizeHeroContent() {
+    private Parent createCustomizeHeroContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -1941,7 +2171,7 @@ public class AlienCreeps extends Application {
         Image view = new Image(getClass()
                 .getResource("res/menu/custom/option.png").toExternalForm());
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 35);
@@ -1959,6 +2189,7 @@ public class AlienCreeps extends Application {
         hBox.setSpacing(50);
         hBox.getChildren().addAll(fields);
         hBox.relocate(70, 50);
+
 
 
         TextField moneyChoice = new TextField();
@@ -2010,7 +2241,7 @@ public class AlienCreeps extends Application {
         hBox1_i.getChildren().addAll(moneyChoice_i, soldierCoinChoice_i, coinEffectChoice_i);
 
         HBox buttons = new HBox();
-        MyMenuItem money_btn = new MyMenuItem(view, 50, 50, "OK");
+        MenuItem money_btn = new MenuItem(view, 50, 50, "OK");
         money_btn.setOnAction(new Runnable() {
             @Override
             public void run() {
@@ -2018,7 +2249,7 @@ public class AlienCreeps extends Application {
             }
         });
 
-        MyMenuItem coin_btn = new MyMenuItem(view, 50, 50, "OK");
+        MenuItem coin_btn = new MenuItem(view, 50, 50, "OK");
         coin_btn.setOnAction(new Runnable() {
             @Override
             public void run() {
@@ -2027,7 +2258,7 @@ public class AlienCreeps extends Application {
         });
 
 
-        MyMenuItem effect_btn = new MyMenuItem(view, 50, 40, "OK");
+        MenuItem effect_btn = new MenuItem(view, 50, 40, "OK");
         effect_btn.setOnAction(new Runnable() {
             @Override
             public void run() {
@@ -2045,11 +2276,11 @@ public class AlienCreeps extends Application {
         sprite.setFont(font);
         sprite.relocate(150, 250);
 
-        MyMenuItem choose_view1 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view7 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view8 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view11 = new MyMenuItem(view, 90, 40, "Choose");
-        MyMenuItem choose_view12 = new MyMenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view1 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view7 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view8 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view11 = new MenuItem(view, 90, 40, "Choose");
+        MenuItem choose_view12 = new MenuItem(view, 90, 40, "Choose");
         HBox choose_btns = new HBox();
         choose_btns.setSpacing(40);
         choose_btns.getChildren().addAll(choose_view1, choose_view7, choose_view8, choose_view11, choose_view12);
@@ -2248,7 +2479,7 @@ public class AlienCreeps extends Application {
         view12[11] = new ImageView(new Image(getClass()
                 .getResource(address + 12 + "/right3.png").toExternalForm()));
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 12; i++){
             view1[i].setFitWidth(50);
             view1[i].setFitHeight(50);
             view1[i].setVisible(false);
@@ -2257,7 +2488,7 @@ public class AlienCreeps extends Application {
             view7[i].setFitWidth(50);
             view7[i].setFitHeight(50);
             view7[i].setVisible(false);
-            view7[i].relocate(220 - 5, 300);
+            view7[i].relocate(220 -5, 300);
 
             view8[i].setFitWidth(50);
             view8[i].setFitHeight(50);
@@ -2285,15 +2516,15 @@ public class AlienCreeps extends Application {
                     @Override
                     public void handle(ActionEvent event) {
                         boolean flag = false;
-                        for (int i = 0; i < 12; i++) {
-                            if (view7[i].isVisible()) {
+                        for (int i = 0; i < 12; i++){
+                            if (view7[i].isVisible()){
                                 flag = true;
                                 view1[i].setVisible(false);
                                 view7[i].setVisible(false);
                                 view8[i].setVisible(false);
                                 view12[i].setVisible(false);
                                 view11[i].setVisible(false);
-                                if (i + 1 < 12) {
+                                if (i + 1 < 12){
                                     view1[i + 1].setVisible(true);
                                     view7[i + 1].setVisible(true);
                                     view8[i + 1].setVisible(true);
@@ -2309,7 +2540,7 @@ public class AlienCreeps extends Application {
                                 break;
                             }
                         }
-                        if (!flag) {
+                        if (!flag){
                             view1[0].setVisible(true);
                             view7[0].setVisible(true);
                             view8[0].setVisible(true);
@@ -2324,7 +2555,7 @@ public class AlienCreeps extends Application {
         root.getChildren().addAll(background);
         root.getChildren().addAll(hBox);
         root.getChildren().addAll(hBox1, hBox1_i, hBox1_l);
-        root.getChildren().addAll(buttons);
+      root.getChildren().addAll(buttons);
         root.getChildren().addAll(choose_btns);
         root.getChildren().addAll(view1);
         root.getChildren().addAll(view7);
@@ -2335,7 +2566,7 @@ public class AlienCreeps extends Application {
         return root;
     }
 
-    private Parent createCustomizeGameMapContent() {
+    private Parent createCustomizeGameMapContent(){
         Group root = new Group();
 
         ImageView background = new ImageView(new Image(getClass()
@@ -2344,7 +2575,7 @@ public class AlienCreeps extends Application {
         Image view = new Image(getClass()
                 .getResource("res/menu/custom/input.png").toExternalForm());
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 32);
@@ -2464,13 +2695,13 @@ public class AlienCreeps extends Application {
 
         VBox vbo1_i = new VBox();
         vbo1_i.setSpacing(12);
-        vbo1_i.getChildren().addAll(max_rate_i, max_hour_i, min_rate_i, min_hour_i, reduce_hour_i, reduce_rate_i, reset_hour_i);
+        vbo1_i.getChildren().addAll(max_rate_i, max_hour_i, min_rate_i, min_hour_i, reduce_hour_i,reduce_rate_i,reset_hour_i);
         vbo1_i.relocate(600, 25);
 
         customizeGameMapScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode() == KeyCode.ENTER) {
+                if (event.getCode() == KeyCode.ENTER){
                     GameMap.setPeakHourMaxAlienRate(Integer.parseInt(max_rate_l.getText()));
                     GameMap.setPeakHourMax(Integer.parseInt(max_hour_l.getText()));
                     GameMap.setPeakHourMinAlienRate(Integer.parseInt(min_rate_l.getText()));
@@ -2490,47 +2721,47 @@ public class AlienCreeps extends Application {
     }
 
 
-    public static void addElementToGameRoot(int index, Node... node) {
-        for (int i = 0; i < node.length; i++) {
+    public static void addElementToGameRoot(int index, Node ... node){
+        for (int i = 0; i < node.length; i++){
             if (!((Group) gameScene.getRoot()).getChildren().contains(node[i]))
                 ((Group) gameScene.getRoot()).getChildren().add(index, node[i]);
         }
     }
 
-    public static void removeElementFromGameRoot(Node... node) {
+    public static void removeElementFromGameRoot(Node ... node){
         ((Group) gameScene.getRoot()).getChildren().removeAll(node);
     }
 
-    public void updateTime(int day, int hour, int sec) {
+    public void updateTime(int day,int hour,int sec){
 
-        Font font = Font.loadFont(MyMenuItem.
+        Font font = Font.loadFont(MenuItem.
                 class.
                 getResource("res/Font/Pieces_of_Eight.ttf").
                 toExternalForm(), 40);
         String daystring = String.valueOf(day);
         String hourString = String.valueOf(hour);
         String secondString = String.valueOf(sec);
-        if (day < 10) {
+        if (day < 10){
             daystring = "0" + day;
         }
 
-        if (hour < 10) {
+        if (hour < 10){
             hourString = "0" + hour;
         }
 
-        if (sec < 10) {
+        if (sec < 10){
             secondString = "0" + sec;
         }
 
-        timeText.setText("" + daystring + ":" + hourString + ":" + secondString);
-        timeText.setFont(font);
-        timeText.setFill(Color.rgb(50, 20, 15));
-
+           timeText.setText(""+daystring+":"+hourString+":"+secondString);
+           timeText.setFont(font);
+           timeText.setFill(Color.rgb(50, 20, 15));
+           
     }
-
+    
 }
 
-class TextEventHandler implements EventHandler<KeyEvent> {
+class TextEventHandler implements EventHandler<KeyEvent>{
 
 
     private Label lbl;
@@ -2544,13 +2775,13 @@ class TextEventHandler implements EventHandler<KeyEvent> {
     @Override
     public void handle(KeyEvent event) {
         KeyCode letter = event.getCode();
-        if (letter != KeyCode.TAB && letter != KeyCode.ENTER) {
-            if (start) {
+        if (letter != KeyCode.TAB && letter != KeyCode.ENTER){
+            if (start){
                 lbl.setText("");
                 start = false;
             }
-            if (letter == KeyCode.BACK_SPACE) {
-                if (lbl.getText().length() > 0) {
+            if (letter == KeyCode.BACK_SPACE){
+                if (lbl.getText().length() > 0){
                     lbl.setText(lbl.getText().substring(0, lbl.getText().length() - 1));
                 }
             } else {
